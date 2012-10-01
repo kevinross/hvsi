@@ -1,0 +1,22 @@
+User:
+  <form>
+	Basic Info:
+		name			(text or textbox)
+		username		(text or textbox)
+		pass			(stars)
+			- pass will allow changing of password.
+		language		(dropdown)
+		student number	(text or textbox)
+		email			(text or textbox)
+		twitter			(text or textbox)
+		cell			(text or textbox)
+	Game Stats:
+		state			(text or dropdown)
+		game id			(text)
+		kills 			(list)
+			victim		(link)
+		deaths 			(list)
+			killer		(link)
+		checkins 		(list)
+			time, location	(text, text)
+  </form>

@@ -1,0 +1,20 @@
+<form>
+	Add Card		(submit)
+</form>
+  
+Active Cards 		(table)
+	Headings:
+		ID			(text)
+		Disqualify	(submit)
+		
+Used Cards			(table)
+	Headings:
+		ID			(text)
+		Time		(text)
+		Player		(link)
+		Disqualify	(submit)
+		
+Disqualified Cards	(table)
+	Headings:
+		ID			(text)
+		Player		(link/"N/A")

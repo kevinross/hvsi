@@ -1,0 +1,252 @@
+diff --git a/database.py b/database.py
+index a0b2452..f6bc813 100644
+--- a/database.py
++++ b/database.py
+@@ -1,14 +1,20 @@
+ from sqlobject import *
+ from sqlobject.mysql import builder
+ from sqlobject.inheritance import *
+-import hashlib, datetime, time, markdown, os
+-__all__ = ['User','Player','Station','Admin','Tag','Checkin','Cure','Post','Comment','Twitter']
++import hashlib, datetime, time, markdown, os, urllib
++__all__ = ['Game','User','Player','Station','Admin','Tag','Checkin','Cure','Post','Comment','Twitter','Snapshot']
+ NAMESPACE = 'hvsi'
+ db = 'hvsi'
+ if '_devel' in os.getcwd():
+ 	db = 'hvsi_devel'
++	user = 'hvsi'
++	passw = 'hvsi'
++else:
++	db = 'hvsi'
++	user = 'hvz'
++	passw = 'asrt5243ga%%^t324g'
+ if os.path.exists('/var/www/hvsi.ca'):	# simple test for production
+-	sqlhub.processConnection = connectionForURI('mysql://hvz:asrt5243ga%%^t324g@/' + db)
++	sqlhub.processConnection = connectionForURI('mysql://' + user + ':' + passw + '@/' + db)
+ else:
+ 	sqlhub.processConnection = connectionForURI('mysql://hvsi:hvsi@/hvsi')
+ def norm_cell(val):
+@@ -27,6 +33,20 @@ def norm_cell(val):
+ 	if final[0] != '1':
+ 		final = '1' + final
+ 	return final
++class Game(SQLObject):
++	class sqlmeta:
++		registry = NAMESPACE
++	started		= BoolCol(default=False)
++	time		= DateTimeCol(default=datetime.datetime.now)
++	def _set_started(self, val):
++		self.time = datetime.datetime.now()
++		self._SO_set_started(val)
++	class started_class(object):
++		def __get__(self, obj, objtype):
++			return Game.select()[0].started
++		def __set__(self, obj):
++			Game.select()[0].started = obj
++	is_started = started_class()
+ class User(InheritableSQLObject):
+ 	class sqlmeta:
+ 		registry = NAMESPACE
+@@ -44,6 +64,8 @@ class User(InheritableSQLObject):
+ 						(not isinstance(self.sqlmeta.columns[x], SOForeignKey) and not self.sqlmeta.columns[x].name == 'childName')])
+ 	def _set_hashed_pass(self, pas):
+ 		self._SO_set_hashed_pass(hashlib.sha1(pas).hexdigest())
++	def set_pass(pas):
++		self._SO_set_hashed_pass(hashlib.sha1(pas).hexdigest())
+ 	def verify_pass(self, pas):
+ 		return self.hashed_pass == hashlib.sha1(pas).hexdigest()
+ 	def change_pass(self, old, new):
+@@ -54,6 +76,12 @@ class User(InheritableSQLObject):
+ 	def _set_cell(self, val):
+ 		self._SO_set_cell(None if not val else norm_cell(val))
+ 	@staticmethod
++	def from_id(num):
++		try:
++			return User.select(User.q.id == num)[0]
++		except:
++			return None
++	@staticmethod
+ 	def from_student_num(num):
+ 		try:
+ 			return User.select(User.q.student_num == num)[0]
+@@ -92,8 +120,17 @@ class User(InheritableSQLObject):
+ 			return None
+ 	@staticmethod
+ 	def get_user(v):
+-		return v if isinstance(v,User) else (User.from_username(v) or User.from_twitter(v) or User.from_email(v) or User.from_cell(v) or User.from_student_num(v))
+-locations = ['cby','ucu','cafealt','manual','twitter','email','internet']
++		if isinstance(v, User):
++			return v
++		elif isinstance(v, str):
++			return User.from_username(v) or User.from_twitter(v) or User.from_email(v) or User.from_cell(v)
++		elif isinstance(v, int):
++			# num is large: 12345.  Probably a student number
++			if len(str(v)) > 4:
++				return User.from_student_num(v)
++			else:
++				return User.from_id(v)
++locations = ['cby','ucu','cafealt','manual','twitter','email','internet','admin']
+ states = ['human','zombie','inactive','banned']
+ class Player(User):
+ 	class sqlmeta:
+@@ -106,6 +143,9 @@ class Player(User):
+ 	cures			 = SQLMultipleJoin('Cure',joinColumn='player_id',orderBy='time')
+ 	signedin		 = BoolCol(default=False,notNone=True)
+ 	signedin_time	 = DateTimeCol(default=None)
++	liability		 = BoolCol(default=False)
++	safety			 = BoolCol(default=False)
++	zero			 = BoolCol(default=False)
+ 	def to_dict(self):
+ 		d = super(Player, self).to_dict()
+ 		d.update(dict(
+@@ -118,14 +158,27 @@ class Player(User):
+ 					signedin=self.signedin,
+ 					signedin_time=self.signedin_time.isoformat()))
+ 		return d
++	def _set_state(self, state):
++		self._SO_set_state(state)
++		Snapshot()
+ 	def _get_game_id(self):
+ 		# surprise! the game_id isn't completely random at all!
+ 		if not self._SO_get_game_id():
++			Snapshot()		# add a snapshot, new user!!
+ 			self._SO_set_game_id('H' + hashlib.sha512(''.join([self.name,self.username,str(self.student_num),str(time.clock())])).hexdigest()[16:24] + 'Z')
+ 		return self._SO_get_game_id()
+ 	def _set_game_id(self, val):
+ 		# attribute is immutable
+ 		return
++	def _set_signedin(self, v):
++		self._SO_set_signedin(v)
++		if v:
++			self.signedin_time = datetime.datetime.now()
++	def _get_last_checkin(self):
++		try:
++			return self.checkins[-1]
++		except:
++			return None
+ 	def _get_last_checkin_time(self):
+ 		try:
+ 			return self.checkins[-1].time
+@@ -138,7 +191,7 @@ class Player(User):
+ 			return None
+ 	def _get_did_webcheckin(self):
+ 		try:
+-			return self.checkins.select(Checkin.q.location==Checkin.location_internet).count() > 0
++			return self.checkins.filter(Checkin.q.location==Checkin.location_internet).count() > 0
+ 		except:
+ 			return False
+ 	def _get_last_death(self):
+@@ -198,7 +251,7 @@ class Admin(User):
+ 		return Station.location_manual
+ 	def to_dict(self):
+ 		d = super(Admin, self).to_dict()
+-		d['location'] = Station.location_manual
++		d['location'] = Station.location_admin
+ 		return d
+ class Tag(SQLObject):
+ 	class sqlmeta:
+@@ -228,10 +281,15 @@ class Cure(SQLObject):
+ 	class sqlmeta:
+ 		registry = NAMESPACE
+ 	time		= DateTimeCol(default=datetime.datetime.now,notNone=True)
+-	card_id 	= StringCol(length=10,varchar=True,unique=True,default=None,notNone=True)
++	card_id 	= StringCol(length=10,varchar=True,unique=True,default=None)
+ 	used		= BoolCol(default=False,notNone=True)
+ 	disqualified= BoolCol(default=False,notNone=True)
+-	player		= ForeignKey('Player',default=None,notNone=True)
++	player		= ForeignKey('Player',default=None)
++	def _get_card_id(self):
++		# surprise! the game_id isn't completely random at all!
++		if not self._SO_get_card_id():
++			self._SO_set_card_id(hashlib.sha512(''.join([self.time.isoformat(),str(self.used),str(self.disqualified),str(time.clock())])).hexdigest()[15:25])
++		return self._SO_get_card_id()
+ 	def to_dict(self):
+ 		return dict(time=self.time.isoformat(), card_id=self.card_id, used=self.used, disqualified=self.disqualified, player=self.player.username)
+ 	@staticmethod
+@@ -241,8 +299,19 @@ class Cure(SQLObject):
+ 		except:
+ 			return None
+ 	@staticmethod
++	def from_id(uid):
++		try:
++			return Cure.select(Cure.q.id == uid)[0]
++		except:
++			return None
++	@staticmethod
+ 	def get_cure(v):
+-		return v if isinstance(v, Cure) else Cure.from_cure_id(v)
++		if isinstance(v, Cure):
++			return v
++		elif isinstance(v, str):
++			return Cure.from_cure_id(v)
++		elif isinstance(v, int):
++			return Cure.from_id(v)
+ 	class state_class(object):
+ 		def __init__(self, used):
+ 			self.used = used
+@@ -261,9 +330,9 @@ class Post(SQLObject):
+ 	allow_comments 	= BoolCol(default=True,notNone=True)
+ 	comments		= SQLMultipleJoin('Comment',joinColumn='post_id',orderBy='time')
+ 	def _get_html_e(self):
+-		return markdown.markdown(self.content_e)
++		return markdown.markdown(self.content_e,['video'],output_format='html')
+ 	def _get_html_f(self):
+-		return markdown.markdown(self.content_f)
++		return markdown.markdown(self.content_f,['video'])
+ 	@staticmethod
+ 	def from_pid(pid):
+ 		return Post.select(Post.q.id == pid)[0]
+@@ -306,6 +375,44 @@ class Twitter(SQLObject):
+ 		def __get__(self, obj, objtype):
+ 			return Twitter.select(orderBy=Twitter.q.id,reversed=True)
+ 	latest = state_class()
++class Snapshot(SQLObject):
++	class sqlmeta:
++		registry = NAMESPACE
++	time		 = DateTimeCol(default=datetime.datetime.now)
++	num_humans	 = IntCol(default=Player.humans.count)
++	num_zombies	 = IntCol(default=Player.zombies.count)
++	class today_class(object):
++		def __get__(self, obj, objtype):
++			now = datetime.datetime.now()
++			morning = datetime.datetime(now.year, now.month, now.day, 0, 0, 0, 0)
++			night = datetime.datetime(now.year, now.month, now.day, 23, 59, 59, 999999)
++			return Snapshot.select(Snapshot.q.time > morning and Snapshot.q.time < night)
++	today = today_class()
++	@staticmethod
++	def points_after_hour(x):
++		now = datetime.datetime.now()
++		hour = datetime.datetime(now.year, now.month, now.day, x, 0, 0, 0)
++		hour_plus_one = hour + datetime.timedelta(0,0,0,0,0,1)
++		return Snapshot.points_between(hour, hour_plus_one)
++	@staticmethod
++	def points_before_hour(x):
++		now = datetime.datetime.now()
++		hour = datetime.datetime(now.year, now.month, now.day, x, 0, 0, 0)
++		hour_minus_one = hour - datetime.timedelta(0,0,0,0,0,1)
++		return Snapshot.points_between(hour_minus_one, hour)
++	@staticmethod
++	def points_after_date(x):
++		return Snapshot.points_between(x, x + datetime.timedelta(0,0,0,0,0,1))
++	@staticmethod
++	def points_before_date(x):
++		return Snapshot.points_between(x - datetime.timedelta(0,0,0,0,0,1), x)
++	@staticmethod
++	def points_between(a,b):
++		return Snapshot.select(Snapshot.q.time > a and Snapshot.q.time < b,orderBy=DESC(Snapshot.q.time))
++	class latest_class(object):
++		def __get__(self, obj, objtype):
++			return Snapshot.select(orderBy=DESC(Snapshot.q.time))[0]
++	latest = latest_class()
+ def set_class_enum(klass, var, array):
+ 	for i in array:
+ 		setattr(klass, var + '_' + i, i)
+@@ -323,4 +430,5 @@ def createTables():
+ 	Cure.createTable()
+ 	Post.createTable()
+ 	Comment.createTable()
+-	Twitter.createTable()
+\ No newline at end of file
++	Twitter.createTable()
++	Snapshot.createTable()
+\ No newline at end of file

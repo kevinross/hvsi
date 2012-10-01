@@ -1,0 +1,6 @@
+French missing:
+/email/message
+/email/subject
+/pages/email/title
+
+English missing:

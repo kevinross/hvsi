@@ -1,0 +1,4 @@
+Users					(table)
+	Headings:
+		username		(link)
+		state			(text)

@@ -1,0 +1,89 @@
+audio[controls],
+video {
+	display: block;
+}
+
+/* always define a default */
+audio {
+	width: 328px;
+	height: 28px;
+}
+video {
+	width: 510px;
+	height: 280px;
+}
+code {
+	display: block;
+	margin: 0 0 10px;
+	white-space: pre;
+}
+.demo-themeswitcher {
+	float: right;
+}
+/* always define a default */
+video {
+	display: block;
+}
+
+video {
+	width: 510px;
+	height: 280px;
+}
+/* always define */
+.timeline-slider,
+.volume-slider,
+.progressbar {
+	position: relative;
+	zoom: 1;
+}
+.ui-slider-horizontal .ui-slider-handle,
+.ui-progressbar-value {
+	position: absolute;
+	display: block;
+	min-width: 1px;
+	min-height: 1px;
+	height: 100%;
+	top: 0;
+	left: 0;
+}
+
+/* simple style */
+.timeline-slider,
+.volume-slider,
+.progressbar {
+	margin: 10px 0;
+	height: 22px;
+	background: #eee;
+}
+.ui-slider-disabled {
+	opacity: 0.8;
+}
+.ui-slider-disabled .ui-slider-handle {
+	cursor: default;
+}
+.ui-slider-horizontal .ui-slider-handle,
+.ui-progressbar-value {
+	background: #333;
+}
+.ui-slider-horizontal .ui-slider-handle {
+	margin-left: -3px;
+	width: 5px;
+}
+.media-state {
+	margin: 10px 0;
+	height: 22px;
+	/* default color + preload loader gif */
+	background: #eee url(../media/loader.gif) no-repeat -9999px -999px;
+}
+.media-state.waiting {
+	background-position: center;
+}
+.media-state.idle {
+	background-color: #999;
+}
+.media-state.playing {
+	background-color: #99e;
+}
+.media-state.totalerror {
+	background-color: #99e;
+}

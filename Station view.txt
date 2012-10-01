@@ -1,0 +1,18 @@
+Station:
+  <form>
+	Tag:
+		Username	(textbox)
+		Game ID		(textbox)
+		Submit		(button)
+  </form>
+  <form>
+	Checkin:
+		Game ID		(textbox)
+		Submit		(button)
+  </form>
+  <form>
+	Cure:
+		Game ID		(textbox)
+		Cure ID		(textbox)
+		Submit		(button)
+  </form>
