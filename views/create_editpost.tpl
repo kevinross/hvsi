@@ -18,7 +18,7 @@
         // Otherwise you'll end up with two editors on top of each other!
         wmd_options = { autostart: false };
     </script>
-	<script type="text/javascript" src="/wmd/wmd.js""></script>
+	<script type="text/javascript" src="/wmd/wmd.js"></script>
 	<script>
 		instances = []
 		function set_content() {
