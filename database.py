@@ -65,7 +65,10 @@ class Game(SQLObject):
 	@staticmethod
 	def toggle_reg():
 		Game.is_reg = not Game.is_reg
-Game = Game.select()[0]
+try:
+	Game = Game.select()[0]
+except:
+	Game = None
 class User(InheritableSQLObject):
 	class sqlmeta:
 		registry = NAMESPACE
