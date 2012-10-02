@@ -377,7 +377,7 @@ def view_eula():
 	i18n_o = i18n.override_title('eula',i18n.i18n['e']['pages']['eula']['title'],i18n.i18n['f']['pages']['eula']['title'])
 	for i in ('e','f'):
 		i18n_o[i]['pages']['register']['agree'] = i18n.i18n[i]['pages']['eula']['agree']
-	return dict(error=(None if 'error' not in request.params else request.params['error']),page='register',
+	return dict(error=request.params.get('error',None),page='register',
 				i18n=i18n_o)
 
 @route('/eula', method='POST')
@@ -393,10 +393,10 @@ def do_eula():
 		setattr(request.user, i, True)
 	redirect('/', 302)
 def reg_cond():
-	if not Game.is_reg and datetime.datetime.now() < datetime.datetime(2010, 11, 2, 21, 0, 0, 0):
+	if not Game.is_reg and datetime.datetime.now() < Game.game_rego:
 		return False
 	else:
-		return datetime.datetime.now() < datetime.datetime(2010, 11, 2, 21, 0, 0, 0)
+		return datetime.datetime.now() < Game.game_rego
 @route('/register',method='GET')
 @view('registration')
 @allow_auth
@@ -404,7 +404,7 @@ def reg_cond():
 @twitter
 @require_cond(reg_cond)
 def view_registration():
-	return dict(error=(None if 'error' not in request.params else request.params['error']),page='register')
+	return dict(error=request.params.get('error',None),page='register')
 @route('/register',method='POST')
 @allow_auth
 @require_cond(reg_cond)
@@ -490,7 +490,7 @@ def view_user_edit(name):
 	user = User.get_user(name)
 	if not user:
 		error(code=404)
-	return dict(error=(None if 'error' not in request.params else request.params['error']),page='useredit',vuser=user,
+	return dict(error=request.params.get('error',None),page='useredit',vuser=user,
 				i18n=i18n.override_title('useredit',
 										 i18n.i18n['e']['pages']['useredit']['editing'] + ' ' + user.username,
 										 i18n.i18n['f']['pages']['useredit']['editing'] + ' ' + user.username))
@@ -534,13 +534,13 @@ def do_user_edit(name):
 def do_user_zero(name):
 	user = User.get_user(name)
 	if not user:
-		redirect('/' if not 'HTTP_REFERER' not in request.environ else request.environ['HTTP_REFERER'], 302)
+		redirect(request.environ.get('HTTP_REFERER','/'), 302)
 	# bypass normal graph stats here, it's not really a kill and the game hasn't started yet
 	for zombie in Player.zombies:
 		zombie._SO_set_state(Player.state_human)
 	user._SO_set_state(Player.state_zombie)
 	user.zero = True
-	redirect('/' if not 'HTTP_REFERER' not in request.environ else request.environ['HTTP_REFERER'], 302)
+	redirect(request.environ.get('HTTP_REFERER','/'), 302)
 @route('/user/:name/activate',method='POST')
 @allow_auth
 @require_auth
@@ -580,7 +580,7 @@ def view_pass_reset():
 	del i18n_reg_f['title']
 	if 'success' in request.params:
 		redirect('/', 302)
-	return dict(error=(None if 'error' not in request.params else request.params['error']),page='pass_reset',
+	return dict(error=request.params.get('error',None),page='pass_reset',
 				i18n=i18n.i18n_over({'e':{'pages':{'pass_reset':i18n_reg_e}},
 									 'f':{'pages':{'pass_reset':i18n_reg_f}}}))
 @route('/password_reset',method='POST')
@@ -602,7 +602,7 @@ def do_pass_reset():
 @twitter
 @require_auth
 def view_tag():
-	return dict(error=(None if 'error' not in request.params else request.params['error']),page='tag',
+	return dict(error=request.params.get('error',None),page='tag',
 				# copy station errors to tag
 				i18n=i18n.i18n_over({'e':{'pages':{'tag':i18n.i18n['e']['pages']['station']['errors']}},
 									 'f':{'pages':{'tag':i18n.i18n['f']['pages']['station']['errors']}}}
@@ -662,7 +662,7 @@ def do_remote_tag(tagger,taggee,uid):
 @require_auth
 @require_role(Admin)
 def view_all_tags():
-	return dict(page='tags', error=(None if 'error' not in request.params else request.params['error']),
+	return dict(page='tags', error=request.params.get('error',None),
 				tags = Tag.select(orderBy=Tag.q.time))
 @route('/tag/:tagger', method='GET')
 @view('tags')
@@ -675,7 +675,7 @@ def view_tags(tagger):
 	tagger = User.get_user(tagger)
 	if not tagger:
 		redirect('/station?error=baduser', 302)
-	return dict(page='tags', error=(None if 'error' not in request.params else request.params['error']),
+	return dict(page='tags', error=request.params.get('error',None),
 				tags=Tag.select(OR(Tag.q.tagger == tagger,Tag.q.taggee == tagger),orderBy=Tag.q.time))
 @route('/tag/:tagger/:taggee', method='GET')
 @view('tags')
@@ -689,7 +689,7 @@ def view_tags(tagger, taggee):
 	taggee = User.get_user(taggee)
 	if not tagger or not taggee:
 		redirect('/station?error=baduser', 302)
-	return dict(page='tags', error=(None if 'error' not in request.params else request.params['error']),
+	return dict(page='tags', error=request.params.get('error',None),
 				tags=Tag.select(OR(
 									AND(Tag.q.tagger == tagger, Tag.q.taggee == taggee),
 									AND(Tag.q.tagger == taggee, Tag.q.taggee == tagger)
@@ -721,9 +721,7 @@ def do_tags_rm():
 @require_auth
 @require_role(Player)
 def view_webcheckin():
-	if 'error' in request.params:
-		return dict(page='webcheckin',error=request.params['error'])
-	return dict(page='webcheckin',error=None)
+	return dict(page='webcheckin',error=request.params.get('error',None))
 @route('/webcheckin',method='POST')
 @allow_auth
 @require_auth
