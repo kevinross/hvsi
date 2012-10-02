@@ -68,7 +68,7 @@ class Game(SQLObject):
 try:
 	Game = Game.select()[0]
 except:
-	Game = None
+	pass
 class User(InheritableSQLObject):
 	class sqlmeta:
 		registry = NAMESPACE
