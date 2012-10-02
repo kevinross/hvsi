@@ -19,7 +19,7 @@
         wmd_options = { autostart: false };
     </script>
 	<script type="text/javascript" src="/wmd/wmd.js"></script>
-	<script>
+	<script type="text/javascript">
 		instances = []
 		function set_content() {
 %	  for i in i18n:
@@ -29,8 +29,8 @@
 		}
 		setTimeout('set_content()',200);
 		function createEditors() {
-            if (!Attacklab || !Attacklab.wmd) {
-                alert("WMD hasn't finished loading!");
+            if (!Attacklab || !Attacklab.wmd || !Attacklab.wmd.previewManager) {
+                setTimeout('createEditors()',200);
                 return;
             }
 %		  for i in i18n:

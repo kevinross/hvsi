@@ -1,4 +1,4 @@
-						<h2><a href="http://twitter.com/uoHvsI">Twitter<a></h2>
+						<h2><a href="http://twitter.com/uoHvsI">Twitter</a></h2>
 						<ul>
 %						  for tweet in db.Twitter.latest[0:5]:
 %						   twe = ''
