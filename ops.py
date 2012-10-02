@@ -1,7 +1,6 @@
 from database import *
 import datetime
 __all__ = ['TagException','CheckInException','CureException','add_kill','do_checkin','do_cure','EXC_NOTHUMAN','EXC_NOTZOMBIE','EXC_KITHUMAN','EXC_KITZOMBIE','EXC_NOTSTATION','EXC_NOSUCHZOMBIE','EXC_NOSUCHHUMAN','CHECKIN_TOOSOON','CURE_DISQUALIFIED','CURE_ALREADYUSED']
-HOURS_BETWEEN_CHECKINS = 4
 EXC_NOTHUMAN = 'player is not a human'
 EXC_NOTZOMBIE= 'player is not a zombie'
 EXC_KITHUMAN = 'human has no kit'
@@ -81,7 +80,7 @@ def do_checkin(player, station):
 	if not (isinstance(station, Station) or isinstance(station, Admin)):
 		raise CheckInException(EXC_NOTSTATION)
 	if player.last_checkin_time:
-		if datetime.datetime.now() < player.last_checkin_time + datetime.timedelta(0,0,0,0,0,HOURS_BETWEEN_CHECKINS):
+		if datetime.datetime.now() < player.last_checkin_time + datetime.timedelta(0,0,0,0,0,Game.hours_between_checkins):
 			raise CheckInException(CHECKIN_TOOSOON)
 	if not player.is_human():
 		raise CheckInException(EXC_NOTHUMAN)

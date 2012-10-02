@@ -286,6 +286,48 @@ def do_game():
 def do_reg():
 	Game.toggle_reg()
 	redirect('/game', 302)
+@route('/startend',method='POST')
+@allow_auth
+@require_auth
+@require_role(Admin)
+def do_startend():
+	s_t = bottle.request.params.get('start_time', None)
+	e_t = bottle.request.params.get('end_time', None)
+	if not s_t or not e_t:
+		redirect('/game?error=notime', 302)
+	Game.game_start = datetime.datetime.strptime(s_t,'%Y-%m-%d %H:%M:%S')
+	Game.game_end = datetime.datetime.strptime(e_t,'%Y-%m-%d %H:%M:%S')
+	redirect('/game', 302)
+@route('/rego',method='POST')
+@allow_auth
+@require_auth
+@require_role(Admin)
+def do_rego():
+	r_t = bottle.request.params.get('rego', None)
+	if not r_t:
+		redirect('/game?error=notime', 302)
+	Game.game_rego = datetime.datetime.strptime(r_t,'%Y-%m-%d %H:%M:%S')
+	redirect('/game', 302)
+@route('/hrsbc',method='POST')
+@allow_auth
+@require_auth
+@require_role(Admin)
+def do_hrsbc():
+	hours = bottle.request.params.get('hrsbc', None)
+	if not hours:
+		redirect('/game?error=notime', 302)
+	Game.hours_between_checkins = int(hours)
+	redirect('/game', 302)
+@route('/itemail',method='POST')
+@allow_auth
+@require_auth
+@require_role(Admin)
+def do_hrsbc():
+	email = bottle.request.params.get('itemail', None)
+	if not email:
+		redirect('/game?error=noemail', 302)
+	Game.it_email = email
+	redirect('/game', 302)
 
 @route('/login',method='GET')
 @view('login')

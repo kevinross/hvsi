@@ -39,6 +39,8 @@ class Game(SQLObject):
 		registry = NAMESPACE
 	started		= BoolCol(default=False)
 	time		= DateTimeCol(default=datetime.datetime.now)
+	string		= StringCol(default=None)
+	number		= IntCol(default=None)
 	def _set_started(self, val):
 		self.time = datetime.datetime.now()
 		self._SO_set_started(val)
@@ -46,20 +48,32 @@ class Game(SQLObject):
 		def __init__(self, index):
 			self.i = index
 		def __get__(self, obj, objtype):
-			return Game.select()[self.i].started
+			return Game.select(Game.q.id == self.i)[0].started
 		def __set__(self, obj, value):
-			Game.select()[self.i].started = value
-			Game.select()[self.i].time = datetime.datetime.now()
-	is_started = started_class(0)
-	is_reg	   = started_class(1)
+			Game.select(Game.q.id == self.i)[0].started = value
+			Game.select(Game.q.id == self.i)[0].time = datetime.datetime.now()
+	class value_class(object):
+		def __init__(self, attr, index):
+			self.i = index
+			self.attr = attr
+		def __get__(self, obj, objtype):
+			return getattr(Game.select(Game.q.id == self.i)[0], self.attr)
+		def __set__(self, obj, value):
+			setattr(Game.select(Game.q.id == self.i)[0], self.attr, value)
+	is_started = started_class(1)
+	is_reg	   = started_class(2)
+	game_start = value_class('time',3)
+	game_end   = value_class('time',4)
+	game_rego  = value_class('time',5)
+	it_email   = value_class('string',6)
+	hours_between_checkins = value_class('number',7)
 	@staticmethod
 	def toggle_game():
-		Game.select()[0].started = not Game.select()[0].started
-		Game.select()[0].time = datetime.datetime.now()
+		Game.is_started = not Game.is_started
 	@staticmethod
 	def toggle_reg():
-		Game.select()[1].started = not Game.select()[1].started
-		Game.select()[1].time = datetime.datetime.now()
+		Game.is_reg = not Game.is_reg
+Game = Game.select()[0]
 class User(InheritableSQLObject):
 	class sqlmeta:
 		registry = NAMESPACE
