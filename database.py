@@ -1,23 +1,15 @@
 from sqlobject import *
 from sqlobject.mysql import builder
 from sqlobject.inheritance import *
-import hashlib, datetime, time, markdown, os, urllib
+import bcrypt, datetime, time, markdown, os, urllib
 __all__ = ['Game','User','Player','Station','Admin','Tag','Checkin','Cure','Post','Comment','Twitter','Snapshot','Score']
 NAMESPACE = 'hvsi'
 db = 'hvsi'
+user = 'hvsi'
+passw = 'hvsi'
 if '_devel' in os.getcwd():
 	db = 'hvsi_devel'
-	user = 'hvsi'
-	passw = 'hvsi'
-else:
-	db = 'hvsi'
-	user = 'hvsi'
-	passw = 'hvsi'
-#if os.path.exists('/var/www/hvsi.ca'):	# simple test for production
-#	sqlhub.processConnection = connectionForURI('mysql://' + user + ':' + passw + '@/' + db)
-#else:
-#	sqlhub.processConnection = connectionForURI('mysql://hvsi:hvsi@/hvsi')
-sqlhub.processConnection = connectionForURI('mysql://hvsi:hvsi@/hvsi')
+sqlhub.processConnection = connectionForURI('mysql://%s:%s@/%s' % (user, passw, db))
 def norm_cell(val):
 	# strip everything out leaving just the numbers.
 	# prefix with a 1 if not already done
@@ -90,15 +82,13 @@ class User(InheritableSQLObject):
 		return dict([(x,getattr(self, x)) for x in self.sqlmeta.columns if 
 						(not isinstance(self.sqlmeta.columns[x], SOForeignKey) and not self.sqlmeta.columns[x].name == 'childName')])
 	def _set_hashed_pass(self, pas):
-		self._SO_set_hashed_pass(hashlib.sha1(pas).hexdigest())
-	def set_pass(pas):
-		self._SO_set_hashed_pass(hashlib.sha1(pas).hexdigest())
+		self._SO_set_hashed_pass(bcrypt.hashpw(pas, bcrypt.gensalt()))
 	def verify_pass(self, pas):
-		return self.hashed_pass == hashlib.sha1(pas).hexdigest()
+		return self.hashed_pass == bcrypt.hashpw(pas, self.hashed_pass)
 	def change_pass(self, old, new):
 		if not self.verify_pass(old):
 			return False
-		self._SO_set_hashed_pass(hashlib.sha1(new).hexdigest())
+		self.hashed_pass = new
 		return True
 	def _set_cell(self, val):
 		self._SO_set_cell(None if not val else norm_cell(val))
@@ -153,7 +143,7 @@ class User(InheritableSQLObject):
 			return User.from_username(v) or User.from_twitter(v) or User.from_email(v) or User.from_cell(v)
 		elif isinstance(v, int):
 			# num is large: 12345.  Probably a student number
-			if len(str(v)) > 4:
+			if v > 10000:
 				return User.from_student_num(v)
 			else:
 				return User.from_id(v)
