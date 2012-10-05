@@ -11,7 +11,7 @@ Tags: light, yellow, silver, blue, two-columns, fixed-width
 html, body
 {
 	background-color:#000000;
-	background-image:url(/images/Countdown.jpg);
+	background-image:url(images/Countdown.jpg);
 	background-repeat:repeat-x;
 	background-position:top center;
 	background-attachment:fixed;
@@ -110,7 +110,7 @@ h3 a { color:#D14640; }
 	margin:0;
 	padding:0;
 	position:relative;
-	background:url(/images/header.png) bottom left no-repeat;
+	background:url(images/header.png) bottom left no-repeat;
 }
 
 #content
@@ -120,7 +120,7 @@ h3 a { color:#D14640; }
 	width:960px;
 	padding:30px 10px 0 10px;
 	position:relative;
-	background:url(/images/content.jpg) top center repeat-y;
+	background:url(images/content.jpg) top center repeat-y;
 }
 
 #content #left
@@ -164,7 +164,7 @@ h3 a { color:#D14640; }
 #header .logo a
 {
 	float:left;
-	background:url(/images/logo.png) top left no-repeat;
+	background:url(images/logo.png) top left no-repeat;
 	width:201px;
 	height:63px;
 	/*margin-bottom:30px;*/
@@ -183,7 +183,7 @@ h3 a { color:#D14640; }
 	width:960px;
 	margin:0 0 10px 0;
 	padding:10px 10px 0 10px;
-	background:url(/images/navigation.png) top left;
+	background:url(images/navigation.png) top left;
 	list-style:none;
 	
 	/*position:absolute;
@@ -210,7 +210,7 @@ h3 a { color:#D14640; }
 	margin:0;
 	padding:0;
 	list-style:none;
-	/* background:url(/images/navigation_sub.png) top left; */
+	/* background:url(images/navigation_sub.png) top left; */
 }
 
 #navigation li:hover ul
@@ -243,7 +243,7 @@ h3 a { color:#D14640; }
 
 #navigation li ul li a:hover
 {
-	background:url(/images/navigation.png) top left;
+	background:url(images/navigation.png) top left;
 }
 
 #navigation li ul li:hover
@@ -253,7 +253,7 @@ h3 a { color:#D14640; }
 
 #navigation li:hover, #navigation li.current_page_item, #navigation li.current_page_ancestor
 {
-	background:url(/images/navigation.png) top left;
+	background:url(images/navigation.png) top left;
 }
 
 #navigation li ul li ul, #navigation li:hover ul li ul
@@ -315,7 +315,7 @@ h3 a { color:#D14640; }
 	float:right;
 	width:29px;
 	height:27px;
-	background:url(/images/comment.png) top right no-repeat;
+	background:url(images/comment.png) top right no-repeat;
 	padding:5px 0 0 0;
 	text-align:center;
 	font-weight:bold;
@@ -386,7 +386,7 @@ h3 a { color:#D14640; }
 {
 	margin-bottom:0;
 	padding:5px 0 5px 27px;
-	background:url(/images/folder.png) center left no-repeat;
+	background:url(images/folder.png) center left no-repeat;
 }
 
 .post .postinfo ul.post-categories li a
@@ -431,7 +431,7 @@ h3 a { color:#D14640; }
 	margin-bottom:20px;
 	font-size:10px;
 	text-transform:uppercase;
-	background:#F38630 url(/images/more-link.jpg) 113px 6px no-repeat;
+	background:#F38630 url(images/more-link.jpg) 113px 6px no-repeat;
 	width:115px;
 	line-height:12px;
 }
@@ -474,7 +474,7 @@ blockquote
 	margin-right:20px;
 	padding:40px 30px 10px 30px;
 	border:1px dotted #fff;
-	background:#FFF5CA url(/images/quote.png) 10px 10px no-repeat;
+	background:#FFF5CA url(images/quote.png) 10px 10px no-repeat;
 	text-align:justify;
 }
 
@@ -687,7 +687,7 @@ blockquote
 	margin:0 0 0 0;
 	font-size:12px;
 	font-weight:normal;
-	background:url(/images/child.jpg) center left no-repeat;
+	background:url(images/child.jpg) center left no-repeat;
 }
 
 #sidebar li ul li ul.children li a
@@ -705,13 +705,13 @@ blockquote
 	padding:20px 20px;
 	width:320px;
 	height:35px;
-	background:url(/images/search_bg.jpg) bottom left no-repeat;
+	background:url(images/search_bg.jpg) bottom left no-repeat;
 }
 
 #sidebar .search_widget #s
 {
 	float:left;
-	background:url(/images/search.jpg) top left no-repeat;
+	background:url(images/search.jpg) top left no-repeat;
 	width:270px;
 	height:25px;
 	padding:0;
@@ -722,7 +722,7 @@ blockquote
 #sidebar .search_widget #sb
 {
 	float:left;
-	background:url(/images/search_button.jpg) top left no-repeat;
+	background:url(images/search_button.jpg) top left no-repeat;
 	width:40px;
 	height:35px;
 	padding:0;
@@ -906,7 +906,7 @@ blockquote
 	padding:0 0 0 20%;
 	margin:0;
 	width:80%;
-	/*background:url(/images/comment_reply.jpg) top left no-repeat;*/
+	/*background:url(images/comment_reply.jpg) top left no-repeat;*/
 }
 
 #comments .commentlist li ul.children li
