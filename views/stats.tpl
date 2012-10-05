@@ -1,11 +1,11 @@
 %if 'i18n' not in globals():
 	%from i18n import i18n
 %end
-%import calendar
+%import calendar, bottle
 %cinclude parts part=1
 <head>
 %	cinclude head
-	<script type="text/javascript" src="//static.hvsi.ca/graph/js/enhance.js"></script>
+	<script type="text/javascript" src="//static.{{bottle.request.environ['HTTP_HOST']}}/graph/js/enhance.js"></script>
 </head>
 %cinclude parts part=2
 			</div>
