@@ -1,0 +1,31 @@
+# LoadModule fcgid_module /usr/lib/apache2/modules/mod_fcgid.so
+NameVirtualHost *:80
+<Directory /var/www/hvsi/>
+    Options +ExecCGI
+    Order allow,deny
+    Allow from all
+</Directory>
+<VirtualHost *:80>
+    ServerName hvsi.ca
+    RewriteLog "/var/log/apache2/rewrite.log"
+    RewriteLogLevel 3
+    # Static/FastCGI
+    DocumentRoot "/var/www/hvsi"
+    AddHandler fcgid-script .fcgi
+
+    RewriteEngine On
+#     RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ /app.fcgi/$1 [QSA,L]
+    <Location />
+        allow from all
+    </Location>
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName static.hvsi.ca
+    DocumentRoot "/var/www/hvsi"
+    <Location />
+        allow from all
+    </Location>
+</VirtualHost>
+
