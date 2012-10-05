@@ -17,12 +17,12 @@ def tagperson(tagger, id_str, mid):
 		return
 	people = fields.groups()
 	url = ''.join(['http://',ZOMBIE_SERVER,'/tag/',tagger,'/',people[0],'/',mid])
-	login_data = urllib.urlencode(dict(username='zombie_twitter',password='zombie_pass'))
+	login_data = urllib.urlencode(dict(username='zombie_twitter',password='zombie_twitter'))
 	d = urllib.urlopen(url, login_data).read()
 def update_status(text):
 	print 'updating status'
 	url = ''.join(['http://',ZOMBIE_SERVER,'/twitter'])
-	login_data = urllib.urlencode(dict(username='zombie_twitter',password='zombie_pass',text=text))
+	login_data = urllib.urlencode(dict(username='zombie_twitter',password='zombie_twitter',text=text))
 	d = urllib.urlopen(url, login_data).read()
 class StreamWatcherListener(tweepy.StreamListener):
 
