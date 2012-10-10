@@ -4,9 +4,9 @@ from sqlobject.inheritance import *
 import bcrypt, datetime, time, markdown, os, urllib
 __all__ = ['Game','User','Player','Station','Admin','Tag','Checkin','Cure','Post','Comment','Twitter','Snapshot','Score']
 NAMESPACE = 'hvsi'
-db = 'hvsi'
-user = 'hvsi'
-passw = 'hvsi'
+db = 'uottawae_hvsi'
+user = 'uottawae_hvsi'
+passw = 'hvs.i'
 if '_devel' in os.getcwd():
 	db = 'hvsi_devel'
 sqlhub.processConnection = connectionForURI('mysql://%s:%s@/%s' % (user, passw, db))
