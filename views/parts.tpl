@@ -1,5 +1,4 @@
-%import database as db
-%import bottle
+%from imports import *
 %admin = bottle.request.admin
 %path = re.match(r'/log[inout]*', bottle.request.path)
 %count = db.Game.is_countdown

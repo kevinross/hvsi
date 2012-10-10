@@ -1,7 +1,4 @@
-%if 'i18n' not in globals():
-	%from i18n import i18n
-%end
-%import calendar, database as db
+%from imports import *
 %cinclude parts part=1
 <head>
 %	cinclude head

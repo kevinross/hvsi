@@ -1,4 +1,4 @@
-%import bottle
+%from imports import *
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="google-site-verification" content="GQMnsDEtrtfSC3X6Ael_dPtmbXAhskKKxqDQMpOg6ss" />
 	<title>HvsI &raquo; {{i18n[lang]['pages'][page]['title']}}</title>
