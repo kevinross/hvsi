@@ -47,7 +47,7 @@
 
 		<div id="footer"><div style="margin-left: auto; margin-right: auto; width: 200px;"><a href="mailto:{{db.Game.it_email}}">Questions, comments, or concerns?</a></div></div>
 	</div>
-	<script type="text/javascript" src="//static.{{bottle.request.environ['HTTP_HOST']}}/js/jquery.corner.js"></script>
+	<script type="text/javascript" src="{{static('/js/jquery.corner.js')}}"></script>
 	<script type="text/javascript">
 //<![CDATA[
 				//Cufon.replace('#navigation a');

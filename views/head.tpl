@@ -2,12 +2,12 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="google-site-verification" content="GQMnsDEtrtfSC3X6Ael_dPtmbXAhskKKxqDQMpOg6ss" />
 	<title>HvsI &raquo; {{i18n[lang]['pages'][page]['title']}}</title>
-	<script type="text/javascript" src="//static.{{bottle.request.environ['HTTP_HOST']}}/js/jquery.min.js"></script>
-	<script type="text/javascript" src="//static.{{bottle.request.environ['HTTP_HOST']}}/js/jquery-ui.min.js"></script>
-	<script type="text/javascript" src="//static.{{bottle.request.environ['HTTP_HOST']}}/js/jquery-ui-timepicker-addon.js"></script>
-	<link rel="stylesheet" href="//static.{{bottle.request.environ['HTTP_HOST']}}/css/style.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="//static.{{bottle.request.environ['HTTP_HOST']}}/css/jquery.ui.all.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="//static.{{bottle.request.environ['HTTP_HOST']}}/css/jquery-ui-timepicker-addon.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="{{static('/js/jquery.min.js')}}"></script>
+	<script type="text/javascript" src="{{static('/js/jquery-ui.min.js')}}"></script>
+	<script type="text/javascript" src="{{static('/js/jquery-ui-timepicker-addon.js')}}"></script>
+	<link rel="stylesheet" href="{{static('/css/style.css')}}" type="text/css" media="screen" />
+	<link rel="stylesheet" href="{{static('/css/jquery.ui.all.css')}}" type="text/css" media="screen" />
+	<link rel="stylesheet" href="{{static('/css/jquery-ui-timepicker-addon.css')}}" type="text/css" media="screen" />
 	<style type="text/css">/*<![CDATA[*/
 		.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}
 		/*]]>*/
