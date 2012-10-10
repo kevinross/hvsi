@@ -19,11 +19,13 @@
 				<a href="/"></a>
 			</div>
 %if 'nologin' not in globals() or ('nologin' in globals() and not nologin):
+		  <div id="loginheader" style="float: right;">
 %		  if not hasattr(request, 'logged_in') or (hasattr(request, 'logged_in') and not request.logged_in):
 			<a style="float: right;" href="/password_reset">{{i18n[lang]['pass']}}</a>
 			<br/>
 %		  end
 %		cinclude login_header
+		  </div>
 %end
 %		cinclude navigation
 		</div>
