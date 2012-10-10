@@ -223,7 +223,8 @@ def eula_file(file):
 #		redirect('/pdf/' + file, 302)
 #	else:
 #		redirect('/pdf/' + file.replace('.pdf','_' + data + '.pdf'), 302)
-	redirect('/pdf/' + file, 302)
+	from imports import static
+	redirect(static('/pdf/%s' % file), 302)
 @route('/favicon.ico')
 def favicon():
 	send_file('favicon.ico', root=img_root)
