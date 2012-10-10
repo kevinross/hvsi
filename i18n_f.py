@@ -27,6 +27,9 @@ i18n = {
 		'banned': 'Interdit'
 	},
 	'pages': {
+		'countdown': {
+			'title': 'TRANSLATE ME:/pages/page/countdown/title'
+		},
 		'index': {
 			'title': 'Home'
 		},
@@ -236,7 +239,9 @@ i18n = {
 			'start': 'Commencer le jeu',
 			'end': 'Terminer le jeu',
 			'startr': 'Ouvrir les inscriptions',
-			'endr': 'Fermer les inscriptions'
+			'endr': 'Fermer les inscriptions',
+			'encount': 'TRANSLATE ME:/pages/game/encount',
+			'discount': 'TRANSLATE ME:/pages/game/discount'
 		},
 		'editcure': {
 			'title': 'Modifier remède',

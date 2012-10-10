@@ -1,5 +1,11 @@
 %import database as db
 %import bottle
+%admin = bottle.request.admin
+%path = re.match(r'/log[inout]*', bottle.request.path)
+%count = db.Game.is_countdown
+%if (not admin and count and not path):
+%bottle.redirect('/countdown', 302)
+%else:
 %if part==1:
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,7 +37,7 @@
 				<br/>
 %			  end
 %end
-%elif part==3:
+% elif part==3:
 			<div id="right">
 %				cinclude sidebar
 				<div id="creditsfix"></div>
@@ -70,4 +76,5 @@
 %  if not hasattr(request, 'logged_in') or (hasattr(request, 'logged_in') and (not request.logged_in or request.player)):
 	%include analytics
 %  end
+%end
 %end

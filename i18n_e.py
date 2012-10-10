@@ -27,6 +27,9 @@ i18n = {
 		'banned': 'Banned'
 	},
 	'pages': {
+		'countdown': {
+			'title': 'Countdown'
+		},
 		'index': {
 			'title': 'Home'
 		},
@@ -84,7 +87,9 @@ i18n = {
 			'start': 'Start Game',
 			'end': 'End Game',
 			'startr': 'Open Registrations',
-			'endr': 'Close Registrations'
+			'endr': 'Close Registrations',
+			'encount': 'Enable Countdown',
+			'discount': 'Disable Countdown'
 		},
 		'register': {
 			'title': 'Registration',

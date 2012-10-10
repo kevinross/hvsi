@@ -234,6 +234,11 @@ def favicon():
 @twitter
 def index():
 	return dict(page='index',error=None,post=Post.from_pid(1),posts=Post.select(Post.q.id > 5,orderBy='-id'))
+@route('/countdown')
+@view('countdown')
+@lang
+def countdown():
+	return dict(page='countdown')
 @route('/missions')
 @view('index')
 @allow_auth
@@ -285,6 +290,23 @@ def do_game():
 @require_role(Admin)
 def do_reg():
 	Game.toggle_reg()
+	redirect('/game', 302)
+@route('/count',method='POST')
+@allow_auth
+@require_auth
+@require_role(Admin)
+def do_count():
+	Game.toggle_countdown()
+	redirect('/game', 302)
+@route('/count_time',method='POST')
+@allow_auth
+@require_auth
+@require_role(Admin)
+def do_countdown():
+	c_t = bottle.request.params.get('count_time', None)
+	if not c_t:
+		redirect('/game?error=notime', 302)
+	Game.countdown_time = datetime.datetime.strptime(c_t,'%Y-%m-%d %H:%M:%S')
 	redirect('/game', 302)
 @route('/startend',method='POST')
 @allow_auth

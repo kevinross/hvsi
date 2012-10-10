@@ -41,6 +41,25 @@
 				</td>
 				</tr>
 				<tr>
+				<td>
+				<form action="/count" method="post">
+%				  if db.Game.is_countdown:
+					<input type="submit" name="submit" value="{{i18n[lang]['pages'][page]['discount']}}" />
+%				  else:
+					<input type="submit" name="submit" value="{{i18n[lang]['pages'][page]['encount']}}" />
+%				  end
+				</form>
+				</td>
+				<td>
+				<form action="/count_time" method="post">
+					Countdown To: <input type="textfield" class="dt" id="count_time" name="count_time" value="{{str(db.Game.countdown_time)}}" />
+				</td>
+				<td>
+				<input type="submit" name="submit" value="Save" />
+				</td>
+				</form>
+				</tr>
+				<tr>
 				<form action="/startend" method="post">
 					<td>Game Start: <input type="textfield" class="dt" id="start_time" name="start_time" value="{{str(db.Game.game_start)}}" /></td>
 					<td>Game End: <input type="textfield" class="dt" id="end_time" name="end_time" value="{{str(db.Game.game_end)}}" /></td>

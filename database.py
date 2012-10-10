@@ -59,12 +59,17 @@ class Game(SQLObject):
 	game_rego  = value_class('time',5)
 	it_email   = value_class('string',6)
 	hours_between_checkins = value_class('number',7)
+	is_countdown  = started_class(8)
+	countdown_time = value_class('time',9)
 	@staticmethod
 	def toggle_game():
-		Game.is_started = not Game.is_started
+		Game.select(Game.q.id == 1)[0].started = not Game.select(Game.q.id == 1)[0].started
 	@staticmethod
 	def toggle_reg():
-		Game.is_reg = not Game.is_reg
+		Game.select(Game.q.id == 2)[0].started = not Game.select(Game.q.id == 2)[0].started
+	@staticmethod
+	def toggle_countdown():
+		Game.select(Game.q.id == 8)[0].started = not Game.select(Game.q.id == 8)[0].started
 try:
 	Game = Game.select()[0]
 except:
