@@ -1,10 +1,15 @@
 #!/bin/bash
 
-cp *.py $1/hvsi/
-cp app.fcgi $1/hvsi/
-cp app.wsgi $1/hvsi/
-cp -r views $1/hvsi/
+if [ -z "$1" ]; then
+	echo "You need to supply the path to public_html (including public_html)!";
+	exit 1;
+fi
+for i in *.py app.fcgi app.wsgi views; do
+	rm -r $1/hvsi/$i;
+	cp -r $i $1/hvsi/$i;
+done
 
-cp -r js $1/hvsi_static/
-cp -r pdf $1/hvsi_static/
-cp -r css $1/hvsi_static/
+for i in js pdf css; do
+	rm -r $1/hvsi_static/$i;
+	cp -r $i $1/hvsi_static/$i;
+done
