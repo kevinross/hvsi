@@ -68,20 +68,20 @@
 				</tr>
 				<tr>
 				<form action="/rego" method="post">
-					<td>Registration Cutoff:</td><td><input type="textfield" class="dt" id="rego" name="rego" value="{{str(db.Game.game_rego)}}" />
-					<input type="submit" name="submit" value="Save" /></td>
+					<td>Registration Cutoff:</td><td><input type="textfield" class="dt" id="rego" name="rego" value="{{str(db.Game.game_rego)}}" /></td>
+					<td><input type="submit" name="submit" value="Save" /></td>
 				</form>
 				</tr>
 				<tr>
 				<form action="/hrsbc" method="post">
-					<td>Hours Between Checkins:</td><td><input type="textfield" id="hrsbc" name="hrsbc" value="{{str(db.Game.hours_between_checkins)}}" />
-					<input type="submit" name="submit" value="Save" /></td>
+					<td>Hours Between Checkins:</td><td><input type="textfield" id="hrsbc" name="hrsbc" value="{{str(db.Game.hours_between_checkins)}}" /></td>
+					<td><input type="submit" name="submit" value="Save" /></td>
 				</form>
 				</tr>
 				<tr>
 				<form action="/itemail" method="post">
-					<td>IT Email:</td><td><input type="textfield" id="itemail" name="itemail" value="{{str(db.Game.it_email)}}" />
-					<input type="submit" name="submit" value="Save" /></td>
+					<td>IT Email:</td><td><input type="textfield" id="itemail" name="itemail" value="{{str(db.Game.it_email)}}" /></td>
+					<td><input type="submit" name="submit" value="Save" /></td>
 				</form>
 				</tr>
 				</table>
