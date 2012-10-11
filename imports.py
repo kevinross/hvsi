@@ -3,4 +3,6 @@ import bottle, re
 from i18n import i18n
 import calendar
 def static(path):
-	return '//static.%s/%s' % (bottle.request.environ['HTTP_HOST'], path.lstrip('/'))
+	host_parts = bottle.request.environ['HTTP_HOST'].split('.')
+	host = '.'.join(['static',host_parts[-2],host_parts[-1]])
+	return '//%s/%s' % (host, path.lstrip('/'))
