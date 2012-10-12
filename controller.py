@@ -18,25 +18,14 @@ def valid_creds(user, passw):
 	if not u:
 		return False
 	return u.hashed_pass == passw or u.verify_pass(passw)
-def get_session_cookie(user=None, passw=None):
+def get_session(user=None, passw=None):
 	if user and passw:
-		cipher = AES.new(key, AES.MODE_CFB, iv)
-		return cipher.encrypt('\n'.join([user,passw])).encode('hex')
+		return Session.session(user)
 	else:
-		# try to extract from environ
-		if request.params.get('session',None) or request.cookies.get('session',None):
-			cipher = AES.new(key, AES.MODE_CFB, iv)
-			val = cipher.decrypt(
-					request.cookies.get('session',None) or
-					request.params.get('session',None)).decode('hex').split('\n')
-					
-			return dict(username=val[0], password=val[1])
-		elif 'username' in request.params:
-			return dict(username=request.params['username'],password=request.params['password'])
-		elif request.auth:
-			return dict(username=request.auth[0],password=request.auth[1])
+		if 'session' in request.params or 'session' in request.cookies:
+			return Session.get(request.params.get('session',None) or request.cookies.get('session',None))
 		else:
-			return dict(username='',password='')
+			return Session()
 # hack the Request __init__
 class Request_Auth():
 	def __init__(self, *args, **kwargs):
@@ -54,7 +43,7 @@ def require_auth(func):
 	def auth(*args, **kwargs):
 		def denied(*args, **kwargs):
 			error(401)
-		if 'session' not in request.params and 'session' not in request.COOKIES and 'username' not in request.params and not request.auth:
+		if 'session' not in request.params and 'session' not in request.cookies and 'username' not in request.params and not request.auth:
 			return denied(*args, **kwargs)
 		if not request.logged_in:
 			return denied(*args, **kwargs)
@@ -63,7 +52,7 @@ def require_auth(func):
 	return auth
 def allow_auth(func):
 	def auth(*args, **kwargs):
-		info = get_session_cookie()
+		info = get_session()
 		setattr(request, 'logged_in', False)
 		setattr(request, 'admin', None)
 		setattr(request, 'station', None)
@@ -71,19 +60,16 @@ def allow_auth(func):
 		setattr(request, 'user', None)
 		if not info:
 			return func(*args, **kwargs)
-		if not valid_creds(info['username'], info['password']):
-			return func(*args, **kwargs)
-		request.user = User.from_username(info['username'])
+		request.user = info.user
 		request.admin = isinstance(request.user, Admin)
 		request.station = isinstance(request.user, Station)
 		request.player = isinstance(request.user, Player)
 		request.logged_in = True
-		if 'session' in request.COOKIES:
+		if 'session' in request.cookies or 'session' in request.params:
 			if isinstance(request.user, Station):
-				expiry =+(5*24*60*60)
-			else:
-				expiry = +(30*60)
-			response.set_cookie('session', request.COOKIES['session'], expires=(datetime.datetime.now() + datetime.timedelta(0,0,0,0,30)))
+				info.ttl = 5*24*60*60
+				info.update_expires()
+			response.set_cookie('session', info.key, expires=info.expires)
 			# force Players to read the eula if they haven't already
 			if 'eula' not in request.path and request.player and not (request.user.liability and request.user.safety):
 #				for i in ('liability', 'safety'):

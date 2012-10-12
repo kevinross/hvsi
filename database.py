@@ -1,8 +1,8 @@
 from sqlobject import *
 from sqlobject.mysql import builder
 from sqlobject.inheritance import *
-import bcrypt, datetime, time, markdown, os, urllib
-__all__ = ['Game','User','Player','Station','Admin','Tag','Checkin','Cure','Post','Comment','Twitter','Snapshot','Score']
+import bcrypt, datetime, time, markdown, os, urllib, uuid
+__all__ = ['Game','User','Player','Station','Admin','Tag','Checkin','Cure','Post','Comment','Twitter','Snapshot','Score','Session']
 NAMESPACE = 'hvsi'
 db = 'uottawae_hvsi'
 user = 'uottawae_hvsi'
@@ -76,6 +76,43 @@ try:
 	Game = Game.select()[0]
 except:
 	pass
+
+class Session(InheritableSQLObject):
+	DEFAULT_LIFETIME = 300
+	class sqlmeta:
+		registry = NAMESPACE
+	key			 = StringCol(length=32,varchar=True,unique=True,notNone=True,default=lambda:uuid.uuid4().get_hex())
+	expires		 = DateTimeCol(notNone=True,default=lambda:datetime.datetime.now()+datetime.timedelta(0,DEFAULT_LIFETIME))
+	ttl			 = IntCol(default=DEFAULT_LIFETIME)
+	language	 = EnumCol(enumValues=['e','f'],default='e')
+	user		 = ForeignKey('User',default=None)
+	data		 = StringCol(default=None)
+	
+	@staticmethod
+	def get(self, key):
+		return Session.session(Session.select(Session.q.key == key)[0].user)
+		
+	def update_expires(self):
+		self.expires = datetime.datetime.now() + datetime.timedelta(0, self.ttl)
+		
+	@staticmethod
+	def session(user):
+		u = user
+		if isinstance(u, basestring):
+			u = User.get_user(u)
+		if not u:
+			return None
+		if Session.select(Session.q.user == u).count() == 0:
+			s = Session(user=u)
+		else:
+			s = Session.select(Session.q.user == u)[0]
+			if datetime.datetime.now() > s.expires:		# expired
+				# destroy and expire it
+				s.destroySelf()
+				s = Session(user=u)
+			self.update_expires()
+		return s
+	
 class User(InheritableSQLObject):
 	class sqlmeta:
 		registry = NAMESPACE
@@ -514,3 +551,4 @@ def createTables():
 	Twitter.createTable(ifNotExists=True)
 	Snapshot.createTable(ifNotExists=True)
 	Score.createTable(ifNotExists=True)
+	Session.createTable(ifNotExists=True)
