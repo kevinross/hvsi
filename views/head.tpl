@@ -5,9 +5,11 @@
 	<script type="text/javascript" src="{{static('/js/jquery.min.js')}}"></script>
 	<script type="text/javascript" src="{{static('/js/jquery-ui.min.js')}}"></script>
 	<script type="text/javascript" src="{{static('/js/jquery-ui-timepicker-addon.js')}}"></script>
+	<script type="text/javascript" src="{{static('/js/jquery.tweet.js')}}"></script>
 	<link rel="stylesheet" href="{{static('/css/style.css')}}" type="text/css" media="screen" />
 	<link rel="stylesheet" href="{{static('/css/jquery.ui.all.css')}}" type="text/css" media="screen" />
 	<link rel="stylesheet" href="{{static('/css/jquery-ui-timepicker-addon.css')}}" type="text/css" media="screen" />
+	<link rel="stylesheet" href="{{static('/css/jquery.tweet.css')}}" type="text/css"/> 
 	<style type="text/css">/*<![CDATA[*/
 		.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}
 		/*]]>*/
