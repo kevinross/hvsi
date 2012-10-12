@@ -18,14 +18,15 @@ def valid_creds(user, passw):
 	if not u:
 		return False
 	return u.hashed_pass == passw or u.verify_pass(passw)
-def get_session(user=None, passw=None):
-	if user and passw:
-		return Session.session(user)
+def set_cookie(i):
+	response.set_cookie('session', i.skey, path="/", max_age=i.ttl, domain='.hvsidevel.ca')
+def get_session():
+	if 'session' in request.params or 'session' in request.cookies:
+		info = Session.grab(request.params.get('session',None) or request.cookies.get('session',None))
 	else:
-		if 'session' in request.params or 'session' in request.cookies:
-			return Session.get(request.params.get('session',None) or request.cookies.get('session',None))
-		else:
-			return Session()
+		info = Session()
+	set_cookie(info)
+	return info
 # hack the Request __init__
 class Request_Auth():
 	def __init__(self, *args, **kwargs):
@@ -58,23 +59,26 @@ def allow_auth(func):
 		setattr(request, 'station', None)
 		setattr(request, 'player', None)
 		setattr(request, 'user', None)
+		setattr(request, 'session', None)
 		if not info:
+			return func(*args, **kwargs)
+		if not info.user:
 			return func(*args, **kwargs)
 		request.user = info.user
 		request.admin = isinstance(request.user, Admin)
 		request.station = isinstance(request.user, Station)
 		request.player = isinstance(request.user, Player)
 		request.logged_in = True
-		if 'session' in request.cookies or 'session' in request.params:
-			if isinstance(request.user, Station):
-				info.ttl = 5*24*60*60
-				info.update_expires()
-			response.set_cookie('session', info.key, expires=info.expires)
-			# force Players to read the eula if they haven't already
-			if 'eula' not in request.path and request.player and not (request.user.liability and request.user.safety):
+		request.session = info
+		if request.station:
+			info.ttl = 5*24*60*60
+			info.update_expires()
+			set_cookie(info)
+		# force Players to read the eula if they haven't already
+		if 'eula' not in request.path and request.player and not (request.user.liability and request.user.safety):
 #				for i in ('liability', 'safety'):
 #					response.set_cookie(i+'_read', '', path='/')
-				redirect('/eula', 302)
+			redirect('/eula', 302)
 		func_dict = func(*args, **kwargs)
 		if func_dict and isinstance(func_dict, dict):
 			if '/tag/' not in request.path:
@@ -85,15 +89,14 @@ def allow_auth(func):
 def lang(func):
 	def lang(*args, **kwargs):
 		if 'setlang' in request.params:
-			if hasattr(request, 'user') and request.logged_in:
-				request.user.language = request.params['setlang']
-			else:
-				response.set_cookie('lang',request.params['setlang'])
+			i = get_session()
+			i.lang = request.params['setlang']
+			if i.user:
+				i.user.language = i.lang
+			set_cookie(i)
 			lang = request.params['setlang']
 		elif hasattr(request, 'user') and request.logged_in:
 			lang = request.user.language
-		elif 'lang' in request.cookies:
-			lang = request.cookies['lang']
 		else:
 			lang = 'e'
 		func_dict = func(*args, **kwargs)
@@ -357,14 +360,12 @@ def do_login():
 	if not user:
 		redirect('/login?error=nouser', 302)
 	if user.verify_pass(passw):
-		print 'User verified'
-		sess = get_session_cookie(usern, user.hashed_pass)
-		print sess
+		sess = get_session()
+		sess.user = user
 		if isinstance(user, Station):
-			expiry = +(5*24*60*60)
-		else:
-			expiry = +(30*60)
-		response.set_cookie('session', sess, path='/', expires=expiry)
+			sess.ttl = +(5*24*60*60)
+			sess.update_expires()
+		set_cookie(sess)
 		if 'HTTP_REFERER' in request.environ:
 			redirect(request.environ['HTTP_REFERER'], 302)
 		else:
@@ -374,14 +375,13 @@ def do_login():
 
 @route('/logout')
 def do_logout():
-	response.set_cookie('session','')
+	get_session().user = None
 	redirect('/')
 
 @route('/eula', method='GET')
 @view('eula')
 @allow_auth
 @lang
-@twitter
 def view_eula():
 	if request.user.liability and request.user.safety:
 		redirect('/', 302)

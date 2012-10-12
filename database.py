@@ -77,11 +77,11 @@ try:
 except:
 	pass
 
+DEFAULT_LIFETIME = 300
 class Session(InheritableSQLObject):
-	DEFAULT_LIFETIME = 300
 	class sqlmeta:
 		registry = NAMESPACE
-	key			 = StringCol(length=32,varchar=True,unique=True,notNone=True,default=lambda:uuid.uuid4().get_hex())
+	skey		 = StringCol(length=32,varchar=True,unique=True,notNone=True,default=lambda:uuid.uuid4().get_hex())
 	expires		 = DateTimeCol(notNone=True,default=lambda:datetime.datetime.now()+datetime.timedelta(0,DEFAULT_LIFETIME))
 	ttl			 = IntCol(default=DEFAULT_LIFETIME)
 	language	 = EnumCol(enumValues=['e','f'],default='e')
@@ -89,8 +89,15 @@ class Session(InheritableSQLObject):
 	data		 = StringCol(default=None)
 	
 	@staticmethod
-	def get(self, key):
-		return Session.session(Session.select(Session.q.key == key)[0].user)
+	def grab(key, attr='skey'):
+		s = Session.select(getattr(Session.q, attr) == key)[0]
+		u = s.user
+		if datetime.datetime.now() > s.expires:		# expired
+			# destroy and expire it
+			s.destroySelf()
+			s = Session(user=u)
+		s.update_expires()
+		return s
 		
 	def update_expires(self):
 		self.expires = datetime.datetime.now() + datetime.timedelta(0, self.ttl)
@@ -105,12 +112,7 @@ class Session(InheritableSQLObject):
 		if Session.select(Session.q.user == u).count() == 0:
 			s = Session(user=u)
 		else:
-			s = Session.select(Session.q.user == u)[0]
-			if datetime.datetime.now() > s.expires:		# expired
-				# destroy and expire it
-				s.destroySelf()
-				s = Session(user=u)
-			self.update_expires()
+			s = Session.grab(u, 'user')
 		return s
 	
 class User(InheritableSQLObject):
