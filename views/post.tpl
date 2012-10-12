@@ -17,7 +17,7 @@
 					<h1><a href="/post/view/{{post.id}}" rel="bookmark" title="{{i18n[lang]['post']['permalink']}} {{getattr(post, 'title_' + lang)}}">{{getattr(post, 'title_' + lang)}}</a></h1>
 
 					<div class="body">
-						<p>{{getattr(post, 'html_' + lang)}}</p>
+						<p>{{!getattr(post, 'html_' + lang)}}</p>
 					</div>
 
 				</div>

@@ -1,4 +1,4 @@
-from bottle import view, route, run, request, response, redirect, send_file, template
+from bottle import view, route, run, request, response, redirect, static_file as send_file, template
 import bottle, os, urllib, error_page, ops, i18n, datetime, random, string
 from Crypto.Cipher import AES
 from database import *
@@ -24,12 +24,12 @@ def get_session_cookie(user=None, passw=None):
 		return cipher.encrypt('\n'.join([user,passw])).encode('hex')
 	else:
 		# try to extract from environ
-		if ('session' in request.params and request.params['session']) or ('session' in request.COOKIES and request.COOKIES['session']):
+		if request.params.get('session',None) or request.cookies.get('session',None):
 			cipher = AES.new(key, AES.MODE_CFB, iv)
 			val = cipher.decrypt(
-					(('session' in request.COOKIES and request.COOKIES['session']) or
-					 ('session' in request.params and request.params['session']))
-					 .decode('hex')).split('\n')
+					request.cookies.get('session',None) or
+					request.params.get('session',None)).decode('hex').split('\n')
+					
 			return dict(username=val[0], password=val[1])
 		elif 'username' in request.params:
 			return dict(username=request.params['username'],password=request.params['password'])
@@ -106,8 +106,8 @@ def lang(func):
 			lang = request.params['setlang']
 		elif hasattr(request, 'user') and request.logged_in:
 			lang = request.user.language
-		elif 'lang' in request.COOKIES:
-			lang = request.COOKIES['lang']
+		elif 'lang' in request.cookies:
+			lang = request.cookies['lang']
 		else:
 			lang = 'e'
 		func_dict = func(*args, **kwargs)
@@ -187,32 +187,32 @@ jme_root = os.path.join(static_root, 'jme')
 pdf_root =os.path.join(static_root, 'pdf')
 @route('/css/:file#.*#')
 def static_css(file):
-	send_file(file, root=css_root)
+	return send_file(file, root=css_root)
 @route('/img/:file#.*#')
 def static_img(file):
-	send_file(file, root=img_root)
+	return send_file(file, root=img_root)
 @route('/wmd/images/:file')
 def static_wmd_img(file):
-	send_file(file, root=img_root)
+	return send_file(file, root=img_root)
 @route('/images/:file#.*#')
 def static_img_2(file):
-	send_file(file, root=img_root)
+	return send_file(file, root=img_root)
 @route('/js/:file#.*#')
 def static_js(file):
-	send_file(file, root=js_root)
+	return send_file(file, root=js_root)
 @route('/wmd/:file')
 def static_wmd(file):
-	send_file(file, root=js_root)
+	return send_file(file, root=js_root)
 @route('/graph/:file#.*#')
 def static_graph(file):
-	send_file(file, root=graph_root)
+	return send_file(file, root=graph_root)
 @route('/jme/:file')
 def static_jme(file):
-	send_file(file, root=jme_root)
+	return send_file(file, root=jme_root)
 
 @route('/pdf/:file')
 def static_pdf(file):
-	send_file(file, root=pdf_root)
+	return send_file(file, root=pdf_root)
 
 @route('/eula/:file')
 @allow_auth
@@ -371,7 +371,9 @@ def do_login():
 	if not user:
 		redirect('/login?error=nouser', 302)
 	if user.verify_pass(passw):
+		print 'User verified'
 		sess = get_session_cookie(usern, user.hashed_pass)
+		print sess
 		if isinstance(user, Station):
 			expiry = +(5*24*60*60)
 		else:
