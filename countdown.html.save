@@ -1,0 +1,43 @@
+<html>
+	<body>
+		<script type="text/javascript">
+		
+					
+
+			function update()
+			{	var gameStart= new Date(2012,10,29,0,0,0,0);
+				var newTime= new Date();
+				var days =Math.abs( gameStart.getDate()-newTime.getDate());
+				var hours=Math.abs(gameStart.getHours- newTime.getHours());
+				var minutes=Math.abs(gameStart.getMinutes()-newTime.getMinutes());
+				var seconds=Math.abs(gameStart.getSeconds()- newTime.getSeconds());
+				
+				if (days < 10)
+				{
+					days="0"+days;
+				}
+				 if (hours < 10)
+                                {
+                                        hours="0"+hours;
+                                }
+				if (minutes<10)
+				{
+					minutes="0"+minutes;
+				}
+				if (seconds<10)
+				{
+					seconds="0"+seconds;
+				}
+				
+				getElementByID('#time').innerHTML(days+":"+hours+":"+minutes+":"+seconds);
+			}
+			update();
+			setInterval(update,1000);
+	
+		</script>
+		<img src = "http://static.hvsi.ca/css/images/Countdown.jpg" id ="background_image"/>
+		<div id ="time_div">
+			<p id = "time"> Coming Soon </p>
+		</div>
+	</body>
+</html>

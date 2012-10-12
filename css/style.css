@@ -148,6 +148,7 @@ h3 a { color:#D14640; }
 	width:100%;
 	color:#fff;
 	padding-top:20px;
+
 }
 /* ////////////////////// Layout ////////////////////// */
 
@@ -170,10 +171,12 @@ h3 a { color:#D14640; }
 	/*margin-bottom:30px;*/
 }
 
+
 #header .fr
 {
 	float:right;
 }
+
 
 #navigation
 {
@@ -192,9 +195,17 @@ h3 a { color:#D14640; }
 }
 #loginheader {
 	margin:0 0 10px 0;
-	padding:10px 10px 0 10px;
+	padding:10px;
 	background:url(images/navigation.png) top left;
 	list-style:none;
+	color:#FFFFFF;
+	font-weight:bold;
+	font-family:Arial, Tahoma, Verdana;
+	text-transform:uppercase;
+}
+
+.header_login_submit{
+
 }
 
 #navigation li

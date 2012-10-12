@@ -1,10 +1,11 @@
+THIS IS TEXT
 %from imports import *
 <html>
 <head>
 <title>
 {{i18n[lang]['pages'][page]['title']}}
 </title>
-<link href='http://fonts.googleapis.com/css?family=Wire+One' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
 <style type = "text/css">
 
 body{
@@ -13,7 +14,7 @@ body{
 }
 p{
 	color:white;
-	font-family:'Wire One', sans-serif;
+	font-family:'Oswald', sans-serif;
 	font-size:1000%;
 	margin:0px;
 }
@@ -25,12 +26,25 @@ p{
 	min-height:200px;
 	background:rgba(0, 0, 0, 0.81);
 	border: solid 1px black;
+	padding:10px;
+}
+#time{
+	display:inline-block;
+}
+a
+{
+	text-decoration:none;
+	color:red;
+	font-size:75px;
+	line-height:2px;
 }
 </style>
 </head>
 	<body>
 		<div id ="time_div">
+
 			<p id = "time"> Coming Soon </p>
+			<a href="/">&raquo;</a>
 		</div>
 		<script type="text/javascript">
 			window.setInterval(function update()
