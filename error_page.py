@@ -6,8 +6,8 @@ ERROR_PAGE_TEMPLATE = SimpleTemplate(u"""
     %from i18n import i18n
     %if hasattr(request, 'logged_in') and request.logged_in:
     %	lang = request.user.language
-    %elif 'lang' in request.COOKIES:
-    %	lang = request.COOKIES['lang']
+    %elif 'lang' in request.cookies:
+    %	lang = request.cookies['lang']
     %else:
     %	lang = 'e'
     %end
