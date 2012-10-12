@@ -1,11 +1,10 @@
-THIS IS TEXT
 %from imports import *
 <html>
 <head>
 <title>
 {{i18n[lang]['pages'][page]['title']}}
 </title>
-<link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Tulpen+One' rel='stylesheet' type='text/css'>
 <style type = "text/css">
 
 body{
@@ -14,9 +13,15 @@ body{
 }
 p{
 	color:white;
-	font-family:'Oswald', sans-serif;
+	font-family:'Tulpen One', sans-serif;
 	font-size:1000%;
 	margin:0px;
+	min-width:390px;
+}
+span{
+	display:inline-block;
+	min-width:80px;
+	width:80px;
 }
 #time_div{
 	margin-top:150px;
@@ -35,17 +40,22 @@ a
 {
 	text-decoration:none;
 	color:red;
-	font-size:75px;
+	font-size:22px;
 	line-height:2px;
+	margin-right:35px;
+	margin-left:35px;
 }
 </style>
 </head>
 	<body>
 		<div id ="time_div">
-
 			<p id = "time"> Coming Soon </p>
-			<a href="/">&raquo;</a>
+			<div id ="link_div">
+				<a href="/?lang=e">Will you survive?</a>
+				<a href="/?lang=f">Allez-vous survivre?</a>
+			</div>		
 		</div>
+
 		<script type="text/javascript">
 			window.setInterval(function update()
 						{
@@ -62,7 +72,7 @@ a
 							minutes=(minutes<10)?"0"+minutes:minutes;
 							seconds=(seconds<10)?"0"+seconds:seconds;
 							var elem= document.getElementById('time');
-							elem.innerHTML=days+":"+hours+":"+minutes+":"+seconds;
+							elem.innerHTML="<span>"+days+"</span>:<span>"+hours+"</span>:<span>"+minutes+"</span>:<span>"+seconds+"</span>";
 						}, 1000);
         </script>
 	</body>
