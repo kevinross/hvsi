@@ -2,7 +2,7 @@ from sqlobject import *
 from sqlobject.mysql import builder
 from sqlobject.inheritance import *
 import bcrypt, datetime, time, markdown, os, urllib, uuid
-__all__ = ['Game','User','Player','Station','Admin','Tag','Checkin','Cure','Post','Comment','Twitter','Snapshot','Score','Session']
+__all__ = ['Game','User','Player','Station','Admin','Tag','Checkin','Cure','Post','Comment','Snapshot','Score','Session']
 NAMESPACE = 'hvsi'
 db = 'uottawae_hvsi'
 user = 'uottawae_hvsi'
@@ -471,14 +471,6 @@ class Comment(SQLObject):
 			content = self.content,
 			user = dict(username = self.user.username, name = self.user.name),
 			)
-class Twitter(SQLObject):
-	class sqlmeta:
-		registry = NAMESPACE
-	text		 = StringCol()
-	class state_class(object):
-		def __get__(self, obj, objtype):
-			return Twitter.select(orderBy=Twitter.q.id,reversed=True)
-	latest = state_class()
 class Snapshot(SQLObject):
 	class sqlmeta:
 		registry = NAMESPACE
@@ -550,7 +542,6 @@ def createTables():
 	Cure.createTable(ifNotExists=True)
 	Post.createTable(ifNotExists=True)
 	Comment.createTable(ifNotExists=True)
-	Twitter.createTable(ifNotExists=True)
 	Snapshot.createTable(ifNotExists=True)
 	Score.createTable(ifNotExists=True)
 	Session.createTable(ifNotExists=True)

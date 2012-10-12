@@ -106,16 +106,6 @@ def lang(func):
 				func_dict['started'] = Game.is_started
 		return func_dict
 	return lang
-def twitter(func):
-	def twit(*args, **kwargs):
-		func_dict = func(*args, **kwargs)
-		if func_dict and isinstance(func_dict, dict):
-			if Twitter.latest.count() > 0:
-				func_dict['twitter'] = Twitter.latest[0]
-			else:
-				func_dict['twitter'] = None
-		return func_dict
-	return twit
 # decorator that whitelists access based on roles
 def require_role(*roles):
 	def wrapper(func):
@@ -220,7 +210,6 @@ def favicon():
 @view('index')
 @allow_auth
 @lang
-@twitter
 def index():
 	return dict(page='index',error=None,post=Post.from_pid(1),posts=Post.select(Post.q.id > 5,orderBy='-id'))
 @route('/countdown')
@@ -232,28 +221,24 @@ def countdown():
 @view('index')
 @allow_auth
 @lang
-@twitter
 def index():
 	return dict(page='missions',error=None,post=Post.from_pid(2))
 @route('/party')
 @view('index')
 @allow_auth
 @lang
-@twitter
 def index():
 	return dict(page='party',error=None,post=Post.from_pid(3))
 @route('/rules')
 @view('index')
 @allow_auth
 @lang
-@twitter
 def index():
 	return dict(page='rules',error=None,post=Post.from_pid(4))
 @route('/blog')
 @view('blog')
 @allow_auth
 @lang
-@twitter
 def blog():
 	return dict(page='blog',error=None,posts=Post.select(Post.q.id > 5,orderBy='-id'))
 	
@@ -261,7 +246,6 @@ def blog():
 @view('game')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin)
 def view_game():
@@ -344,7 +328,6 @@ def do_hrsbc():
 @view('login')
 @allow_auth
 @lang
-@twitter
 def view_login():
 	if request.logged_in:
 		redirect('/', 302)
@@ -413,7 +396,6 @@ def reg_cond():
 @view('registration')
 @allow_auth
 @lang
-@twitter
 @require_cond(reg_cond)
 def view_registration():
 	return dict(error=request.params.get('error',None),page='register')
@@ -458,7 +440,6 @@ def do_registration():
 @view('thanks')
 @allow_auth
 @lang
-@twitter
 @require_auth
 def view_thanks():
 	return dict(error=None,page='thanks')
@@ -467,7 +448,6 @@ def view_thanks():
 @view('users')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin)
 def view_users():
@@ -477,7 +457,6 @@ def view_users():
 @view('user_view')
 @allow_auth
 @lang
-@twitter
 @require_auth
 def view_user(name):
 	if request.station and not ('HTTP_REFERER' in request.environ and '/station' in request.environ['HTTP_REFERER']):
@@ -493,7 +472,6 @@ def view_user(name):
 @view('user_edit')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin,Player)
 def view_user_edit(name):
@@ -584,7 +562,6 @@ def do_user_tags(name):
 @view('pass_reset')
 @allow_auth
 @lang
-@twitter
 def view_pass_reset():
 	i18n_reg_e = i18n.i18n_over({'nonsensical':'bullshit'})['e']['pages']['register']
 	del i18n_reg_e['title']
@@ -611,7 +588,6 @@ def do_pass_reset():
 @view('tag')
 @allow_auth
 @lang
-@twitter
 @require_auth
 def view_tag():
 	return dict(error=request.params.get('error',None),page='tag',
@@ -670,7 +646,6 @@ def do_remote_tag(tagger,taggee,uid):
 @view('tags')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin)
 def view_all_tags():
@@ -680,7 +655,6 @@ def view_all_tags():
 @view('tags')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin)
 def view_tags(tagger):
@@ -693,7 +667,6 @@ def view_tags(tagger):
 @view('tags')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin)
 def view_tags(tagger, taggee):
@@ -729,7 +702,6 @@ def do_tags_rm():
 @view('webcheckin')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Player)
 def view_webcheckin():
@@ -758,7 +730,6 @@ def do_webcheckin():
 @view('index')
 @allow_auth
 @lang
-@twitter
 def view_post(pid):
 	try:
 		p = Post.from_pid(pid)
@@ -768,7 +739,6 @@ def view_post(pid):
 @route('/post/view/:pid/comment',method='POST')
 @allow_auth
 @lang
-@twitter
 @require_auth
 def do_comment(pid):
 	p = request.params
@@ -786,7 +756,6 @@ def do_comment(pid):
 @view('create_editpost')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin)
 def create_post():
@@ -817,7 +786,6 @@ def create_post_post():
 @view('create_editpost')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin)
 def view_edit_post(pid):
@@ -832,7 +800,6 @@ def view_edit_post(pid):
 @route('/post/edit/:pid',method='POST')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin)
 def do_edit_post(pid):
@@ -882,7 +849,6 @@ def update_twitter():
 @view('stationops')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin, Station)
 def view_stationops():
@@ -998,7 +964,6 @@ def do_station_tag():
 @view('cures')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin)
 def view_cures():
@@ -1008,7 +973,6 @@ def view_cures():
 @view('cure_edit')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin)
 def view_edit_cure(cid):
