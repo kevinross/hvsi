@@ -9,9 +9,8 @@ from email.mime.text import MIMEText
 iv = '6543209487240596'
 key = 'd74Kv9duE8bk3Jh2'
 static_root = os.getcwd()
-if 'hvsi.ca' not in static_root:
+if '_debug' in static_root:
 	bottle.debug(True)
-#bottle.debug(True)
 bottle.ERROR_PAGE_TEMPLATE = error_page.ERROR_PAGE_TEMPLATE
 def valid_creds(user, passw):
 	u = User.from_username(user)
