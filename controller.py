@@ -865,6 +865,7 @@ def do_edit_post(pid):
 	else:
 		p['allow_comments'] = False
 	p = dict([(x,p[x]) for x in ['content_e','content_f','title_e','title_f','allow_comments']])
+	p['time'] = datetime.datetime.now()
 	for i in p:
 		setattr(post, i, p[i])
 	redirect('/post/view/' + str(pid), 302)
