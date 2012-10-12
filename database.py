@@ -9,6 +9,8 @@ user = 'uottawae_hvsi'
 passw = 'hvs.i'
 if '_devel' in os.getcwd():
 	db = 'hvsi_devel'
+	user = 'hvsi'
+	passw = 'hvsi'
 sqlhub.processConnection = connectionForURI('mysql://%s:%s@/%s' % (user, passw, db))
 def norm_cell(val):
 	# strip everything out leaving just the numbers.
