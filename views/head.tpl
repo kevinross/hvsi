@@ -30,8 +30,5 @@
 	/*]]>*/
 	</style>
 	<script>
-		$('html').addClass('js-on');
-		$(function(){
-			$('div.media-player').jmeControl();
-		});
+	$('html').addClass('js-on');
 	</script>
