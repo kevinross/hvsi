@@ -9,7 +9,8 @@
 	<link rel="stylesheet" href="{{static('/css/style.css')}}" type="text/css" media="screen" />
 	<link rel="stylesheet" href="{{static('/css/jquery.ui.all.css')}}" type="text/css" media="screen" />
 	<link rel="stylesheet" href="{{static('/css/jquery-ui-timepicker-addon.css')}}" type="text/css" media="screen" />
-	<link rel="stylesheet" href="{{static('/css/jquery.tweet.css')}}" type="text/css"/> 
+	<link rel="stylesheet" href="{{static('/css/jquery.tweet.css')}}" type="text/css"/>
+	<link rel="icon" href="{{static('/favicon.ico')}}" type="image/ico"/> 
 	<style type="text/css">/*<![CDATA[*/
 		.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}
 		/*]]>*/

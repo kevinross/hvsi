@@ -1,6 +1,7 @@
 %from imports import *
 <html>
 <head>
+<link rel="icon" href="{{static('/favicon.ico')}}" type="image/x-icon"/>
 <title>
 {{i18n[lang]['pages'][page]['title']}}
 </title>
