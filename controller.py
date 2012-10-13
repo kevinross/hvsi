@@ -24,13 +24,7 @@ def get_session():
 		try:
 			info = Session.grab(request.params.get('session',None) or request.cookies.get('session',None))
 		except IndexError, e:
-			# old-style session, upgrade it
-			try:
-				del request.params['session']
-				del request.cookies['session']
-			except:
-				pass
-			return get_session()
+			info = Session()
 	else:
 		info = Session()
 	set_cookie(info)
