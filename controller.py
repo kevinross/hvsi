@@ -18,7 +18,7 @@ def valid_creds(user, passw):
 		return False
 	return u.hashed_pass == passw or u.verify_pass(passw)
 def set_cookie(i):
-	response.set_cookie('session', i.skey, path="/", max_age=i.ttl, domain='.hvsidevel.ca')
+	response.set_cookie('session', i.skey, path="/", max_age=i.ttl, domain='.' + request.environ['HTTP_HOST'])
 def get_session():
 	if 'session' in request.params or 'session' in request.cookies:
 		try:
