@@ -1,7 +1,6 @@
 %from imports import *
 <html>
 <head>
-<link rel="icon" href="{{static('/favicon.ico')}}" type="image/ico"/>
 <title>
 {{i18n[lang]['pages'][page]['title']}}
 </title>
@@ -51,10 +50,12 @@ a
 	<body>
 		<div id ="time_div">
 			<p id = "time"> Coming Soon </p>
+%		  if not db.Game.is_countdown:
 			<div id ="link_div">
 				<a href="/index?setlang=e">Will you survive?</a>
 				<a href="/index?setlang=f">Allez-vous survivre?</a>
-			</div>		
+			</div>
+%		  end
 		</div>
 
 		<script type="text/javascript">
