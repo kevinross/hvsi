@@ -21,7 +21,16 @@ def set_cookie(i):
 	response.set_cookie('session', i.skey, path="/", max_age=i.ttl, domain='.hvsidevel.ca')
 def get_session():
 	if 'session' in request.params or 'session' in request.cookies:
-		info = Session.grab(request.params.get('session',None) or request.cookies.get('session',None))
+		try:
+			info = Session.grab(request.params.get('session',None) or request.cookies.get('session',None))
+		except IndexError, e:
+			# old-style session, upgrade it
+			try:
+				del request.params['session']
+				del request.cookies['session']
+			except:
+				pass
+			return get_session()
 	else:
 		info = Session()
 	set_cookie(info)
