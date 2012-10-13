@@ -427,13 +427,16 @@ def do_registration():
 		   User.from_twitter(twitter) or User.from_cell(cell))
 	if user:
 		redirect('/register?error=userexists', 302)
+	u = None
 	try:
-		Player(name=name,username=username,hashed_pass=password,language=language,student_num=studentn,
+		u = Player(name=name,username=username,hashed_pass=password,language=language,student_num=studentn,
 			   email=email,twitter=twitter,cell=cell,liability=True,safety=True)
 	except dberrors.DuplicateEntryError, e:
 		redirect('/register?error=userexists', 302)
 	if hasattr(request, 'station') and not request.station and not request.admin:
-		response.set_cookie('session',get_session_cookie(username, password))
+		sess = get_session()
+		sess.user = u
+		set_cookie(sess)
 	redirect('/thanks',302)
 
 # end of non-auth pages
