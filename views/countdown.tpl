@@ -52,8 +52,8 @@ a
 		<div id ="time_div">
 			<p id = "time"> Coming Soon </p>
 			<div id ="link_div">
-				<a href="/?setlang=e">Will you survive?</a>
-				<a href="/?setlang=f">Allez-vous survivre?</a>
+				<a href="/index?setlang=e">Will you survive?</a>
+				<a href="/index?setlang=f">Allez-vous survivre?</a>
 			</div>		
 		</div>
 

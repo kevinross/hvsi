@@ -209,13 +209,13 @@ def eula_file(file):
 @route('/favicon.ico')
 def favicon():
 	send_file('favicon.ico', root=img_root)
-@route('/')
+@route('/index')
 @view('index')
 @allow_auth
 @lang
 def index():
 	return dict(page='index',error=None,post=Post.from_pid(1),posts=Post.select(Post.q.id > 5,orderBy='-id'))
-@route('/countdown')
+@route('/')
 @view('countdown')
 @lang
 def countdown():
@@ -354,7 +354,7 @@ def do_login():
 		if 'HTTP_REFERER' in request.environ:
 			redirect(request.environ['HTTP_REFERER'], 302)
 		else:
-			redirect('/', 302)
+			redirect('/index', 302)
 	else:
 		redirect('/login?error=nouser', 302)
 
