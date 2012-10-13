@@ -1,9 +1,12 @@
 %from imports import *
-%admin = bottle.request.admin
+%admin = bottle.request.admin or bottle.request.station
 %path = re.match(r'/log[inout]*', bottle.request.path)
+%past = datetime.datetime.now() > db.Game.countdown_time
 %count = db.Game.is_countdown
 %if (not admin and count and not path):
-%bottle.redirect('/countdown', 302)
+%bottle.redirect('/', 302)
+%elif past:
+%bottle.redirect('/index', 302)
 %else:
 %if part==1:
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
