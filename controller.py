@@ -354,7 +354,7 @@ def do_login():
 		if 'HTTP_REFERER' in request.environ:
 			redirect(request.environ['HTTP_REFERER'], 302)
 		else:
-			redirect('/', 302)
+			redirect('/index', 302)
 	else:
 		redirect('/login?error=nouser', 302)
 
