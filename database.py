@@ -1,8 +1,8 @@
 from sqlobject import *
 from sqlobject.mysql import builder
 from sqlobject.inheritance import *
-import bcrypt, datetime, time, markdown, os, urllib
-__all__ = ['Game','User','Player','Station','Admin','Tag','Checkin','Cure','Post','Comment','Twitter','Snapshot','Score']
+import bcrypt, datetime, time, markdown, os, urllib, uuid
+__all__ = ['Game','User','Player','Station','Admin','Tag','Checkin','Cure','Post','Comment','Snapshot','Score','Session']
 NAMESPACE = 'hvsi'
 db = 'uottawae_hvsi'
 user = 'uottawae_hvsi'
@@ -76,6 +76,45 @@ try:
 	Game = Game.select()[0]
 except:
 	pass
+
+DEFAULT_LIFETIME = 300
+class Session(InheritableSQLObject):
+	class sqlmeta:
+		registry = NAMESPACE
+	skey		 = StringCol(length=32,varchar=True,unique=True,notNone=True,default=lambda:uuid.uuid4().get_hex())
+	expires		 = DateTimeCol(notNone=True,default=lambda:datetime.datetime.now()+datetime.timedelta(0,DEFAULT_LIFETIME))
+	ttl			 = IntCol(default=DEFAULT_LIFETIME)
+	language	 = EnumCol(enumValues=['e','f'],default='e')
+	user		 = ForeignKey('User',default=None)
+	data		 = StringCol(default=None)
+	
+	@staticmethod
+	def grab(key, attr='skey'):
+		s = Session.select(getattr(Session.q, attr) == key)[0]
+		u = s.user
+		if datetime.datetime.now() > s.expires:		# expired
+			# destroy and expire it
+			s.destroySelf()
+			s = Session(user=u)
+		s.update_expires()
+		return s
+		
+	def update_expires(self):
+		self.expires = datetime.datetime.now() + datetime.timedelta(0, self.ttl)
+		
+	@staticmethod
+	def session(user):
+		u = user
+		if isinstance(u, basestring):
+			u = User.get_user(u)
+		if not u:
+			return None
+		if Session.select(Session.q.user == u).count() == 0:
+			s = Session(user=u)
+		else:
+			s = Session.grab(u, 'user')
+		return s
+	
 class User(InheritableSQLObject):
 	class sqlmeta:
 		registry = NAMESPACE
@@ -432,14 +471,6 @@ class Comment(SQLObject):
 			content = self.content,
 			user = dict(username = self.user.username, name = self.user.name),
 			)
-class Twitter(SQLObject):
-	class sqlmeta:
-		registry = NAMESPACE
-	text		 = StringCol()
-	class state_class(object):
-		def __get__(self, obj, objtype):
-			return Twitter.select(orderBy=Twitter.q.id,reversed=True)
-	latest = state_class()
 class Snapshot(SQLObject):
 	class sqlmeta:
 		registry = NAMESPACE
@@ -511,6 +542,7 @@ def createTables():
 	Cure.createTable(ifNotExists=True)
 	Post.createTable(ifNotExists=True)
 	Comment.createTable(ifNotExists=True)
-	Twitter.createTable(ifNotExists=True)
 	Snapshot.createTable(ifNotExists=True)
 	Score.createTable(ifNotExists=True)
+	Session.createTable(ifNotExists=True)
+createTables()

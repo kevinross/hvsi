@@ -1,4 +1,4 @@
-from bottle import view, route, run, request, response, redirect, send_file, template
+from bottle import view, route, run, request, response, redirect, static_file as send_file, template
 import bottle, os, urllib, error_page, ops, i18n, datetime, random, string
 from Crypto.Cipher import AES
 from database import *
@@ -9,34 +9,23 @@ from email.mime.text import MIMEText
 iv = '6543209487240596'
 key = 'd74Kv9duE8bk3Jh2'
 static_root = os.getcwd()
-if 'hvsi.ca' not in static_root:
+if '_debug' in static_root:
 	bottle.debug(True)
-#bottle.debug(True)
 bottle.ERROR_PAGE_TEMPLATE = error_page.ERROR_PAGE_TEMPLATE
 def valid_creds(user, passw):
 	u = User.from_username(user)
 	if not u:
 		return False
 	return u.hashed_pass == passw or u.verify_pass(passw)
-def get_session_cookie(user=None, passw=None):
-	if user and passw:
-		cipher = AES.new(key, AES.MODE_CFB, iv)
-		return cipher.encrypt('\n'.join([user,passw])).encode('hex')
+def set_cookie(i):
+	response.set_cookie('session', i.skey, path="/", max_age=i.ttl, domain='.hvsidevel.ca')
+def get_session():
+	if 'session' in request.params or 'session' in request.cookies:
+		info = Session.grab(request.params.get('session',None) or request.cookies.get('session',None))
 	else:
-		# try to extract from environ
-		if ('session' in request.params and request.params['session']) or ('session' in request.COOKIES and request.COOKIES['session']):
-			cipher = AES.new(key, AES.MODE_CFB, iv)
-			val = cipher.decrypt(
-					(('session' in request.COOKIES and request.COOKIES['session']) or
-					 ('session' in request.params and request.params['session']))
-					 .decode('hex')).split('\n')
-			return dict(username=val[0], password=val[1])
-		elif 'username' in request.params:
-			return dict(username=request.params['username'],password=request.params['password'])
-		elif request.auth:
-			return dict(username=request.auth[0],password=request.auth[1])
-		else:
-			return dict(username='',password='')
+		info = Session()
+	set_cookie(info)
+	return info
 # hack the Request __init__
 class Request_Auth():
 	def __init__(self, *args, **kwargs):
@@ -54,7 +43,7 @@ def require_auth(func):
 	def auth(*args, **kwargs):
 		def denied(*args, **kwargs):
 			error(401)
-		if 'session' not in request.params and 'session' not in request.COOKIES and 'username' not in request.params and not request.auth:
+		if 'session' not in request.params and 'session' not in request.cookies and 'username' not in request.params and not request.auth:
 			return denied(*args, **kwargs)
 		if not request.logged_in:
 			return denied(*args, **kwargs)
@@ -63,32 +52,32 @@ def require_auth(func):
 	return auth
 def allow_auth(func):
 	def auth(*args, **kwargs):
-		info = get_session_cookie()
+		info = get_session()
 		setattr(request, 'logged_in', False)
 		setattr(request, 'admin', None)
 		setattr(request, 'station', None)
 		setattr(request, 'player', None)
 		setattr(request, 'user', None)
+		setattr(request, 'session', None)
 		if not info:
 			return func(*args, **kwargs)
-		if not valid_creds(info['username'], info['password']):
+		if not info.user:
 			return func(*args, **kwargs)
-		request.user = User.from_username(info['username'])
+		request.user = info.user
 		request.admin = isinstance(request.user, Admin)
 		request.station = isinstance(request.user, Station)
 		request.player = isinstance(request.user, Player)
 		request.logged_in = True
-		if 'session' in request.COOKIES:
-			if isinstance(request.user, Station):
-				expiry =+(5*24*60*60)
-			else:
-				expiry = +(30*60)
-			response.set_cookie('session', request.COOKIES['session'], expires=(datetime.datetime.now() + datetime.timedelta(0,0,0,0,30)))
-			# force Players to read the eula if they haven't already
-			if 'eula' not in request.path and request.player and not (request.user.liability and request.user.safety):
+		request.session = info
+		if request.station:
+			info.ttl = 5*24*60*60
+			info.update_expires()
+			set_cookie(info)
+		# force Players to read the eula if they haven't already
+		if 'eula' not in request.path and request.player and not (request.user.liability and request.user.safety):
 #				for i in ('liability', 'safety'):
 #					response.set_cookie(i+'_read', '', path='/')
-				redirect('/eula', 302)
+			redirect('/eula', 302)
 		func_dict = func(*args, **kwargs)
 		if func_dict and isinstance(func_dict, dict):
 			if '/tag/' not in request.path:
@@ -99,15 +88,14 @@ def allow_auth(func):
 def lang(func):
 	def lang(*args, **kwargs):
 		if 'setlang' in request.params:
-			if hasattr(request, 'user') and request.logged_in:
-				request.user.language = request.params['setlang']
-			else:
-				response.set_cookie('lang',request.params['setlang'])
+			i = get_session()
+			i.lang = request.params['setlang']
+			if i.user:
+				i.user.language = i.lang
+			set_cookie(i)
 			lang = request.params['setlang']
 		elif hasattr(request, 'user') and request.logged_in:
 			lang = request.user.language
-		elif 'lang' in request.COOKIES:
-			lang = request.COOKIES['lang']
 		else:
 			lang = 'e'
 		func_dict = func(*args, **kwargs)
@@ -118,16 +106,6 @@ def lang(func):
 				func_dict['started'] = Game.is_started
 		return func_dict
 	return lang
-def twitter(func):
-	def twit(*args, **kwargs):
-		func_dict = func(*args, **kwargs)
-		if func_dict and isinstance(func_dict, dict):
-			if Twitter.latest.count() > 0:
-				func_dict['twitter'] = Twitter.latest[0]
-			else:
-				func_dict['twitter'] = None
-		return func_dict
-	return twit
 # decorator that whitelists access based on roles
 def require_role(*roles):
 	def wrapper(func):
@@ -187,32 +165,32 @@ jme_root = os.path.join(static_root, 'jme')
 pdf_root =os.path.join(static_root, 'pdf')
 @route('/css/:file#.*#')
 def static_css(file):
-	send_file(file, root=css_root)
+	return send_file(file, root=css_root)
 @route('/img/:file#.*#')
 def static_img(file):
-	send_file(file, root=img_root)
+	return send_file(file, root=img_root)
 @route('/wmd/images/:file')
 def static_wmd_img(file):
-	send_file(file, root=img_root)
+	return send_file(file, root=img_root)
 @route('/images/:file#.*#')
 def static_img_2(file):
-	send_file(file, root=img_root)
+	return send_file(file, root=img_root)
 @route('/js/:file#.*#')
 def static_js(file):
-	send_file(file, root=js_root)
+	return send_file(file, root=js_root)
 @route('/wmd/:file')
 def static_wmd(file):
-	send_file(file, root=js_root)
+	return send_file(file, root=js_root)
 @route('/graph/:file#.*#')
 def static_graph(file):
-	send_file(file, root=graph_root)
+	return send_file(file, root=graph_root)
 @route('/jme/:file')
 def static_jme(file):
-	send_file(file, root=jme_root)
+	return send_file(file, root=jme_root)
 
 @route('/pdf/:file')
 def static_pdf(file):
-	send_file(file, root=pdf_root)
+	return send_file(file, root=pdf_root)
 
 @route('/eula/:file')
 @allow_auth
@@ -232,7 +210,6 @@ def favicon():
 @view('index')
 @allow_auth
 @lang
-@twitter
 def index():
 	return dict(page='index',error=None,post=Post.from_pid(1),posts=Post.select(Post.q.id > 5,orderBy='-id'))
 @route('/countdown')
@@ -244,28 +221,24 @@ def countdown():
 @view('index')
 @allow_auth
 @lang
-@twitter
 def index():
 	return dict(page='missions',error=None,post=Post.from_pid(2))
 @route('/party')
 @view('index')
 @allow_auth
 @lang
-@twitter
 def index():
 	return dict(page='party',error=None,post=Post.from_pid(3))
 @route('/rules')
 @view('index')
 @allow_auth
 @lang
-@twitter
 def index():
 	return dict(page='rules',error=None,post=Post.from_pid(4))
 @route('/blog')
 @view('blog')
 @allow_auth
 @lang
-@twitter
 def blog():
 	return dict(page='blog',error=None,posts=Post.select(Post.q.id > 5,orderBy='-id'))
 	
@@ -273,7 +246,6 @@ def blog():
 @view('game')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin)
 def view_game():
@@ -356,7 +328,6 @@ def do_hrsbc():
 @view('login')
 @allow_auth
 @lang
-@twitter
 def view_login():
 	if request.logged_in:
 		redirect('/', 302)
@@ -371,12 +342,12 @@ def do_login():
 	if not user:
 		redirect('/login?error=nouser', 302)
 	if user.verify_pass(passw):
-		sess = get_session_cookie(usern, user.hashed_pass)
+		sess = get_session()
+		sess.user = user
 		if isinstance(user, Station):
-			expiry = +(5*24*60*60)
-		else:
-			expiry = +(30*60)
-		response.set_cookie('session', sess, path='/', expires=expiry)
+			sess.ttl = +(5*24*60*60)
+			sess.update_expires()
+		set_cookie(sess)
 		if 'HTTP_REFERER' in request.environ:
 			redirect(request.environ['HTTP_REFERER'], 302)
 		else:
@@ -386,14 +357,13 @@ def do_login():
 
 @route('/logout')
 def do_logout():
-	response.set_cookie('session','')
+	get_session().user = None
 	redirect('/')
 
 @route('/eula', method='GET')
 @view('eula')
 @allow_auth
 @lang
-@twitter
 def view_eula():
 	if request.user.liability and request.user.safety:
 		redirect('/', 302)
@@ -426,7 +396,6 @@ def reg_cond():
 @view('registration')
 @allow_auth
 @lang
-@twitter
 @require_cond(reg_cond)
 def view_registration():
 	return dict(error=request.params.get('error',None),page='register')
@@ -471,7 +440,6 @@ def do_registration():
 @view('thanks')
 @allow_auth
 @lang
-@twitter
 @require_auth
 def view_thanks():
 	return dict(error=None,page='thanks')
@@ -480,7 +448,6 @@ def view_thanks():
 @view('users')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin)
 def view_users():
@@ -490,7 +457,6 @@ def view_users():
 @view('user_view')
 @allow_auth
 @lang
-@twitter
 @require_auth
 def view_user(name):
 	if request.station and not ('HTTP_REFERER' in request.environ and '/station' in request.environ['HTTP_REFERER']):
@@ -506,7 +472,6 @@ def view_user(name):
 @view('user_edit')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin,Player)
 def view_user_edit(name):
@@ -597,7 +562,6 @@ def do_user_tags(name):
 @view('pass_reset')
 @allow_auth
 @lang
-@twitter
 def view_pass_reset():
 	i18n_reg_e = i18n.i18n_over({'nonsensical':'bullshit'})['e']['pages']['register']
 	del i18n_reg_e['title']
@@ -624,7 +588,6 @@ def do_pass_reset():
 @view('tag')
 @allow_auth
 @lang
-@twitter
 @require_auth
 def view_tag():
 	return dict(error=request.params.get('error',None),page='tag',
@@ -683,7 +646,6 @@ def do_remote_tag(tagger,taggee,uid):
 @view('tags')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin)
 def view_all_tags():
@@ -693,7 +655,6 @@ def view_all_tags():
 @view('tags')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin)
 def view_tags(tagger):
@@ -706,7 +667,6 @@ def view_tags(tagger):
 @view('tags')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin)
 def view_tags(tagger, taggee):
@@ -742,7 +702,6 @@ def do_tags_rm():
 @view('webcheckin')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Player)
 def view_webcheckin():
@@ -771,7 +730,6 @@ def do_webcheckin():
 @view('index')
 @allow_auth
 @lang
-@twitter
 def view_post(pid):
 	try:
 		p = Post.from_pid(pid)
@@ -781,7 +739,6 @@ def view_post(pid):
 @route('/post/view/:pid/comment',method='POST')
 @allow_auth
 @lang
-@twitter
 @require_auth
 def do_comment(pid):
 	p = request.params
@@ -799,7 +756,6 @@ def do_comment(pid):
 @view('create_editpost')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin)
 def create_post():
@@ -830,7 +786,6 @@ def create_post_post():
 @view('create_editpost')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin)
 def view_edit_post(pid):
@@ -845,7 +800,6 @@ def view_edit_post(pid):
 @route('/post/edit/:pid',method='POST')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin)
 def do_edit_post(pid):
@@ -895,7 +849,6 @@ def update_twitter():
 @view('stationops')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin, Station)
 def view_stationops():
@@ -1011,7 +964,6 @@ def do_station_tag():
 @view('cures')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin)
 def view_cures():
@@ -1021,7 +973,6 @@ def view_cures():
 @view('cure_edit')
 @allow_auth
 @lang
-@twitter
 @require_auth
 @require_role(Admin)
 def view_edit_cure(cid):

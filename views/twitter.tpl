@@ -7,6 +7,6 @@
 								fetch: 10,
 								username: "uoHvsI",
 								filter: function(t){ return ! /^@\w+/.test(t.tweet_raw_text); },
-								template: '<a class="tweet_link" href="{tweet_url}" title="view tweet on twitter">{tweet_relative_time}</a>: {text}'
+								template: '<a class="tweet_link" href="{tweet_url}" title="view tweet on twitter">{tweet_relative_time}</a>:&nbsp;{text}'
 							});
 						</script>
