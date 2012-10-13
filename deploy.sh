@@ -5,7 +5,7 @@ if [ -z "$1" ]; then
 	exit 1;
 fi
 cp app.fcgi $1/hvsi/;
-cp favicon.ico $1/hvsi_static/;
+cp img/favicon.ico $1/hvsi_static/;
 
 for i in *.py views; do
 	rm -r $1/hvsi/app/$i;

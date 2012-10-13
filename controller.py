@@ -208,7 +208,7 @@ def eula_file(file):
 	redirect(static('/pdf/%s' % file), 302)
 @route('/favicon.ico')
 def favicon():
-	send_file('favicon.ico', root=img_root)
+	return send_file('favicon.ico', root=img_root)
 @route('/index')
 @view('index')
 @allow_auth
