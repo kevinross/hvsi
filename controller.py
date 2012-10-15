@@ -163,8 +163,6 @@ def logged_in():
 css_root = os.path.join(static_root, 'css')
 img_root = os.path.join(static_root, 'img')
 js_root  = os.path.join(static_root, 'js')
-graph_root=os.path.join(static_root, 'graph')
-jme_root = os.path.join(static_root, 'jme')
 pdf_root =os.path.join(static_root, 'pdf')
 @route('/css/:file#.*#')
 def static_css(file):
@@ -184,12 +182,6 @@ def static_js(file):
 @route('/wmd/:file')
 def static_wmd(file):
 	return send_file(file, root=js_root)
-@route('/graph/:file#.*#')
-def static_graph(file):
-	return send_file(file, root=graph_root)
-@route('/jme/:file')
-def static_jme(file):
-	return send_file(file, root=jme_root)
 
 @route('/pdf/:file')
 def static_pdf(file):
@@ -1069,12 +1061,6 @@ def do_shotgun_email():
 		to = [x.email for x in Player.select(Player.q.username != 'military.militaire')]
 	s.sendmail(msg['From'], ['president@hvsi.ca'] + to, msg.as_string())
 	redirect('/', 302)
-@route('/stats')
-@view('graph')
-@allow_auth
-@lang
-def graph():
-	return dict(error=None,page='stats')
 # catch all perm-redirect
 @route('/:page#.+#/')
 def redir(page):
