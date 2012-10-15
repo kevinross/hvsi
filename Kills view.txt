@@ -1,6 +1,0 @@
-Kills:
-	table:
-		headers:
-			time		(text)
-			killer		(link)
-			victim		(link)

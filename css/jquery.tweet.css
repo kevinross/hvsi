@@ -1,4 +1,7 @@
 .tweet,
+.tweet_link{
+float:none;
+}
 .query {
 	font: 120% Georgia, serif;
 	color: #085258;
@@ -19,5 +22,9 @@
 	color: black;
 }
 #sidebar li ul li a.tweet_link:visited {
-	color: #666;
+	color: #008E00;
+}
+#sidebar li ul li a{
+color:#666;
+float:none;
 }
