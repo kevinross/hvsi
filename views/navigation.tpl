@@ -26,5 +26,5 @@
 %			  if hasattr(request, 'admin') and request.admin:
 				<li class="page_item {{"current_page_item" if 'game' in request.path else ""}}"><a href="/game" title="{{i18n[lang]['navd']['game']}}">{{i18n[lang]['navd']['game']}}</a></li>
 %			  end
-				<li class="page_item" style="float:right;"><a href="?setlang={{i18n[lang]['altlang']['key']}}">{{i18n[lang]['altlang']['name']}}</a></li>
+				<li class="page_item" style="float:right;"><a href="?lang={{i18n[lang]['altlang']['key']}}">{{i18n[lang]['altlang']['name']}}</a></li>
 			</ul>
