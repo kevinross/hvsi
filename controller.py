@@ -414,7 +414,7 @@ def do_registration():
 	language = p['language']
 	studentn = int(p['student_num'])
 	email = p['email']
-	twitter = None if not p['twitter'] else p['twitter']
+	twitter = None if not p['twitter'] else p['twitter'].replace('@','')
 	cell = None if not p['cell'] else p['cell']
 	user = (User.from_username(username) or User.from_student_num(studentn) or User.from_email(email) or
 		   User.from_twitter(twitter) or User.from_cell(cell))
