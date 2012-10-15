@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
-#os.chdir(os.path.expanduser('~/hvsi'))
+if '_devel' not in os.getcwd():
+	os.chdir(os.path.expanduser('~/hvsi'))
 import sys
 sys.path.append('.')
 from database import Session, AND
