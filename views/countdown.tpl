@@ -50,10 +50,12 @@ a
 	<body>
 		<div id ="time_div">
 			<p id = "time"> Coming Soon </p>
+%		  if not db.Game.is_countdown:
 			<div id ="link_div">
-				<a href="/index?setlang=e">Will you survive?</a>
-				<a href="/index?setlang=f">Allez-vous survivre?</a>
-			</div>		
+				<a href="/index?lang=e">Will you survive?</a>
+				<a href="/index?lang=f">Allez-vous survivre?</a>
+			</div>
+%		  end
 		</div>
 
 		<script type="text/javascript">

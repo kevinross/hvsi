@@ -90,13 +90,13 @@ def allow_auth(func):
 # a decorator to automatically set the lang for pages, prefer cookies
 def lang(func):
 	def lang(*args, **kwargs):
-		if 'setlang' in request.params:
+		if 'lang' in request.params:
 			i = get_session()
-			i.lang = request.params['setlang']
+			i.lang = request.params['lang']
 			if i.user:
 				i.user.language = i.lang
 			set_cookie(i)
-			lang = request.params['setlang']
+			lang = request.params['lang']
 		elif hasattr(request, 'user') and request.logged_in:
 			lang = request.user.language
 		else:
@@ -206,9 +206,7 @@ def eula_file(file):
 #		redirect('/pdf/' + file.replace('.pdf','_' + data + '.pdf'), 302)
 	from imports import static
 	redirect(static('/pdf/%s' % file), 302)
-@route('/favicon.ico')
-def favicon():
-	send_file('favicon.ico', root=img_root)
+
 @route('/index')
 @view('index')
 @allow_auth
@@ -354,7 +352,7 @@ def do_login():
 		if 'HTTP_REFERER' in request.environ:
 			redirect(request.environ['HTTP_REFERER'], 302)
 		else:
-			redirect('/', 302)
+			redirect('/index', 302)
 	else:
 		redirect('/login?error=nouser', 302)
 
@@ -429,13 +427,16 @@ def do_registration():
 		   User.from_twitter(twitter) or User.from_cell(cell))
 	if user:
 		redirect('/register?error=userexists', 302)
+	u = None
 	try:
-		Player(name=name,username=username,hashed_pass=password,language=language,student_num=studentn,
+		u = Player(name=name,username=username,hashed_pass=password,language=language,student_num=studentn,
 			   email=email,twitter=twitter,cell=cell,liability=True,safety=True)
 	except dberrors.DuplicateEntryError, e:
 		redirect('/register?error=userexists', 302)
 	if hasattr(request, 'station') and not request.station and not request.admin:
-		response.set_cookie('session',get_session_cookie(username, password))
+		sess = get_session()
+		sess.user = u
+		set_cookie(sess)
 	redirect('/thanks',302)
 
 # end of non-auth pages

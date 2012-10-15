@@ -1,7 +1,7 @@
 from sqlobject import *
 from sqlobject.mysql import builder
 from sqlobject.inheritance import *
-import bcrypt, datetime, time, markdown, os, urllib, uuid
+import bcrypt, datetime, time, markdown, os, urllib, uuid, hashlib
 __all__ = ['Game','User','Player','Station','Admin','Tag','Checkin','Cure','Post','Comment','Snapshot','Score','Session']
 NAMESPACE = 'hvsi'
 db = 'uottawae_hvsi'
