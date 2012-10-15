@@ -90,13 +90,13 @@ def allow_auth(func):
 # a decorator to automatically set the lang for pages, prefer cookies
 def lang(func):
 	def lang(*args, **kwargs):
-		if 'setlang' in request.params:
+		if 'lang' in request.params:
 			i = get_session()
-			i.lang = request.params['setlang']
+			i.lang = request.params['lang']
 			if i.user:
 				i.user.language = i.lang
 			set_cookie(i)
-			lang = request.params['setlang']
+			lang = request.params['lang']
 		elif hasattr(request, 'user') and request.logged_in:
 			lang = request.user.language
 		else:
