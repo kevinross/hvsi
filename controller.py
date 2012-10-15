@@ -27,6 +27,7 @@ def get_session():
 			info = Session()
 	else:
 		info = Session()
+	info.update_expires()
 	set_cookie(info)
 	return info
 # hack the Request __init__
