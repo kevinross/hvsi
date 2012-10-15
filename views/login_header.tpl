@@ -17,7 +17,7 @@
 %			  if not request.station:
 				</a>
 				<span style="margin-left: 5px; margin-right: 5px">|</span>
-				<a href="/logout">Logout</a>
+				<a href="/logout">{{i18n[lang]['logout']}}</a>
 %			  end
 			</div>
 %		end
