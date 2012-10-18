@@ -92,7 +92,7 @@ def lang(func):
 	def lang(*args, **kwargs):
 		i = get_session()
 		if 'lang' in request.params:
-			i.lang = request.params['lang']
+			i.language = request.params['lang']
 			if i.user:
 				i.user.language = i.lang
 			set_cookie(i)
