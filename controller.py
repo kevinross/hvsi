@@ -1030,7 +1030,7 @@ def do_mass_rm_cure():
 @lang
 def graph():
 	if not Game.is_started:
-		redirect('/', 302)
+		redirect('/index', 302)
 	return dict(error=None,page='stats')
 @route('/email', method='GET')
 @view('email')
