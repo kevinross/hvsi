@@ -3,17 +3,16 @@ i18n = {
 	'name': u'Humains vs Infectés',
 	'lang': u'Français',
 	'pass': 'Réinitialiser le mot de passe',
-	'nav': [
-		#url	name	display_for_player	display_for_station		display_for_all
-		('home','Accueil',True,True,True,True),
-		('blog','Blog',True,True,True,True),
-		('missions','Missions',True,True,True,True),
-		('party','Party',True,True,True,True),
-		('register','Inscription',False,True,True,False),
-		('rules',u'Règlements',True,True,True,True),
-		('stats','Stats',True,True,True,True),
-		('station',u'Opérations de stations',False,True,False,True)
-	],
+	'nav': {
+		'home':'Accueil',
+		'blog':'Blog',
+		'missions':'Missions',
+		'party':'Party',
+		'register':'Inscription',
+		'rules':u'Règlements',
+		'stats':'Stats',
+		'station':u'Opérations de stations'
+	},
 	'navd': {
 	    'game': 'Jeu'
 	},

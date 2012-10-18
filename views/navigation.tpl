@@ -6,24 +6,23 @@
 %player = (logged_in and request.player)
 %station = (logged_in and request.station)
 %superuser = (logged_in and (request.admin or request.station))
-%for_player = 2
-%for_station = 3
-%for_all  = 4
-%reg_open  = 5
-				<li class="page_item {{"current_page_item" if request.path=='/' else ""}}"><a href="/" title="{{i18n[lang]['nav'][0][1]}}">{{i18n[lang]['nav'][0][1]}}</a></li>
-%			for i in i18n[lang]['nav'][1:]:
-%			  if (logged_in and player and i[for_player] and i[for_all]) or \
-%				 (not logged_in and i[for_all]) or \
-%				 (logged_in and superuser and i[for_station]):
-%				if not rego and i[0] == 'register':
-%					continue
-%				end
-%				if not starto and i[0] == 'stats':
-%					continue
-%				end
-				<li class="page_item {{"current_page_item" if i[0] in request.path else ""}}"><a href="/{{i[0]}}" title="{{i[1]}}">{{i[1]}}</a></li>
-%			  end
-%			end
+%def build_list(key):
+	<li class="page_item {{"current_page_item" if key in request.path else ""}}"><a href="/{{key}}" title="{{i18n[lang]['nav'][key]}}">{{i18n[lang]['nav'][key]}}</a></li>
+%end
+				<li class="page_item {{"current_page_item" if request.path=='/index' else ""}}"><a href="/index" title="{{i18n[lang]['nav']['home']}}">{{i18n[lang]['nav']['home']}}</a></li>
+%for i in ('blog', 'missions', 'party'):
+%	build_list(i)
+%end
+%if rego or station or superuser:
+%	build_list('register')
+%end
+%build_list('rules')
+%if starto or superuser:
+%	build_list('stats')
+%end
+%if station or superuser:
+%	build_list('station')
+%end
 %			  if hasattr(request, 'logged_in') and request.logged_in and not request.station:
 				<li class="page_item {{"current_page_item" if ('/user/' + request.user.username) in request.path else ""}}"><a href="/user/{{request.user.username}}">{{i18n[lang]['profile']}}</a></li>
 %			  end

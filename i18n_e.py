@@ -3,17 +3,16 @@ i18n = {
 	'name': 'Humans vs Infected',
 	'lang': 'English',
 	'pass': 'Password Reset',
-	'nav': [
-		#url	name	display_for_player	display_for_station		display_for_all		display_registration_open
-		('home','Home',True,True,True,True),
-		('blog','Blog',True,True,True,True),
-		('missions','Missions',True,True,True,True),
-		('party','Party',True,True,True,True),
-		('register','Registration',False,True,True,False),
-		('rules','Rules',True,True,True,True),
-		('stats','Stats',True,True,True,True),
-		('station','Station Operations',False,True,False,True)
-	],
+	'nav': {
+		'home':'Home',
+		'blog':'Blog',
+		'missions':'Missions',
+		'party':'Party',
+		'register':'Registration',
+		'rules':'Rules',
+		'stats':'Stats',
+		'station':'Station Operations'
+	},
 	'navd': {
 		'game': 'Game'
 	},
