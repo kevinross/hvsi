@@ -100,7 +100,7 @@ def lang(func):
 		elif hasattr(request, 'user') and request.logged_in:
 			lang = request.user.language
 		else:
-			lang = i.lang
+			lang = i.language
 		func_dict = func(*args, **kwargs)
 		if func_dict and isinstance(func_dict, dict):
 			func_dict['lang'] = lang
