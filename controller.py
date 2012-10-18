@@ -1,6 +1,5 @@
 from bottle import view, route, run, request, response, redirect, static_file as send_file, template
 import bottle, os, urllib, error_page, ops, i18n, datetime, random, string
-from Crypto.Cipher import AES
 from database import *
 from ops import *
 from sqlobject import *
