@@ -1,13 +1,10 @@
 %from imports import *
 %admin = bottle.request.admin or bottle.request.station
-%path = re.match(r'/log[inout]*', bottle.request.path)
-%past = datetime.datetime.now() > db.Game.countdown_time
+%path = re.match(r'/log[inout]*(.*)', bottle.request.path)
 %count = db.Game.is_countdown
 %if (not admin and count and not path):
 %bottle.redirect('/', 302)
-%elif past:
-%bottle.redirect('/index', 302)
-%else:
+%end
 %if part==1:
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -80,5 +77,4 @@
 %  if not hasattr(request, 'logged_in') or (hasattr(request, 'logged_in') and (not request.logged_in or request.player)):
 	%include analytics
 %  end
-%end
 %end
