@@ -1,6 +1,7 @@
 			<ul id="navigation">
 %import database as db
 %rego = db.Game.is_reg
+%starto = db.Game.is_started
 %logged_in = (hasattr(request, 'logged_in') and request.logged_in)
 %player = (logged_in and request.player)
 %station = (logged_in and request.station)
@@ -15,6 +16,9 @@
 %				 (not logged_in and i[for_all]) or \
 %				 (logged_in and superuser and i[for_station]):
 %				if not rego and i[0] == 'register':
+%					continue
+%				end
+%				if not starto and i[0] == 'stats':
 %					continue
 %				end
 				<li class="page_item {{"current_page_item" if i[0] in request.path else ""}}"><a href="/{{i[0]}}" title="{{i[1]}}">{{i[1]}}</a></li>

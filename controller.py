@@ -1024,6 +1024,14 @@ def do_mass_rm_cure():
 			cure.player.kill()
 		cure.destroySelf()
 	redirect('/cures', 302)
+@route('/stats')
+@view('graph')
+@allow_auth
+@lang
+def graph():
+	if not Game.is_started:
+		redirect('/', 302)
+	return dict(error=None,page='stats')
 @route('/email', method='GET')
 @view('email')
 @allow_auth
