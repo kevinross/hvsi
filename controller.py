@@ -146,7 +146,6 @@ def require_cond(cond):
 		def auth(*args, **kwargs):
 			def denied(*args, **kwargs):
 				error(401)
-			print callable(cond) and cond()
 			if callable(cond) and cond() or not callable(cond) and cond:
 				return func(*args, **kwargs)
 			else:
