@@ -28,7 +28,7 @@ i18n = {
 	},
 	'pages': {
 		'countdown': {
-			'title': 'Countdown'
+			'title': 'Countdown / Compte à Rebours'
 		},
 		'index': {
 			'title': 'Home'
