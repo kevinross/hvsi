@@ -92,9 +92,9 @@ def lang(func):
 	def lang(*args, **kwargs):
 		i = get_session()
 		if 'lang' in request.params:
-			if i.user:
-				i.user.language = i.language
 			lang = request.params['lang']
+			if i.user:
+				i.user.language = lang
 		elif hasattr(request, 'user') and request.logged_in:
 			lang = request.user.language
 		else:
