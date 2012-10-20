@@ -92,15 +92,14 @@ def lang(func):
 	def lang(*args, **kwargs):
 		i = get_session()
 		if 'lang' in request.params:
-			i.language = request.params['lang']
 			if i.user:
 				i.user.language = i.lang
-			set_cookie(i)
 			lang = request.params['lang']
 		elif hasattr(request, 'user') and request.logged_in:
 			lang = request.user.language
 		else:
 			lang = i.language
+		i.language = lang
 		func_dict = func(*args, **kwargs)
 		if func_dict and isinstance(func_dict, dict):
 			func_dict['lang'] = lang
