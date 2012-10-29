@@ -12,6 +12,7 @@
 						%i=i18n[lang]['pages'][page]['table']
 						<td><strong>{{i['id']}}</strong></td>
 						<td><strong>{{i['username']}}</strong></td>
+						<td><strong>{{i['game_id']}}</strong></td>
 						<td><strong>{{i['name']}}</strong></td>
 						<td><strong>{{i['status']}}</strong></td>
 						<td><strong>{{i['signedin']}}</strong></td>
@@ -21,6 +22,7 @@
 					<tr>
 						<td><strong>{{player.id}}</strong></td>
 						<td><a href="/user/{{player.username}}">{{player.username}}</a></td>
+						<td>{{player.game_id}}</td>
 						<td>{{player.name}}</td>
 						<td>{{i18n[lang]['player_status'][player.state]}}</td>
 						<td>{{i18n[lang]['pages']['register']['yes'] if player.signedin else i18n[lang]['pages']['register']['no']}}</td>

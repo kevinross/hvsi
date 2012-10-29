@@ -195,6 +195,7 @@ i18n = {
 			'table': {
 				'id': 'ID',
 				'username': 'Username',
+				'game_id': 'Game ID',
 				'name': 'Name',
 				'status': 'Status',
 				'signedin': 'Active'
