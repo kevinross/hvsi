@@ -7,7 +7,7 @@
 %station = (logged_in and request.station)
 %superuser = (logged_in and (request.admin or request.station))
 %def build_list(key):
-	<li class="page_item {{"current_page_item" if key in request.path else ""}}"><a href="/{{key}}" title="{{i18n[lang]['nav'][key]}}">{{i18n[lang]['nav'][key]}}</a></li>
+				<li class="page_item {{"current_page_item" if key in request.path else ""}}"><a href="/{{key}}" title="{{i18n[lang]['nav'][key]}}">{{i18n[lang]['nav'][key]}}</a></li>
 %end
 				<li class="page_item {{"current_page_item" if request.path=='/index' else ""}}"><a href="/index" title="{{i18n[lang]['nav']['home']}}">{{i18n[lang]['nav']['home']}}</a></li>
 %for i in ('blog', 'missions', 'party'):
