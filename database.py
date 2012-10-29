@@ -2,7 +2,7 @@ from sqlobject import *
 from sqlobject.mysql import builder
 from sqlobject.inheritance import *
 import bcrypt, datetime, time, markdown, os, urllib, uuid, hashlib
-__all__ = ['Game','User','Player','Station','Admin','Tag','Checkin','Cure','Post','Comment','Snapshot','Score','Session']
+__all__ = ['Game','User','Player','Station','Admin','Tag','Checkin','Cure','Post','Comment','Snapshot','Score','Session', 'Twitter']
 NAMESPACE = 'hvsi'
 db = 'uottawae_hvsi'
 user = 'uottawae_hvsi'
@@ -524,6 +524,16 @@ class Score(SQLObject):
 		def __get__(self, obj, objtype):
 			return Score.select(Score.q.player != Player.get_player('military.militaire'),orderBy=DESC(Score.q.kills))
 	top = latest_class()	
+class Twitter(SQLObject):
+	class sqlmeta:
+		registry = NAMESPACE
+	time = DateTimeCol(default=datetime.datetime.now)
+	query = StringCol()
+	content = StringCol(default=None)
+	def _set_content(self, new_content):
+		self.time = datetime.datetime.now()
+		self._SO_set_content(new_content)
+	
 def set_class_enum(klass, var, array):
 	for i in array:
 		setattr(klass, var + '_' + i, i)
@@ -545,4 +555,5 @@ def createTables():
 	Snapshot.createTable(ifNotExists=True)
 	Score.createTable(ifNotExists=True)
 	Session.createTable(ifNotExists=True)
+	Twitter.createTable(ifNotExists=True)
 createTables()
