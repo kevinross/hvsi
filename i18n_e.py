@@ -199,7 +199,10 @@ i18n = {
 				'name': 'Name',
 				'status': 'Status',
 				'signedin': 'Active'
-			}
+			},
+			'search_heading': 'Retrieve User',
+			'match_on': 'Match via',
+			'retrieve': 'Retrieve'
 		},
 		'useredit': {
 			'title': '',
