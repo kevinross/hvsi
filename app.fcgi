@@ -21,5 +21,5 @@ if __name__ == '__main__':
         							error_subject_prefix='HvsI Error',
         							smtp_username='errors@hvsi.ca',
         							smtp_password='error_reporter',
-        							smtp_user_tls=True)
+        							smtp_use_tls=True)
         WSGIServer(bottle.default_app()).run()
