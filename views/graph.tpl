@@ -33,8 +33,8 @@
 			begin_data.addColumn('string', '{{i18n[lang]['pages'][page]['time']}}');
 			begin_data.addColumn('number', '{{i18n[lang]['sidebar']['status']['zombies']}}');
 			begin_data.addColumn('number', '{{i18n[lang]['sidebar']['status']['humans']}}');
-%		  monday = datetime.datetime(2010,11,1,8,30,00)
-%		  friday = datetime.datetime(2010,11,6,20,30,00)
+%		  monday = db.Game.game_start
+%		  friday = db.Game.game_end
 %		  dates = []
 %		  d = monday
 %		  while d <= friday:
