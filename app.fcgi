@@ -23,4 +23,4 @@ if __name__ == '__main__':
         							smtp_username='errors@hvsi.ca',
         							smtp_password='error_reporter',
         							smtp_use_tls=True)
-        WSGIServer(bottle.default_app()).run()
+        WSGIServer(error_app).run()
