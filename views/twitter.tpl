@@ -11,7 +11,7 @@
 								template: '<a class="tweet_link" href="{tweet_url}" title="view tweet on twitter">{tweet_relative_time}</a>:&nbsp;{text}',
 %							if '_devel' in os.getcwd():
 								twitter_api_url: 'hvsidevel.ca:9055/twittercache'
-%							else:
+%							elif False:
 								twitter_api_url: 'hvsi.ca/twittercache'
 %							end
 							});
