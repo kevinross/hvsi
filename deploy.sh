@@ -8,6 +8,9 @@ cp app.fcgi $1/hvsi/;
 cp img/favicon.ico $1/hvsi_static/;
 cp img/favicon.ico $1/hvsi/;
 
+mkdir -p $1/hvsi/app/errors;
+mkdir -p $1/hvsi_static/;
+
 for i in *.py views; do
 	rm -r $1/hvsi/app/$i;
 	cp -r $i $1/hvsi/app/$i;
