@@ -13,6 +13,7 @@ from paste.exceptions.errormiddleware import ErrorMiddleware
 if __name__ == '__main__':
         from flup.server.fcgi import WSGIServer
         app = bottle.default_app()
+        app.catchall = False
         error_app = ErrorMiddleware(app, 
         							debug=False,
         							error_log=os.path.expanduser('~/public_html/hvsi/app/errors.log'),
