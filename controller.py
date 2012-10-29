@@ -1091,6 +1091,25 @@ def do_shotgun_email():
 		to = [x.email for x in Player.select(Player.q.username != 'military.militaire')]
 	s.sendmail(msg['From'], ['president@hvsi.ca'] + to, msg.as_string())
 	redirect('/', 302)
+@route('/twittercache/1/statuses/user_timeline.json')
+def twitter_search():
+	qstr = request.environ.get('QUERY_STRING', '')
+	if not qstr:
+		return ''
+	cb_str = request.params['callback']
+	uscore = request.params['_']
+	fqstr = qstr.replace(cb_str, '').replace(uscore, '')
+	try:
+		t = Twitter.select(Twitter.q.query == fqstr)[0]
+	except:
+		t = Twitter(query=fqstr, time=datetime.datetime.now() - datetime.timedelta(0, 25))
+	if datetime.datetime.now() > (t.time + datetime.timedelta(0, 24)):
+		# update the content
+		print 'Content Update'
+		t.content = urllib.urlopen('http://api.twitter.com/1/statuses/user_timeline.json?%s' % qstr).read()
+		t.content = t.content.replace(cb_str, '##CALLBACK_STRING##')
+	response.content_type='application/json'
+	return t.content.replace('##CALLBACK_STRING##', cb_str)
 # catch all perm-redirect
 @route('/:page#.+#/')
 def redir(page):

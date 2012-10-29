@@ -1,3 +1,4 @@
+%from imports import *
 						<h2><a href="http://twitter.com/uoHvsI">Twitter</a></h2>
 						<div id="tweet" />
 						<script type="text/javascript">
@@ -7,6 +8,11 @@
 								fetch: 10,
 								username: "uoHvsI",
 								filter: function(t){ return ! /^@\w+/.test(t.tweet_raw_text); },
-								template: '<a class="tweet_link" href="{tweet_url}" title="view tweet on twitter">{tweet_relative_time}</a>:&nbsp;{text}'
+								template: '<a class="tweet_link" href="{tweet_url}" title="view tweet on twitter">{tweet_relative_time}</a>:&nbsp;{text}',
+%							if '_devel' in os.getcwd():
+								twitter_api_url: 'hvsidevel.ca:9055/twittercache'
+%							else:
+								twitter_api_url: 'hvsi.ca/twittercache'
+%							end
 							});
 						</script>

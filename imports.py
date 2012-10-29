@@ -1,5 +1,5 @@
 import database as db
-import bottle, re
+import bottle, re, os
 from i18n import i18n
 import calendar, datetime as datetime
 def static(path):
