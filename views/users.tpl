@@ -7,6 +7,21 @@
 %	cinclude head
 </head>
 %cinclude parts part=2
+				<h3>{{i18n[lang]['pages'][page]['search_heading']}}</h3>
+				<form method="POST" action="/users">
+				{{i18n[lang]['pages'][page]['match_on']}} 
+					<select name="cat">
+						<option value="email">{{i18n[lang]['pages']['register']['email']}}</option>
+						<option value="twitter">{{i18n[lang]['pages']['register']['twitter']}}</option>
+						<option value="cell">{{i18n[lang]['pages']['register']['cell']}}</option>
+						<option value="student">{{i18n[lang]['pages']['register']['student_num']}}</option>
+						<option value="game_id">Game ID</option>
+					</select>
+					&nbsp;
+					<input type="textbox" name="value" />
+					<input type="submit" value="{{i18n[lang]['pages'][page]['retrieve']}}" />
+				</form>
+				<br/>
 				<table border="1" style="width: 100%;">
 					<tr>
 						%i=i18n[lang]['pages'][page]['table']

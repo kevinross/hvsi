@@ -190,7 +190,10 @@ i18n = {
 				'name': 'Nom',
 				'status': 'État',
 				'signedin': 'Connecté'
-			}
+			},
+			'search_heading': 'Retrieve User',
+			'match_on': 'Match via',
+			'retrieve': 'Retrieve'
 		},
 		'useredit': {
 			'title': '',
