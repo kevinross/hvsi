@@ -1133,7 +1133,7 @@ def twitter_search():
 		# update the content
 		t.content = urllib.urlopen('http://api.twitter.com/1/statuses/user_timeline.json?%s' % qstr).read()
 		t.content = t.content.replace(cb_str, '##CALLBACK_STRING##')
-	response.content_type='application/json'
+	response.content_type='application/javascript'
 	return t.content.replace('##CALLBACK_STRING##', cb_str)
 # catch all perm-redirect
 @route('/:page#.+#/')
