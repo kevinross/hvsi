@@ -202,7 +202,12 @@ i18n = {
 			},
 			'search_heading': 'Retrieve User',
 			'match_on': 'Match via',
-			'retrieve': 'Retrieve'
+			'retrieve': 'Retrieve',
+			'nouser': 'No user with the specified %s exists',
+			'email': 'email',
+			'twitter': 'twitter',
+			'cell': 'cell',
+			'student_num': 'student number'
 		},
 		'useredit': {
 			'title': '',

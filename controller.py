@@ -445,7 +445,7 @@ def view_thanks():
 @require_auth
 @require_role(Admin)
 def view_users():
-	return dict(error=None,users=Player.select(Player.q.username != 'military.militaire',orderBy=[Player.q.state,User.q.username]),page='userlist')
+	return dict(error=request.params.get('error',None),users=Player.select(Player.q.username != 'military.militaire',orderBy=[Player.q.state,User.q.username]),page='userlist')
 
 @route('/users',method='POST')
 @allow_auth
@@ -468,6 +468,8 @@ def find_user():
 		elif cat == 'game_id':
 			p = Player.from_game_id(value.upper())
 	except:
+		redirect('/users?error=nouser&cat=%s' % cat, 302)
+	if not p:
 		redirect('/users?error=nouser&cat=%s' % cat, 302)
 	redirect('/user/%s' % p.username, 302)
 

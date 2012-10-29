@@ -33,7 +33,11 @@
 			<div id="left">
 %			  if error:
 				<div style="color: red;">
+%if 'suberror' in globals() and suberror:
+					{{i18n[lang]['pages'][page][error] % i18n[lang]['pages'][page][suberror]}}
+%else:
 					{{i18n[lang]['pages'][page][error]}}
+%end
 				</div>
 				<br/>
 %			  end

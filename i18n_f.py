@@ -193,7 +193,8 @@ i18n = {
 			},
 			'search_heading': 'Retrieve User',
 			'match_on': 'Match via',
-			'retrieve': 'Retrieve'
+			'retrieve': 'Retrieve',
+			'nouser': 'No user with the specified %s exists'
 		},
 		'useredit': {
 			'title': '',

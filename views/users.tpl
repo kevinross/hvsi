@@ -6,8 +6,14 @@
 <head>
 %	cinclude head
 </head>
-%cinclude parts part=2
+%if 'cat' in request.params:
+%	suberror = request.params['cat']
+%else:
+%	suberror = None
+%end
+%cinclude parts part=2, suberror=suberror
 				<h3>{{i18n[lang]['pages'][page]['search_heading']}}</h3>
+				
 				<form method="POST" action="/users">
 				{{i18n[lang]['pages'][page]['match_on']}} 
 					<select name="cat">
