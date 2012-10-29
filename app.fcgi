@@ -16,11 +16,5 @@ if __name__ == '__main__':
         app.catchall = False
         app = ErrorMiddleware(app, 
         					  debug=False,
-        					  error_log=os.path.expanduser('~/public_html/hvsi/app/errors'),
-        					  from_address='errors@hvsi.ca',
-        					  error_email='r0ssar00@gmail.com',
-        					  smtp_server='smtp.gmail.com',
-        					  error_subject_prefix='HvsI Error',
-        					  smtp_username='errors@hvsi.ca',
-        					  smtp_password='error_reporter')
+        					  error_log=os.path.expanduser('~/public_html/hvsi/app/errors'))
         WSGIServer(app).run()
