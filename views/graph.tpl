@@ -52,7 +52,8 @@
 			begin_data.addRow(['Nov {{h.day}} {{h.hour}}:00', {{'null' if not event else event.num_zombies}}, {{'null' if not event else event.num_humans}}]);
 %		  end
 			var top_data = new google.visualization.DataTable();
-			var players = [{{','.join(['["' + x.player.username + '",' + str(x.kills) + ']' for x in db.Score.top[0:10]])}}];
+%			top_ten = ','.join(['["' + x.player.username + '",' + str(x.kills) + ']' for x in db.Score.top[0:10]])
+			var players = [{{!top_ten}}];
 			top_data.addColumn('string', '{{i18n[lang]['player_status']['zombie']}}');
 			top_data.addColumn('number', '{{i18n[lang]['pages'][page]['count']}}');
 			top_data.addRows(players.length);
