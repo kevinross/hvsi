@@ -1131,7 +1131,6 @@ def twitter_search():
 		t = Twitter(query=fqstr, time=datetime.datetime.now() - datetime.timedelta(0, 25))
 	if datetime.datetime.now() > (t.time + datetime.timedelta(0, 24)):
 		# update the content
-		print 'Content Update'
 		t.content = urllib.urlopen('http://api.twitter.com/1/statuses/user_timeline.json?%s' % qstr).read()
 		t.content = t.content.replace(cb_str, '##CALLBACK_STRING##')
 	response.content_type='application/json'
