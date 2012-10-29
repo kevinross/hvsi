@@ -445,7 +445,33 @@ def view_thanks():
 @require_auth
 @require_role(Admin)
 def view_users():
-	return dict(error=None,users=Player.select(Player.q.username != 'military.militaire',orderBy=[Player.q.state,User.q.username]),page='userlist')
+	return dict(error=request.params.get('error',None),users=Player.select(Player.q.username != 'military.militaire',orderBy=[Player.q.state,User.q.username]),page='userlist')
+
+@route('/users',method='POST')
+@allow_auth
+@lang
+@require_auth
+@require_role(Admin)
+def find_user():
+	value = request.params['value']
+	cat = request.params['cat']
+	try:
+		p = None
+		if cat == 'email':
+			p = Player.from_email(value)
+		elif cat == 'twitter':
+			p = Player.from_twitter(value)
+		elif cat == 'cell':
+			p = Player.from_cell(value)
+		elif cat == 'student':
+			p = Player.from_student_num(int(value))
+		elif cat == 'game_id':
+			p = Player.from_game_id(value.upper())
+	except:
+		redirect('/users?error=nouser&cat=%s' % cat, 302)
+	if not p:
+		redirect('/users?error=nouser&cat=%s' % cat, 302)
+	redirect('/user/%s' % p.username, 302)
 
 @route('/users',method='POST')
 @allow_auth
