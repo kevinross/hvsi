@@ -13,7 +13,7 @@ from database import *
 from ops import *
 
 s = smtplib.SMTP_SSL('smtp.gmail.com',465)
-s.login('tag@hvsi.ca','P@s5w0rD')
+s.login('tag@hvsi.ca',"they'retagged")
 
 bot = Player.from_username('military.militaire')
 today = datetime.datetime.now()
