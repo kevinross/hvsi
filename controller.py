@@ -1092,7 +1092,8 @@ def view_shotgun_email():
 @require_auth
 @require_role(Admin)
 def do_shotgun_email():
-	s = smtplib.SMTP_SSL('smtp.gmail.com',465)
+	s = smtplib.SMTP_SSL('localhost',465)
+	s.login('hvsi@hvsi.ca','HvsI_email_sender')
 	if 'msg' not in request.params:
 		redirect('/email?error=nomsg', 302)
 	msg = MIMEText(request.params['msg'])

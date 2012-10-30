@@ -13,13 +13,14 @@ else:
 from database import *
 from ops import *
 
-s = smtplib.SMTP_SSL('smtp.gmail.com',465)
-s.login('tag@hvsi.ca',"they'retagged")
+s = smtplib.SMTP_SSL('localhost',465)
+s.login('hvsi@hvsi.ca',"HvsI_email_sender")
 
 bot = Player.from_username('military.militaire')
 today = datetime.datetime.now()
 eight30 = datetime.datetime(today.year, today.month, today.day, 8, 00, 0, 0)
 four30 = datetime.datetime(today.year, today.month, today.day, 23, 55, 00, 0)
+
 monday = datetime.datetime(Game.game_start.year, Game.game_start.month, Game.game_start.day, 12, 30, 0, 0)
 tuesday = datetime.datetime(Game.game_start.year, Game.game_start.month, Game.game_start.day+1, 12, 30, 0, 0)
 tuesday_four30 = datetime.datetime(Game.game_start.year, Game.game_start.month, Game.game_start.day+1, 22, 30, 0, 0)
