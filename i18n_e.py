@@ -254,7 +254,8 @@ i18n = {
 		'tag': {
 			'title': 'Register A Tag',
 			'tag': 'Tag',
-			'unknown': 'Unknown error'
+			'unknown': 'Unknown error',
+			'duplicate': 'Duplicate found, reload the page and try again'
 		},
 		'email': {
 			'title': 'Mass Email'
