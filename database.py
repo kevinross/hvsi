@@ -228,7 +228,7 @@ class Player(User):
 		self._SO_set_state(state)
 		try:
 			if self.signedin:
-				Snapshot()
+				Snapshot(changer=self)
 		except:
 			pass
 	def _get_game_id(self):
@@ -243,7 +243,7 @@ class Player(User):
 	def _set_signedin(self, v):
 		self._SO_set_signedin(v)
 		if v:
-			Snapshot()		# add a snapshot, new user!!
+			Snapshot(changer=self)		# add a snapshot, new user!!
 			self.signedin_time = datetime.datetime.now()
 	def _get_last_checkin(self):
 		try:
@@ -477,6 +477,7 @@ class Snapshot(SQLObject):
 	time		 = DateTimeCol(default=datetime.datetime.now)
 	num_humans	 = IntCol(default=Player.humans.count)
 	num_zombies	 = IntCol(default=Player.zombies.count)
+	changer		 = ForeignKey('Player',notNone=False)
 	class today_class(object):
 		def __get__(self, obj, objtype):
 			now = datetime.datetime.now()
