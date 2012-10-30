@@ -1,5 +1,6 @@
 import os, sys, random, string, datetime, time
 from sqlobject import *
+from database import *
 import i18n
 import smtplib
 from email.mime.text import MIMEText
@@ -18,10 +19,10 @@ s.login('tag@hvsi.ca',"they'retagged")
 bot = Player.from_username('military.militaire')
 today = datetime.datetime.now()
 eight30 = datetime.datetime(today.year, today.month, today.day, 8, 00, 0, 0)
-four30 = datetime.datetime(today.year, today.month, today.day, 18, 00, 0, 0)
-monday = datetime.datetime(2010, 11, 1, 12, 30, 0, 0)
-tuesday = datetime.datetime(2010, 11, 2, 12, 30, 0, 0)
-tuesday_four30 = datetime.datetime(2010, 11, 3, 22, 30, 0, 0)
+four30 = datetime.datetime(today.year, today.month, today.day, 23, 55, 00, 0)
+monday = datetime.datetime(Game.game_start.year, Game.game_start.month, Game.game_start.day, 12, 30, 0, 0)
+tuesday = datetime.datetime(Game.game_start.year, Game.game_start.month, Game.game_start.day+1, 12, 30, 0, 0)
+tuesday_four30 = datetime.datetime(Game.game_start.year, Game.game_start.month, Game.game_start.day+1, 22, 30, 0, 0)
 def inform_player(players):
 	subject = i18n.i18n['e']['email']['subject'] + '/' + i18n.i18n['f']['email']['subject']
 	subject = Header(unicode(subject), 'utf-8')
