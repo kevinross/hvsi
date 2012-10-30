@@ -141,7 +141,8 @@ i18n = {
 		'pass_reset': {
 			'title': 'Password Reset',
 			'success': 'Your password has been reset to your student number',
-			'submit': 'Reset password'
+			'submit': 'Reset password',
+			'wronginfo': 'Incorrect information submitted'
 		},
 		'station': {
 			'title': 'Station Operations',

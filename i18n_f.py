@@ -132,7 +132,8 @@ i18n = {
 		'pass_reset': {
 			'title': 'Réinitialisation du mot de passe',
 			'success': 'Votre mot de passe a été changé à votre numéro étudiant',
-			'submit': 'Réinitialiser le mot de passe'
+			'submit': 'Réinitialiser le mot de passe',
+			'wronginfo': 'Incorrect information submitted'
 		},
 		'station': {
 			'title': 'Opérations de station',
@@ -195,6 +196,10 @@ i18n = {
 			'match_on': 'Match via',
 			'retrieve': 'Retrieve',
 			'nouser': 'No user with the specified %s exists'
+			'email': 'email',
+			'twitter': 'twitter',
+			'cell': 'cell',
+			'student_num': 'student number'
 		},
 		'useredit': {
 			'title': '',
