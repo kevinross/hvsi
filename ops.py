@@ -1,6 +1,6 @@
 from database import *
 import datetime
-__all__ = ['TagException','CheckInException','CureException','add_kill','do_checkin','do_cure','EXC_NOTHUMAN','EXC_NOTZOMBIE','EXC_KITHUMAN','EXC_KITZOMBIE','EXC_NOTSTATION','EXC_NOSUCHZOMBIE','EXC_NOSUCHHUMAN','CHECKIN_TOOSOON','CURE_DISQUALIFIED','CURE_ALREADYUSED']
+__all__ = ['TagException','CheckInException','CureException','add_kill','do_checkin','do_cure','EXC_NOTHUMAN','EXC_NOTZOMBIE','EXC_KITHUMAN','EXC_KITZOMBIE','EXC_NOTSTATION','EXC_NOSUCHZOMBIE','EXC_NOSUCHHUMAN','EXC_CHEATER','CHECKIN_TOOSOON','CURE_DISQUALIFIED','CURE_ALREADYUSED']
 EXC_NOTHUMAN = 'player is not a human'
 EXC_NOTZOMBIE= 'player is not a zombie'
 EXC_KITHUMAN = 'human has no kit'
@@ -8,6 +8,7 @@ EXC_KITZOMBIE= 'zombie has no kit'
 EXC_NOTSTATION='non-station attempting to perform station operations'
 EXC_NOSUCHZOMBIE='no such zombie exists'
 EXC_NOSUCHHUMAN='no such human exists'
+EXC_CHEATER='duplicate uid, we may have a cheater'
 CHECKIN_TOOSOON = 'player checked in too soon'
 CURE_DISQUALIFIED = 'cure card is disqualified'
 CURE_ALREADYUSED = 'cure card already used'
@@ -50,7 +51,7 @@ def add_kill(tagger, taggee, uid, override=False):
 	if not taggee:
 		raise TagException(EXC_NOSUCHHUMAN)
 	if Tag.has_uid(uid):
-		raise TagException(uid + ' already exists, ' + tagger.username + ' may be attempting to cheat')
+		raise TagException(EXC_CHEATER)
 	if not tagger.is_zombie():
 		tagger.kill()
 	if not taggee.is_human() and not override:

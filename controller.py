@@ -661,6 +661,8 @@ def do_tag():
 			error = 'kithuman'
 		elif e.message == ops.EXC_KITZOMBIE:
 			error = 'kitzombie'
+		elif e.message == ops.EXC_CHEATER:
+			error = 'duplicate'
 		else:
 			error = 'unknown'
 	if error:
