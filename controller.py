@@ -1103,9 +1103,6 @@ def do_shotgun_email():
 	if 'from' not in request.params:
 		redirect('/email?error=nofrom', 302)
 	msg['From'] = request.params['from']
-	if 'password' not in request.params:
-		redirect('/email?error=nopass', 302)
-	s.login(msg['From'],request.params['password'])
 	if request.params['target'] == 'humans':
 		to = [x.email for x in Player.humans]
 	elif request.params['target'] == 'zombies':
