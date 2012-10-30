@@ -377,7 +377,7 @@ def do_eula():
 		setattr(request.user, i, True)
 	redirect('/', 302)
 def reg_cond():
-	if request.admin:
+	if request.admin or request.station:
 		return True
 	if not Game.is_reg and datetime.datetime.now() < Game.game_rego:
 		return False
