@@ -242,7 +242,7 @@ i18n = {
 		'tag': {
 		    'title': 'Enregistrer un tag',
 			'tag': 'Tag',
-			'unknown': 'Unknown error'
+			'unknown': 'Unknown error',
 			'duplicate': 'Duplicate found, reload the page and try again'
 		},
 		'game': {
