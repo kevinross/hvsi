@@ -984,7 +984,7 @@ def do_station_tag():
 		redirect('/station?error=game', 302)
 	try:
 		uid = request.user.username + '_' + ''.join(random.sample(string.ascii_letters+string.digits, 36))
-		add_kill(request.params['tagger_id'],request.params['taggee_id'], uid)
+		add_kill(request.params['tagger_id'],request.params['taggee_id'].toupper(), uid)
 	except TagException, e:
 		if e.message == ops.EXC_NOTHUMAN:
 			redirect('/station?section=kill&err=nothuman', 302)
