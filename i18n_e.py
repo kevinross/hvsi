@@ -253,7 +253,8 @@ i18n = {
 		},
 		'tag': {
 			'title': 'Register A Tag',
-			'tag': 'Tag'
+			'tag': 'Tag',
+			'unknown': 'Unknown error'
 		},
 		'email': {
 			'title': 'Mass Email'

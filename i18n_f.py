@@ -241,7 +241,8 @@ i18n = {
 		},
 		'tag': {
 		    'title': 'Enregistrer un tag',
-			'tag': 'Tag'
+			'tag': 'Tag',
+			'unknown': 'Unknown error'
 		},
 		'game': {
 			'title': 'Contrôle du jeu',
