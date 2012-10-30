@@ -8,11 +8,6 @@
 								fetch: 10,
 								username: "uoHvsI",
 								filter: function(t){ return ! /^@\w+/.test(t.tweet_raw_text); },
-								template: '<a class="tweet_link" href="{tweet_url}" title="view tweet on twitter">{tweet_relative_time}</a>:&nbsp;{text}',
-%							if '_devel' in os.getcwd():
-								twitter_api_url: 'hvsidevel.ca:9055/twittercache'
-%							elif False:
-								twitter_api_url: 'hvsi.ca/twittercache'
-%							end
+								template: '<a class="tweet_link" href="{tweet_url}" title="view tweet on twitter">{tweet_relative_time}</a>:&nbsp;{text}'
 							});
 						</script>
