@@ -18,14 +18,6 @@
 						<input type="textbox" name="from" />
 					</div>
 					<div>
-						<label for="password">
-							Password:
-						</label>
-					</div>
-					<div>
-						<input type="password" name="password" />
-					</div>
-					<div>
 						<label for="target">
 							Target:
 						</label>
