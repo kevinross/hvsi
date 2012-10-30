@@ -986,7 +986,7 @@ def do_station_tag():
 		redirect('/station?error=game', 302)
 	try:
 		uid = request.user.username + '_' + ''.join(random.sample(string.ascii_letters+string.digits, 36))
-		add_kill(request.params['tagger_id'],request.params['taggee_id'].toupper(), uid)
+		add_kill(request.params['tagger_id'],request.params['taggee_id'].upper(), uid)
 	except TagException, e:
 		if e.message == ops.EXC_NOTHUMAN:
 			redirect('/station?section=kill&err=nothuman', 302)
@@ -1000,10 +1000,10 @@ def do_station_tag():
 			redirect('/station?section=kill&err=nohuman', 302)
 		elif e.message == ops.EXC_NOSUCHZOMBIE:
 			redirect('/station?section=kill&err=nozombie', 302)
+		elif e.message == ops.EXC_CHEATER:
+			redirect('/station?section=kill&err=duplicate', 302)
 		else:
 			redirect('/station?section=kill&err=unknown', 302)
-	except:
-		redirect('/station?section=kill&err=unknown', 302)
 	redirect('/station', code=302)
 
 @route('/cures')
