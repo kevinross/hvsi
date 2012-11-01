@@ -4,6 +4,7 @@ from sqlobject.inheritance import *
 import bcrypt, datetime, time, markdown, os, urllib, uuid, hashlib
 __all__ = ['Game','User','Player','Station','Admin','Tag','Checkin','Cure','Post','Comment','Snapshot','Score','Session', 'Twitter']
 NAMESPACE = 'hvsi'
+host = 'localhost'
 db = 'uottawae_hvsi'
 user = 'uottawae_hvsi'
 passw = 'hvs.i'
@@ -11,7 +12,12 @@ if '_devel' in os.getcwd():
 	db = 'hvsi_devel'
 	user = 'hvsi'
 	passw = 'hvsi'
-sqlhub.processConnection = connectionForURI('mysql://%s:%s@/%s' % (user, passw, db))
+if 'RDS_HOSTNAME' in os.environ:
+	host = os.environ['RDS_HOSTNAME']
+	db = os.environ['RDS_DB_NAME']
+	user = os.environ['RDS_USERNAME']
+	passw = os.environ['RDS_PASSWORD']
+sqlhub.processConnection = connectionForURI('mysql://%s:%s@%s/%s' % (user, passw, host, db))
 def norm_cell(val):
 	# strip everything out leaving just the numbers.
 	# prefix with a 1 if not already done
