@@ -57,7 +57,9 @@ def check_player(player):
 			return False
 		print "killing " + player.username + ', with checkin count ' + str(todays.count())
 		for i in player.checkins:
-			print '	killing ' + player.username + ':' + i.time.isoformat()
+			print '	checkin:' + i.time.isoformat()
+		for i in player.kills:
+			print ' killed %s @ %s' % (i.taggee.username, time.isoformat())
 		if real:
 			add_kill(bot, player, uid, override=True)
 		return player
