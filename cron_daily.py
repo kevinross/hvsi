@@ -39,14 +39,14 @@ def check_player(player):
 	uid = "bot_" + ''.join(random.sample(string.ascii_letters+string.digits, 36))
 	# today's checkins < 2
 	todays = player.checkins.filter(AND(Checkin.q.time <= four30,Checkin.q.time >= eight30))
-	print player.username + ' ' + str(todays.count())
+	print 'Checking %s, checkins today: %i' % (player.username, todays.count())
 	if todays.count() < 2:
 		if todays.count() > 0:
 			for i in todays:
-				print '	' + i.time.strftime('Nov %d @ %H:%M')
+				print '	' + i.time.strftime('%b %d @ %H:%M')
 		if today <= tuesday_four30:
 			if player.signedin_time:
-				print '	Signedin:' + player.signedin_time.strftime('Nov %d @ %H:%M')
+				print '	Signedin:' + player.signedin_time.strftime('%b %d @ %H:%M')
 			if player.signedin and player.signedin_time and player.signedin_time.date() == monday.date():
 				if player.signedin_time > monday:
 					return False
@@ -55,7 +55,7 @@ def check_player(player):
 					return False
 		elif player.signedin and not player.signedin_time:
 			return False
-		print "killing " + player.username + ' ' + str(todays.count())
+		print "killing " + player.username + ', with checkin count ' + str(todays.count())
 		for i in player.checkins:
 			print '	killing ' + player.username + ':' + i.time.isoformat()
 		if real:
