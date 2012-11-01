@@ -5,6 +5,8 @@ import i18n
 import smtplib
 from email.mime.text import MIMEText
 from email.Header import Header
+os.environ['TZ'] = 'America/Toronto'
+time.tzset()
 
 if len(sys.argv) > 1:
 	real = True
