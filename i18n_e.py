@@ -241,6 +241,7 @@ i18n = {
 		'tags': {
 			'title': 'Edit Tags',
 			'submit': 'Delete Tag(s)',
+			'vs': 'vs',
 			'table': {
 				'id': 'Tag ID',
 				'method': 'Report Method',

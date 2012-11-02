@@ -7,6 +7,13 @@
 %	cinclude head
 </head>
 %cinclude parts part=2
+				<h2>
+					<a href="/user/{{tagger.username}}">{{tagger.username}}</a>
+%				  if 'taggee' in globals():
+					&nbsp;{{i18n[lang]['pages'][page]['vs']}}&nbsp;
+					<a href="/user/{{taggee.username}}">{{taggee.username}}</a>
+%				  end
+				</h2>
 				<form action="/tagrm" method="post">
 					<input type="submit" name="submit" value="{{i18n[lang]['pages'][page]['submit']}}" />
 					<table border="1" style="width: 100%;">
