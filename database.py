@@ -391,6 +391,7 @@ class Cure(SQLObject):
 	class sqlmeta:
 		registry = NAMESPACE
 	time		= DateTimeCol(default=datetime.datetime.now,notNone=True)
+	expiry		= DateTimeCol()
 	card_id 	= StringCol(length=10,varchar=True,unique=True,default=None)
 	used		= BoolCol(default=False,notNone=True)
 	disqualified= BoolCol(default=False,notNone=True)
@@ -401,7 +402,7 @@ class Cure(SQLObject):
 			self._SO_set_card_id(hashlib.sha512(''.join([self.time.isoformat(),str(self.used),str(self.disqualified),str(time.clock())])).hexdigest()[15:25])
 		return self._SO_get_card_id()
 	def to_dict(self):
-		return dict(time=self.time.isoformat(), card_id=self.card_id, used=self.used, disqualified=self.disqualified, player=self.player.username)
+		return dict(time=self.time.isoformat(), expiry=self.expiry.isoformat(), card_id=self.card_id, used=self.used, disqualified=self.disqualified, player=self.player.username)
 	@staticmethod
 	def from_cure_id(v):
 		try:

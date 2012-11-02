@@ -1018,6 +1018,8 @@ def do_station_cure():
 			redirect('/station?section=cure&err=disq', 302)
 		elif e.message == ops.CURE_ALREADYUSED:
 			redirect('/station?section=cure&err=used', 302)
+		elif e.message == ops.CURE_EXPIRED:
+			redirect('/station?section=cure&err=exp', 302)
 		elif e.message == ops.EXC_NOSUCHZOMBIE:
 			redirect('/station?section=checkin&err=nozombie', 302)
 		else:
@@ -1091,12 +1093,19 @@ def do_edit_cure(cid):
 	except:
 		c = Cure.get_cure(cid)
 	# time, used, username, disqualified
+	time = request.params.get('time',None)
+	expiry = request.params.get('expiry',None)
+	username = request.params.get('username',None)
 	time = None if not request.params['time'] else request.params['time']
 	username = None if not request.params['username'] else request.params['username']
 	used = 'used' in request.params
 	disqualified = 'disqualified' in request.params
-	c.time = None if not time else datetime.datetime.strptime(time,"%Y-%m-%dT%H:%M:%S")
-	c.player = None if not username else User.get_user(username)
+	if time:
+		c.time = datetime.datetime.strptime(time,"%Y-%m-%dT%H:%M:%S")
+	if expiry:
+		c.expiry = datetime.datetime.strptime(expiry,"%Y-%m-%dT%H:%M:%S")
+	if username:
+		c.player = User.get_user(username)
 	if c.player:
 		used = True
 		c.player.cure()

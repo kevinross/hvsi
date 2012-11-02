@@ -188,7 +188,8 @@ i18n = {
 				'toosoon': 'Player checking in too soon',
 				'disq': 'Cure card with this ID was disqualified',
 				'used': 'Cure card with this ID was already used',
-				'activated': 'Player has already been activated'
+				'activated': 'Player has already been activated',
+				'exp': 'Cure card expired'
 			}
 		},
 		'userlist': {
@@ -225,6 +226,7 @@ i18n = {
 				'id': 'ID',
 				'username': 'Username',
 				'time': 'Time Used',
+				'expiry': 'Expiry Date',
 				'disqualified': 'Disqualified',
 				'disqualify': 'Disqualify',
 				'qualify': 'Qualify',

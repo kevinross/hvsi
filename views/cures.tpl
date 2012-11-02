@@ -17,10 +17,11 @@
 							%i=i18n[lang]['pages'][page]['table']
 							<td><strong>{{i['id']}}</strong></td>
 							<td><strong>{{i['cardid']}}</strong></td>
-							<td><strong>{{i['disqualified']}}</strong></td>
+							<td><strong>{{i['expiry']}}</strong></td>
 							<td><strong>{{i['used']}}</strong></td>
-							<td><strong>{{i['username']}}</strong></td>
 							<td><strong>{{i['time']}}</strong></td>
+							<td><strong>{{i['username']}}</strong></td>
+							<td><strong>{{i['disqualified']}}</strong></td>
 							<td><strong>{{i['delete']}}</strong></td>
 							%del i
 						</tr>
@@ -28,10 +29,11 @@
 						<tr>
 							<td><strong>{{cure.id}}</strong></td>
 							<td>{{cure.card_id}}</td>
-							<td>{{i18n[lang]['pages']['register']['yes'] if cure.disqualified else i18n[lang]['pages']['register']['no']}}</td>
+							<td>{{'' if not cure.expiry else cure.expiry.isoformat()}}</td>
 							<td>{{i18n[lang]['pages']['register']['yes'] if cure.used else i18n[lang]['pages']['register']['no']}}</td>
+							<td>{{'' if not cure.used else cure.time.isoformat()}}</td>
 							<td><a href={{'""' if not cure.used else ('"/user/' + cure.player.username + '"')}}>{{'' if not cure.used else cure.player.username}}</a></td>
-							<td>{{'' if not cure.used else cure.time.strftime('%H:%M')}}</td>
+							<td>{{i18n[lang]['pages']['register']['yes'] if cure.disqualified else i18n[lang]['pages']['register']['no']}}</td>
 							<td><input type="checkbox" name="cure_{{cure.id}}" /></td>
 							<td><a href="/cures/edit/{{cure.id}}">Edit</a></td>
 						</tr>

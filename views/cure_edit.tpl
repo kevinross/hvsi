@@ -10,12 +10,20 @@
 				<h2>Cure #{{cure.id}}</h2>
 				<form action="/cures/edit/{{cure.id}}" method="post">
 					<div>
+						<label for="expiry">
+							{{i18n[lang]['pages']['cures']['table']['expiry']}}
+						</label>
+					</div>
+					<div>
+						<input type="textbox" name="expiry" class="dt" value="{{'' if not cure.expiry else cure.expiry.isoformat()}}" />
+					</div>
+					<div>
 						<label for="time">
 							{{i18n[lang]['pages']['cures']['table']['time']}}
 						</label>
 					</div>
 					<div>
-						<input type="textbox" name="time" value="{{'' if not cure.time else cure.time.isoformat()}}" />
+						<input type="textbox" name="time" class="dt" value="{{cure.time.isoformat()}}" />
 					</div>
 					<div>
 						<label for="card_id">
