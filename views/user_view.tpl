@@ -74,6 +74,8 @@
 						<input type="submit" name="submit" value="submit" style="display:none;" />
 					</form>
 				</div>
+				<br/>
+				<span class="u_key"><a href="/user/{{vuser.username}}/checkins">{{i18n[lang]['pages'][page]['checkins']}}</a></span>
 %			  end
 %			  end
 				<br/>

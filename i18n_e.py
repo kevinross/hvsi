@@ -258,6 +258,18 @@ i18n = {
 			'unknown': 'Unknown error',
 			'duplicate': 'Duplicate found, reload the page and try again'
 		},
+		'checkins': {
+			'title': 'Checkins',
+			'addcheckin': 'Add Checkin',
+			'delcheckin': 'Delete Checkin',
+			'add': 'Add',
+			'delete': 'Delete',
+			'table': {
+				'id': 'ID',
+				'time': 'Time',
+				'location': 'Location'
+			}
+		},
 		'email': {
 			'title': 'Mass Email'
 		},
@@ -273,7 +285,8 @@ i18n = {
 			'activate': 'Activate Player',
 			'kitted': 'Player has accepted liability + safety rules and has received kit?',
 			'tags': 'Tags involving this player',
-			'and': 'and'
+			'and': 'and',
+			'checkins': 'Checkin Editor'
 		},
 		'http_error': {
 			'title': 'Error',
