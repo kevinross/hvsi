@@ -12,6 +12,7 @@ EXC_CHEATER='duplicate uid, we may have a cheater'
 CHECKIN_TOOSOON = 'player checked in too soon'
 CURE_DISQUALIFIED = 'cure card is disqualified'
 CURE_ALREADYUSED = 'cure card already used'
+CURE_EXPIRED = 'cure card is expired'
 class TagException(Exception):
 	pass
 class CheckInException(Exception):
@@ -113,6 +114,8 @@ def do_cure(player, station, cure):
 		raise CureException(CURE_DISQUALIFIED)
 	if cure.used:
 		raise CureException(CURE_ALREADYUSED)
+	if cure.expiry < datetime.datetime.now():
+		raise CureException(CURE_EXPIRED)
 	cure.time = datetime.datetime.now()
 	cure.used = True
 	cure.player = player
