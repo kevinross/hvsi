@@ -3,7 +3,7 @@ import bottle, os, urllib, error_page, ops, i18n, datetime, random, string
 from database import *
 from ops import *
 from sqlobject import *
-import smtplib
+import smtplib, database
 from email.mime.text import MIMEText
 iv = '6543209487240596'
 key = 'd74Kv9duE8bk3Jh2'
@@ -602,6 +602,55 @@ def do_user_tags(name):
 	if 'username' not in request.params:
 		redirect('/station?error=noplayer', 302)
 	redirect('/'.join(['/tag',name,request.params['username']]), 302)
+
+@route('/user/:name/checkins',method='GET')
+@view('checkins')
+@allow_auth
+@lang
+@require_auth
+@require_role(Admin)
+def get_user_checkins(name):
+	user = User.get_user(name)
+	if not user:
+		redirect('/station?error=noplayer', 302)
+	return dict(error=request.params.get('error',None),page='checkins',vuser=user,checkins=user.checkins.orderBy(Checkin.q.time))
+@route('/user/:name/checkins/add',method='POST')
+@allow_auth
+@require_auth
+@require_role(Admin)
+def add_user_checkin(name):
+	user = User.get_user(name)
+	if not user:
+		redirect('/station?error=noplayer', 302)
+	# no location or time
+	if not 'location' in request.params:
+		redirect('/user/%s/checkins?error=noloc' % user.username, 302)
+	if not 'time' in request.params:
+		redirect('/user/%s/checkins?error=notime' % user.username, 302)
+	# bad location
+	if not request.params['location'] in database.locations:
+		redirect('/user/%s/checkins?error=badloc' % user.username, 302)
+	# bad time
+	time = None
+	try:
+		time = datetime.datetime.strptime(request.params['time'],'%Y-%m-%d %H:%M:%S')
+	except:
+		redirect('/user/%s/checkins?error=badtime' % user.username, 302)
+	location = request.params['location']
+	Checkin(time=time,location=location,player=user)
+	redirect('/user/%s/checkins' % name, 302)
+@route('/user/:name/checkins/delete',method='POST')
+@allow_auth
+@require_auth
+@require_role(Admin)
+def del_user_checkins(name):
+	user = User.get_user(name)
+	if not user:
+		redirect('/station?error=noplayer', 302)
+	# checkins are like checkin_[id]
+	ids = [int(x[x.find('_')+1:]) for x in request.params if 'checkin_' in x]
+	_ = [Checkin.select(Checkin.q.id == x)[0].destroySelf() for x in ids]
+	redirect('/user/%s/checkins' % user.username, 302)
 @route('/password_reset',method='GET')
 @view('pass_reset')
 @allow_auth
@@ -708,6 +757,7 @@ def view_tags(tagger):
 	if not tagger:
 		redirect('/station?error=baduser', 302)
 	return dict(page='tags', error=request.params.get('error',None),
+				tagger=tagger,
 				tags=Tag.select(OR(Tag.q.tagger == tagger,Tag.q.taggee == tagger),orderBy=Tag.q.time))
 @route('/tag/:tagger/:taggee', method='GET')
 @view('tags')
@@ -721,6 +771,8 @@ def view_tags(tagger, taggee):
 	if not tagger or not taggee:
 		redirect('/station?error=baduser', 302)
 	return dict(page='tags', error=request.params.get('error',None),
+				tagger=tagger,
+				taggee=taggee,
 				tags=Tag.select(OR(
 									AND(Tag.q.tagger == tagger, Tag.q.taggee == taggee),
 									AND(Tag.q.tagger == taggee, Tag.q.taggee == tagger)
