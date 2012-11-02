@@ -568,7 +568,7 @@ def do_user_edit(name):
 def do_user_zero(name):
 	user = User.get_user(name)
 	if not user:
-		redirect(request.environ.get('HTTP_REFERER','/'), 302)
+		error(code=404)
 	# bypass normal graph stats here, it's not really a kill and the game hasn't started yet
 	for zombie in Player.zombies:
 		zombie._SO_set_state(Player.state_human)
@@ -598,7 +598,7 @@ def do_user_activate(name):
 def do_user_tags(name):
 	user = User.get_user(name)
 	if not user:
-		redirect('/station?error=noplayer', 302)
+		error(code=404)
 	if 'username' not in request.params:
 		redirect('/station?error=noplayer', 302)
 	redirect('/'.join(['/tag',name,request.params['username']]), 302)
@@ -612,7 +612,7 @@ def do_user_tags(name):
 def get_user_checkins(name):
 	user = User.get_user(name)
 	if not user:
-		redirect('/station?error=noplayer', 302)
+		error(code=404)
 	return dict(error=request.params.get('error',None),page='checkins',vuser=user,checkins=user.checkins.orderBy(Checkin.q.time))
 @route('/user/:name/checkins/add',method='POST')
 @allow_auth
@@ -621,7 +621,7 @@ def get_user_checkins(name):
 def add_user_checkin(name):
 	user = User.get_user(name)
 	if not user:
-		redirect('/station?error=noplayer', 302)
+		error(code=404)
 	# no location or time
 	if not 'location' in request.params:
 		redirect('/user/%s/checkins?error=noloc' % user.username, 302)
@@ -646,7 +646,7 @@ def add_user_checkin(name):
 def del_user_checkins(name):
 	user = User.get_user(name)
 	if not user:
-		redirect('/station?error=noplayer', 302)
+		error(code=404)
 	# checkins are like checkin_[id]
 	ids = [int(x[x.find('_')+1:]) for x in request.params if 'checkin_' in x]
 	_ = [Checkin.select(Checkin.q.id == x)[0].destroySelf() for x in ids]
@@ -755,7 +755,7 @@ def view_all_tags():
 def view_tags(tagger):
 	tagger = User.get_user(tagger)
 	if not tagger:
-		redirect('/station?error=baduser', 302)
+		error(code=404)
 	return dict(page='tags', error=request.params.get('error',None),
 				tagger=tagger,
 				tags=Tag.select(OR(Tag.q.tagger == tagger,Tag.q.taggee == tagger),orderBy=Tag.q.time))
@@ -769,7 +769,7 @@ def view_tags(tagger, taggee):
 	tagger = User.get_user(tagger)
 	taggee = User.get_user(taggee)
 	if not tagger or not taggee:
-		redirect('/station?error=baduser', 302)
+		error(code=404)
 	return dict(page='tags', error=request.params.get('error',None),
 				tagger=tagger,
 				taggee=taggee,
@@ -1079,7 +1079,7 @@ def view_edit_cure(cid):
 	except:
 		c = Cure.get_cure(cid)
 	if not c:
-		redirect('/cures?error=nocure', 302)
+		error(code=404)
 	return dict(error=None,page='editcure',cure=c)
 @route('/cures/edit/:cid',method='POST')
 @allow_auth
