@@ -202,7 +202,7 @@ class User(InheritableSQLObject):
 				return User.from_student_num(v)
 			else:
 				return User.from_id(v)
-locations = ['cby','ucu','cafealt','manual','twitter','email','internet','admin']
+locations = ['cby','ucu','cafealt','manual','twitter','email','internet','admin','unset']
 states = ['human','zombie','inactive','banned']
 class Player(User):
 	class sqlmeta:
@@ -338,7 +338,7 @@ class Player(User):
 class Station(User):
 	class sqlmeta:
 		registry = NAMESPACE
-	location		 = EnumCol(enumValues=locations,default=None,notNone=True)
+	location		 = EnumCol(enumValues=locations,default='unset',notNone=True)
 	def to_dict(self):
 		d = super(Station, self).to_dict()
 		d['location'] = self.location
@@ -347,7 +347,7 @@ class Admin(User):
 	class sqlmeta:
 		registry = NAMESPACE
 	def _get_location(self):
-		return Station.location_manual
+		return Station.location_admin
 	def to_dict(self):
 		d = super(Admin, self).to_dict()
 		d['location'] = Station.location_admin
@@ -440,9 +440,9 @@ class Post(SQLObject):
 	allow_comments 	= BoolCol(default=True,notNone=True)
 	comments		= SQLMultipleJoin('Comment',joinColumn='post_id',orderBy='time')
 	def _get_html_e(self):
-		return markdown.markdown(self.content_e,['video'],output_format='html')
+		return markdown.markdown(self.content_e,output_format='html')
 	def _get_html_f(self):
-		return markdown.markdown(self.content_f,['video'])
+		return markdown.markdown(self.content_f)
 	@staticmethod
 	def from_pid(pid):
 		return Post.select(Post.q.id == pid)[0]
@@ -467,8 +467,8 @@ class Comment(SQLObject):
 		registry = NAMESPACE
 	time		= DateTimeCol(default=datetime.datetime.now,notNone=True)
 	content		= StringCol()
-	user		= ForeignKey('User')
-	post		= ForeignKey('Post')
+	user		= ForeignKey('User',notNone=True)
+	post		= ForeignKey('Post',notNone=True)
 	def _get_html(self):
 		return markdown.markdown(self.content, safe_mode="remove")
 	def to_dict(self):
@@ -516,6 +516,10 @@ class Snapshot(SQLObject):
 		def __get__(self, obj, objtype):
 			return Snapshot.select(orderBy=DESC(Snapshot.q.time))[0]
 	latest = latest_class()
+
+# used to more efficiently store the scores for each person
+# if this didn't exist, we'd have to run a SELECT on Tag and count() for each player,
+# that could get slow really quickly
 class Score(SQLObject):
 	class sqlmeta:
 		registry = NAMESPACE
