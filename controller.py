@@ -37,6 +37,7 @@ class Request_Auth():
 		self.admin = False
 		self.station = False
 		self.player = False
+		self.session = None
 bottle.Request.__bases__+=(Request_Auth,)
 bottle.request.logged_in = False
 def error(code):
@@ -61,7 +62,7 @@ def allow_auth(func):
 		setattr(request, 'station', None)
 		setattr(request, 'player', None)
 		setattr(request, 'user', None)
-		setattr(request, 'session', None)
+		setattr(request, 'session', info)
 		if not info:
 			return func(*args, **kwargs)
 		if not info.user:
@@ -71,7 +72,6 @@ def allow_auth(func):
 		request.station = isinstance(request.user, Station)
 		request.player = isinstance(request.user, Player)
 		request.logged_in = True
-		request.session = info
 		if request.station:
 			info.ttl = 5*24*60*60
 			info.update_expires()
