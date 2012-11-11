@@ -16,9 +16,9 @@ def valid_creds(user, passw):
 	if not u:
 		return False
 	return u.hashed_pass == passw or u.verify_pass(passw)
-def set_cookie(i):
+def set_cookie(i, as_needed=False):
 	# if already set and more than 5 seconds away from expiring, don't reset it
-	if i.skey in request.cookies and datetime.datetime.now() + datetime.timedelta(0, 5) < i.expires:
+	if as_needed and i.skey in request.cookies and datetime.datetime.now() + datetime.timedelta(0, 5) < i.expires:
 		return
 	response.set_cookie('session', i.skey, path="/", max_age=i.ttl)
 def get_session():
