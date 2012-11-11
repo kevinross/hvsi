@@ -118,7 +118,7 @@ def lang(func):
 			lang = i.language
 		i.language = lang
 		func_dict = func(*args, **kwargs)
-		if func_dict and isinstance(func_dict, dict):
+		if func_dict is not None and isinstance(func_dict, dict):
 			func_dict['lang'] = lang
 			if request.method == 'GET':
 				func_dict['request'] = request
@@ -194,9 +194,9 @@ def static_img_2(file):
 @route('/js/:file#.*#')
 def static_js(file):
 	return send_file(file, root=js_root)
-@route('/wmd/:file')
+@route('/wmd/images/:file')
 def static_wmd(file):
-	return send_file(file, root=js_root)
+	return send_file(file, root=css_root + '/images/')
 
 @route('/pdf/:file')
 def static_pdf(file):
@@ -744,18 +744,6 @@ def do_tag():
 			redirect(pg, 302)
 		else:
 			redirect('/', 302)
-@route('/tag/:tagger/:taggee/:uid',method='POST')
-@allow_auth
-@require_auth
-@require_user('zombie_twitter','zombie_email')
-def do_remote_tag(tagger,taggee,uid):
-	if not Game.is_started:
-		return dict(error="game not stared")
-	try:
-		kill = add_kill(tagger,taggee,uid)
-	except TagException, e:
-		return dict(error=e.message)
-	return dict(error=None)
 @route('/tags', method='GET')
 @mview('tags')
 @allow_auth
@@ -952,15 +940,6 @@ def delete_post(pid):
 	p.delete()
 	redirect('/', 303)
 
-@route('/twitter', method='POST')
-@allow_auth
-@require_auth
-@require_user('zombie_twitter')
-def update_twitter():
-	p = request.params
-	if 'text' not in p or not p['text']:
-		return
-	Twitter(text=p['text'])
 
 @route('/station')
 @mview('station')
@@ -1089,7 +1068,7 @@ def view_cures():
 	return dict(page='cures',error=None,cures=Cure.select())
 
 @route('/cures/edit/:cid',method='GET')
-@view('cure_edit')
+@mview('cure_edit')
 @allow_auth
 @lang
 @require_auth
@@ -1196,25 +1175,7 @@ def do_shotgun_email():
 	elif request.params['target'] == 'all':
 		to = [x.email for x in Player.select(Player.q.username != 'military.militaire')]
 	s.sendmail(msg['From'], ['president@hvsi.ca'] + to, msg.as_string())
-	redirect('/', 302)
-@route('/twittercache/1/statuses/user_timeline.json')
-def twitter_search():
-	qstr = request.environ.get('QUERY_STRING', '')
-	if not qstr:
-		return ''
-	cb_str = request.params['callback']
-	uscore = request.params['_']
-	fqstr = qstr.replace(cb_str, '').replace(uscore, '')
-	try:
-		t = Twitter.select(Twitter.q.query == fqstr)[0]
-	except:
-		t = Twitter(query=fqstr, time=datetime.datetime.now() - datetime.timedelta(0, 25))
-	if datetime.datetime.now() > (t.time + datetime.timedelta(0, 24)):
-		# update the content
-		t.content = urllib.urlopen('http://api.twitter.com/1/statuses/user_timeline.json?%s' % qstr).read()
-		t.content = t.content.replace(cb_str, '##CALLBACK_STRING##')
-	response.content_type='application/javascript'
-	return t.content.replace('##CALLBACK_STRING##', cb_str)
+	redirect('/', 303)
 # catch all perm-redirect
 @route('/:page#.+#/')
 def redir(page):
