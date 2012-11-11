@@ -588,10 +588,6 @@ def do_user_zero(name):
 	user = User.get_user(name)
 	if not user:
 		error(code=404)
-	# bypass normal graph stats here, it's not really a kill and the game hasn't started yet
-	for zombie in Player.zombies:
-		zombie._SO_set_state(Player.state_human)
-	user._SO_set_state(Player.state_zombie)
 	user.zero = True
 	redirect(request.environ.get('HTTP_REFERER','/'), 303)
 @route('/user/:name/activate',method='POST')

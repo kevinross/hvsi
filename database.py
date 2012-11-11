@@ -230,6 +230,11 @@ class Player(User):
 					signedin=self.signedin,
 					signedin_time=self.signedin_time.isoformat()))
 		return d
+	def _set_zero(self, zero):
+		for i in Player.select(Player.q.id != self.id):
+			i._SO_set_state('human')
+			i._SO_set_zero(False)
+		self._SO_set_zero(True)
 	def _set_state(self, state):
 		self._SO_set_state(state)
 		try:
