@@ -42,6 +42,18 @@ bottle.Request.__bases__+=(Request_Auth,)
 bottle.request.logged_in = False
 def error(code):
 	raise bottle.HTTPError(code, bottle.HTTP_CODES[code])
+
+# decorator that automatically gives the "page" variable to templates
+def mview(view_name):
+	def tview(func):
+		@view(view_name)
+		def view_func(*args, **kwargs):
+			val = func(*args, **kwargs)
+			if val is not None and isinstance(val, dict) and 'page' not in val:
+				val['page'] = view_name
+			return val
+		return view_func
+	return tview
 # decorator that denies access to anon
 def require_auth(func):
 	def auth(*args, **kwargs):
@@ -198,49 +210,49 @@ def eula_file(file):
 	redirect(static('/pdf/%s' % file), 303)
 
 @route('/index')
-@view('index')
+@mview('index')
 @allow_auth
 @lang
 def index():
 	return dict(page='index',error=None,post=Post.from_pid(1),posts=Post.select(Post.q.id > 5,orderBy='-id'))
 @route('/')
-@view('countdown')
+@mview('countdown')
 @lang
 def countdown():
-	return dict(page='countdown')
+	return dict()
 @route('/missions')
-@view('index')
+@mview('index')
 @allow_auth
 @lang
 def index():
 	return dict(page='missions',error=None,post=Post.from_pid(2))
 @route('/party')
-@view('index')
+@mview('index')
 @allow_auth
 @lang
 def index():
 	return dict(page='party',error=None,post=Post.from_pid(3))
 @route('/rules')
-@view('index')
+@mview('index')
 @allow_auth
 @lang
 def index():
 	return dict(page='rules',error=None,post=Post.from_pid(4))
 @route('/blog')
-@view('blog')
+@mview('blog')
 @allow_auth
 @lang
 def blog():
 	return dict(page='blog',error=None,posts=Post.select(Post.q.id > 5,orderBy='-id'))
 	
 @route('/game')
-@view('game')
+@mview('game')
 @allow_auth
 @lang
 @require_auth
 @require_role(Admin)
 def view_game():
-	return dict(page='game',error=None)
+	return dict()
 @route('/game',method='POST')
 @allow_auth
 @require_auth
@@ -316,7 +328,7 @@ def do_hrsbc():
 	redirect('/game', 303)
 
 @route('/login',method='GET')
-@view('login')
+@mview('login')
 @allow_auth
 @lang
 def view_login():
@@ -352,7 +364,7 @@ def do_logout():
 	redirect('/')
 
 @route('/eula', method='GET')
-@view('eula')
+@mview('eula')
 @allow_auth
 @lang
 def view_eula():
@@ -384,7 +396,7 @@ def reg_cond():
 	else:
 		return datetime.datetime.now() < Game.game_rego
 @route('/register',method='GET')
-@view('registration')
+@mview('register')
 @allow_auth
 @lang
 @require_cond(reg_cond)
@@ -431,7 +443,7 @@ def do_registration():
 
 # end of non-auth pages
 @route('/thanks')
-@view('thanks')
+@mview('thanks')
 @allow_auth
 @lang
 @require_auth
@@ -439,7 +451,7 @@ def view_thanks():
 	return dict(error=None,page='thanks')
 	
 @route('/users')
-@view('users')
+@mview('users')
 @allow_auth
 @lang
 @require_auth
@@ -498,7 +510,7 @@ def find_user():
 	redirect('/user/%s' % p.username, 302)
 
 @route('/user/:name')
-@view('user_view')
+@mview('user_view')
 @allow_auth
 @lang
 @require_auth
@@ -513,7 +525,7 @@ def view_user(name):
 	return dict(error=None,vuser=user,page='user',i18n=i18n.override_title('user',user.username,user.username))
 
 @route('/user/:name/edit',method='GET')
-@view('user_edit')
+@mview('user_edit')
 @allow_auth
 @lang
 @require_auth
@@ -604,7 +616,7 @@ def do_user_tags(name):
 	redirect('/'.join(['/tag',name,request.params['username']]), 302)
 
 @route('/user/:name/checkins',method='GET')
-@view('checkins')
+@mview('checkins')
 @allow_auth
 @lang
 @require_auth
@@ -652,7 +664,7 @@ def del_user_checkins(name):
 	_ = [Checkin.select(Checkin.q.id == x)[0].destroySelf() for x in ids]
 	redirect('/user/%s/checkins' % user.username, 303)
 @route('/password_reset',method='GET')
-@view('pass_reset')
+@mview('pass_reset')
 @allow_auth
 @lang
 def view_pass_reset():
@@ -678,7 +690,7 @@ def do_pass_reset():
 	user.hashed_pass = str(user.student_num)
 	redirect('/password_reset?success=true', 303)
 @route('/tag',method='GET')
-@view('tag')
+@mview('tag')
 @allow_auth
 @lang
 @require_auth
@@ -738,7 +750,7 @@ def do_remote_tag(tagger,taggee,uid):
 		return dict(error=e.message)
 	return dict(error=None)
 @route('/tags', method='GET')
-@view('tags')
+@mview('tags')
 @allow_auth
 @lang
 @require_auth
@@ -747,7 +759,7 @@ def view_all_tags():
 	return dict(page='tags', error=request.params.get('error',None),
 				tags = Tag.select(orderBy=Tag.q.time))
 @route('/tag/:tagger', method='GET')
-@view('tags')
+@mview('tags')
 @allow_auth
 @lang
 @require_auth
@@ -760,7 +772,7 @@ def view_tags(tagger):
 				tagger=tagger,
 				tags=Tag.select(OR(Tag.q.tagger == tagger,Tag.q.taggee == tagger),orderBy=Tag.q.time))
 @route('/tag/:tagger/:taggee', method='GET')
-@view('tags')
+@mview('tags')
 @allow_auth
 @lang
 @require_auth
@@ -797,7 +809,7 @@ def do_tags_rm():
 			taggee.cure()
 	redirect('/station' if 'HTTP_REFERER' not in request.environ else request.environ['HTTP_REFERER'], 302)
 @route('/webcheckin')
-@view('webcheckin')
+@mview('webcheckin')
 @allow_auth
 @lang
 @require_auth
@@ -825,7 +837,7 @@ def do_webcheckin():
 		redirect('/webcheckin?error=' + err, 302)
 	redirect('/', 302)
 @route('/post/view/:pid')
-@view('index')
+@mview('index')
 @allow_auth
 @lang
 def view_post(pid):
@@ -851,7 +863,7 @@ def do_comment(pid):
 	c = Comment(user=request.user, content=p['comment'], post=po)
 	redirect('/post/view/' + str(pid) + '#comment-' + str(c.id), 302)
 @route('/post/create',method='GET')
-@view('create_editpost')
+@mview('create_editpost')
 @allow_auth
 @lang
 @require_auth
@@ -878,10 +890,10 @@ def create_post_post():
 		p['allow_comments'] = False
 	p = dict([(x,p[x]) for x in ['content_e','content_f','title_e','title_f','allow_comments']])
 	post = Post(**p)
-	redirect('/post/view/' + str(post.id),302)
+	redirect('/post/view/' + str(post.id),303)
 	
 @route('/post/edit/:pid',method='GET')
-@view('create_editpost')
+@mview('create_editpost')
 @allow_auth
 @lang
 @require_auth
@@ -944,7 +956,7 @@ def update_twitter():
 	Twitter(text=p['text'])
 
 @route('/station')
-@view('stationops')
+@mview('station')
 @allow_auth
 @lang
 @require_auth
@@ -1061,7 +1073,7 @@ def do_station_tag():
 	redirect('/station', code=303)
 
 @route('/cures')
-@view('cures')
+@mview('cures')
 @allow_auth
 @lang
 @require_auth
@@ -1135,7 +1147,7 @@ def do_mass_rm_cure():
 		cure.destroySelf()
 	redirect('/cures', 303)
 @route('/stats')
-@view('graph')
+@mview('graph')
 @allow_auth
 @lang
 def graph():
@@ -1143,7 +1155,7 @@ def graph():
 		redirect('/index', 302)
 	return dict(error=None,page='stats')
 @route('/email', method='GET')
-@view('email')
+@mview('email')
 @allow_auth
 @lang
 @require_auth
