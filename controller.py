@@ -27,8 +27,10 @@ def get_session():
 			info = Session.grab(request.params.get('session',None) or request.cookies.get('session',None))
 		except IndexError, e:
 			info = Session()
+			request.params['session'] = info.skey
 	else:
 		info = Session()
+		request.params['session'] = info.skey
 	info.update_expires()
 	set_cookie(info)
 	return info
@@ -349,21 +351,23 @@ def do_login():
 		redirect('/login?error=nouser', 302)
 	if user.verify_pass(passw):
 		sess = get_session()
+		# protect against session fixation
+		sess.destroySelf()
+		sess = get_session()
 		sess.user = user
 		if isinstance(user, Station):
 			sess.ttl = +(5*24*60*60)
 			sess.update_expires()
 		set_cookie(sess)
-		if 'HTTP_REFERER' in request.environ:
-			redirect(request.environ['HTTP_REFERER'], 302)
-		else:
-			redirect('/index', 302)
+		response.set_header('Location', request.environ.get('HTTP_REFERER', '/index'))
+		response.status = 303
 	else:
-		redirect('/login?error=nouser', 302)
+		seterr('/login', 'nouser')
+	return None
 
 @route('/logout')
 def do_logout():
-	get_session().user = None
+	get_session().destroySelf()
 	redirect('/')
 
 @route('/eula', method='GET')
