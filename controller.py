@@ -32,7 +32,7 @@ def get_session():
 		info = Session()
 		request.params['session'] = info.skey
 	info.update_expires()
-	set_cookie(info)
+	set_cookie(info, as_needed=True)
 	return info
 # hack the Request __init__
 class Request_Auth():
