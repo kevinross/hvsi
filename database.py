@@ -92,6 +92,7 @@ class Session(InheritableSQLObject):
 	ttl			 = IntCol(default=DEFAULT_LIFETIME)
 	language	 = EnumCol(enumValues=['e','f'],default='e')
 	user		 = ForeignKey('User',default=None)
+	error		 = StringCol(default=None)
 	data		 = StringCol(default=None)
 	
 	@staticmethod
@@ -339,7 +340,12 @@ class Player(User):
 	humans  = state_class('human')
 	zombies = state_class('zombie')
 	users = state_class2()
-		
+	
+class Bounty(Player):
+	class sqlmeta:
+		registry = NAMESPACE
+	def _set_state(self, val):
+		self._SO_set_state(val)
 class Station(User):
 	class sqlmeta:
 		registry = NAMESPACE

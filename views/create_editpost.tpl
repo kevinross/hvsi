@@ -8,7 +8,7 @@
 </head>
 %cinclude parts part=2
 				<h1>{{i18n[lang]['pages'][page]['title']}}</h1>
-%				cinclude post_edit template_settings=dict(noescape=True)
+%				cinclude post_edit
 %				cinclude comments
 			</div>
 %cinclude parts part=3

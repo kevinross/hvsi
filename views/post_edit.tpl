@@ -4,6 +4,12 @@
 %				else:
 					<form id='post_editor' action="/post/edit/{{post.id}}" method="post">
 %				end
+%				if request.session.data:
+%					data = simplejson.loads(request.session.data)
+%					request.session.data = None
+%				else:
+%					data = dict()
+%				end
 %					for i in i18n.keys():
 						<div class="post_editor">
 							<div>
@@ -12,7 +18,7 @@
 								</label>
 							</div>
 							<div>
-								<input mode="textbox" name="title_{{i}}" value="{{'' if mode=='create' else getattr(post,'title_' + i)}}"/>
+								<input mode="textbox" name="title_{{i}}" value="{{data.get('title_' + i, '') if mode=='create' else getattr(post,'title_' + i)}}"/>
 							</div>
 							<div>
 								<label for="content_e">
@@ -20,8 +26,8 @@
 								</label>
 							</div>
 							<div>
-								<textarea rows=10 cols=70 id="content_{{i}}" name="content_{{i}}">{{'' if mode=='create' else getattr(post,'content_' + i)}}</textarea>
-								<input type="hidden" id="content_{{i}}_hidden" name="content_{{i}}_hidden" value="" />
+								<textarea rows=10 cols=70 id="content_{{i}}" name="content_{{i}}">{{data.get('content_' + i, '') if mode=='create' else getattr(post,'content_' + i)}}</textarea>
+								<input type="hidden" id="content_{{i}}_hidden" name="content_{{i}}_hidden" value="{{data.get('content_' + i + '_hidden', '')}}" />
 							</div>
 							<br/>
 							<br/>

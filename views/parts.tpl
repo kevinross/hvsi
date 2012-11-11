@@ -31,15 +31,16 @@
 %if not ('nocontent' in globals() and nocontent):
 		<div id="content">
 			<div id="left">
-%			  if error:
+%			  if bottle.request.session.error:
 				<div style="color: red;">
 %if 'suberror' in globals() and suberror:
-					{{i18n[lang]['pages'][page][error] % i18n[lang]['pages'][page][suberror]}}
+					{{i18n[lang]['pages'][page][bottle.request.session.error] % i18n[lang]['pages'][page][suberror]}}
 %else:
-					{{i18n[lang]['pages'][page][error]}}
+					{{i18n[lang]['pages'][page][bottle.request.session.error]}}
 %end
 				</div>
 				<br/>
+%				bottle.request.session.error = None
 %			  end
 %end
 % elif part==3:

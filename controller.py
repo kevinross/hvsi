@@ -34,6 +34,9 @@ def get_session():
 	info.update_expires()
 	set_cookie(info, as_needed=True)
 	return info
+def seterr(p, s):
+	get_session().error = s
+	redirect(p, 303)
 # hack the Request __init__
 class Request_Auth():
 	def __init__(self, *args, **kwargs):
@@ -219,7 +222,7 @@ def eula_file(file):
 @allow_auth
 @lang
 def index():
-	return dict(page='index',error=None,post=Post.from_pid(1),posts=Post.select(Post.q.id > 5,orderBy='-id'))
+	return dict(post=Post.from_pid(1),posts=Post.select(Post.q.id > 5,orderBy='-id'))
 @route('/')
 @mview('countdown')
 @lang
@@ -230,25 +233,25 @@ def countdown():
 @allow_auth
 @lang
 def index():
-	return dict(page='missions',error=None,post=Post.from_pid(2))
+	return dict(page='missions',post=Post.from_pid(2))
 @route('/party')
 @mview('index')
 @allow_auth
 @lang
 def index():
-	return dict(page='party',error=None,post=Post.from_pid(3))
+	return dict(page='party',post=Post.from_pid(3))
 @route('/rules')
 @mview('index')
 @allow_auth
 @lang
 def index():
-	return dict(page='rules',error=None,post=Post.from_pid(4))
+	return dict(page='rules',post=Post.from_pid(4))
 @route('/blog')
 @mview('blog')
 @allow_auth
 @lang
 def blog():
-	return dict(page='blog',error=None,posts=Post.select(Post.q.id > 5,orderBy='-id'))
+	return dict(posts=Post.select(Post.q.id > 5,orderBy='-id'))
 	
 @route('/game')
 @mview('game')
@@ -286,7 +289,7 @@ def do_count():
 def do_countdown():
 	c_t = bottle.request.params.get('count_time', None)
 	if not c_t:
-		redirect('/game?error=notime', 302)
+		seterr('/game', 'notime')
 	Game.countdown_time = datetime.datetime.strptime(c_t,'%Y-%m-%d %H:%M:%S')
 	redirect('/game', 303)
 @route('/startend',method='POST')
@@ -297,7 +300,7 @@ def do_startend():
 	s_t = bottle.request.params.get('start_time', None)
 	e_t = bottle.request.params.get('end_time', None)
 	if not s_t or not e_t:
-		redirect('/game?error=notime', 302)
+		seterr('/game', 'notime')
 	Game.game_start = datetime.datetime.strptime(s_t,'%Y-%m-%d %H:%M:%S')
 	Game.game_end = datetime.datetime.strptime(e_t,'%Y-%m-%d %H:%M:%S')
 	redirect('/game', 303)
@@ -308,7 +311,7 @@ def do_startend():
 def do_rego():
 	r_t = bottle.request.params.get('rego', None)
 	if not r_t:
-		redirect('/game?error=notime', 302)
+		seterr('/game', 'notime')
 	Game.game_rego = datetime.datetime.strptime(r_t,'%Y-%m-%d %H:%M:%S')
 	redirect('/game', 303)
 @route('/hrsbc',method='POST')
@@ -318,7 +321,7 @@ def do_rego():
 def do_hrsbc():
 	hours = bottle.request.params.get('hrsbc', None)
 	if not hours:
-		redirect('/game?error=notime', 302)
+		seterr('/game', 'notime')
 	Game.hours_between_checkins = int(hours)
 	redirect('/game', 303)
 @route('/itemail',method='POST')
@@ -328,7 +331,7 @@ def do_hrsbc():
 def do_hrsbc():
 	email = bottle.request.params.get('itemail', None)
 	if not email:
-		redirect('/game?error=noemail', 302)
+		seterr('/game', 'noemail')
 	Game.it_email = email
 	redirect('/game', 303)
 
@@ -338,17 +341,15 @@ def do_hrsbc():
 @lang
 def view_login():
 	if request.logged_in:
-		redirect('/', 302)
-	if 'error' in request.params:
-		return dict(page='login',error=request.params['error'])
-	return dict(page='login',error=None)
+		redirect('/', 303)
+	return dict()
 @route('/login',method='POST')
 def do_login():
 	usern = request.params['username']
 	passw = request.params['password']
 	user = User.from_username(usern)
 	if not user:
-		redirect('/login?error=nouser', 302)
+		seterr('/login','nouser')
 	if user.verify_pass(passw):
 		sess = get_session()
 		# protect against session fixation
@@ -380,7 +381,7 @@ def view_eula():
 	i18n_o = i18n.override_title('eula',i18n.i18n['e']['pages']['eula']['title'],i18n.i18n['f']['pages']['eula']['title'])
 	for i in ('e','f'):
 		i18n_o[i]['pages']['register']['agree'] = i18n.i18n[i]['pages']['eula']['agree']
-	return dict(error=request.params.get('error',None),page='register',
+	return dict(page='register',
 				i18n=i18n_o)
 
 @route('/eula', method='POST')
@@ -390,9 +391,9 @@ def view_eula():
 def do_eula():
 	for i in ('liability','safety'):
 #		if i+'_read' not in request.COOKIES or request.COOKIES[i+'_read'] != 'true':
-#			redirect('/eula?error='+i+'_read', 302)
+#			redirect('/eula?error='+i+'_read', 303)
 		if i not in request.params:
-			redirect('/eula?error='+i, 302)
+			seterr('/eula', i)
 		setattr(request.user, i, True)
 	redirect('/', 303)
 def reg_cond():
@@ -408,7 +409,7 @@ def reg_cond():
 @lang
 @require_cond(reg_cond)
 def view_registration():
-	return dict(error=request.params.get('error',None),page='register')
+	return dict()
 @route('/register',method='POST')
 @allow_auth
 @require_cond(reg_cond)
@@ -441,7 +442,7 @@ def do_registration():
 		u = Player(name=name,username=username,hashed_pass=password,language=language,student_num=studentn,
 			   email=email,twitter=twitter,cell=cell,liability=True,safety=True)
 	except dberrors.DuplicateEntryError, e:
-		redirect('/register?error=userexists', 302)
+		seterr('/register', 'userexists')
 	if hasattr(request, 'station') and not request.station and not request.admin:
 		sess = get_session()
 		sess.user = u
@@ -455,7 +456,7 @@ def do_registration():
 @lang
 @require_auth
 def view_thanks():
-	return dict(error=None,page='thanks')
+	return dict()
 	
 @route('/users')
 @mview('users')
@@ -464,7 +465,10 @@ def view_thanks():
 @require_auth
 @require_role(Admin)
 def view_users():
-	return dict(error=request.params.get('error',None),users=Player.select(Player.q.username != 'military.militaire',orderBy=[Player.q.state,User.q.username]),page='userlist')
+	return dict(users=
+					Player.select(
+						Player.q.username != 'military.militaire',
+						orderBy=[Player.q.state,User.q.username]))
 
 @route('/users',method='POST')
 @allow_auth
@@ -487,10 +491,10 @@ def find_user():
 		elif cat == 'game_id':
 			p = Player.from_game_id(value.upper())
 	except:
-		redirect('/users?error=nouser&cat=%s' % cat, 302)
+		seterr('/users?cat=%s' % cat, 'nouser')
 	if not p:
-		redirect('/users?error=nouser&cat=%s' % cat, 302)
-	redirect('/user/%s' % p.username, 302)
+		seterr('/users?cat=%s' % cat, 'nouser')
+	redirect('/user/%s' % p.username, 303)
 
 @route('/users',method='POST')
 @allow_auth
@@ -513,8 +517,8 @@ def find_user():
 		elif cat == 'game_id':
 			p = Player.from_game_id(value.upper())
 	except:
-		redirect('/users?error=nouser&cat=%s' % cat, 302)
-	redirect('/user/%s' % p.username, 302)
+		seterr('/users?cat=%s' % cat, 'nouser')
+	redirect('/user/%s' % p.username, 303)
 
 @route('/user/:name')
 @mview('user_view')
@@ -529,7 +533,7 @@ def view_user(name):
 	user = User.get_user(name)
 	if not user:
 		error(code=404)
-	return dict(error=None,vuser=user,page='user',i18n=i18n.override_title('user',user.username,user.username))
+	return dict(vuser=user,i18n=i18n.override_title('user',user.username,user.username))
 
 @route('/user/:name/edit',method='GET')
 @mview('user_edit')
@@ -543,10 +547,10 @@ def view_user_edit(name):
 	user = User.get_user(name)
 	if not user:
 		error(code=404)
-	return dict(error=request.params.get('error',None),page='useredit',vuser=user,
-				i18n=i18n.override_title('useredit',
-										 i18n.i18n['e']['pages']['useredit']['editing'] + ' ' + user.username,
-										 i18n.i18n['f']['pages']['useredit']['editing'] + ' ' + user.username))
+	return dict(vuser=user,
+				i18n=i18n.override_title('user_edit',
+										 i18n.i18n['e']['pages']['user_edit']['editing'] + ' ' + user.username,
+										 i18n.i18n['f']['pages']['user_edit']['editing'] + ' ' + user.username))
 
 @route('/user/:name/edit',method='POST')
 @allow_auth
@@ -564,9 +568,9 @@ def do_user_edit(name):
 		p = dict([(x,p[x]) for x in perm_user if x in p])
 	if 'password' in p and p['password'] and not request.admin:
 		if p['password'] != p['confirm_password']:
-			redirect('/user/' + name + '/edit?error=vp')
+			seterr('/user/%s/edit' % name, 'vp')
 		if not user.verify_pass(p['verify_password']):
-			redirect('/user/' + name + '/edit?error=bp')
+			seterr('/user/%s/edit' % name, 'bp')
 	for prop in ['language','cell','twitter','name','username','state','signedin','student_num','email']:
 		if prop in p:
 			if p[prop]:
@@ -615,8 +619,8 @@ def do_user_tags(name):
 	if not user:
 		error(code=404)
 	if 'username' not in request.params:
-		redirect('/station?error=noplayer', 302)
-	redirect('/'.join(['/tag',name,request.params['username']]), 302)
+		seterr('/station', 'noplayer')
+	redirect('/'.join(['/tag',name,request.params['username']]), 303)
 
 @route('/user/:name/checkins',method='GET')
 @mview('checkins')
@@ -628,7 +632,7 @@ def get_user_checkins(name):
 	user = User.get_user(name)
 	if not user:
 		error(code=404)
-	return dict(error=request.params.get('error',None),page='checkins',vuser=user,checkins=user.checkins.orderBy(Checkin.q.time))
+	return dict(vuser=user,checkins=user.checkins.orderBy(Checkin.q.time))
 @route('/user/:name/checkins/add',method='POST')
 @allow_auth
 @require_auth
@@ -639,18 +643,18 @@ def add_user_checkin(name):
 		error(code=404)
 	# no location or time
 	if not 'location' in request.params:
-		redirect('/user/%s/checkins?error=noloc' % user.username, 302)
+		seterr('/user/%s/checkins' % user.username, 'noloc')
 	if not 'time' in request.params:
-		redirect('/user/%s/checkins?error=notime' % user.username, 302)
+		seterr('/user/%s/checkins' % user.username, 'notime')
 	# bad location
 	if not request.params['location'] in database.locations:
-		redirect('/user/%s/checkins?error=badloc' % user.username, 302)
+		seterr('/user/%s/checkins' % user.username, 'badloc')
 	# bad time
 	time = None
 	try:
 		time = datetime.datetime.strptime(request.params['time'],'%Y-%m-%d %H:%M:%S')
 	except:
-		redirect('/user/%s/checkins?error=badtime' % user.username, 302)
+		seterr('/user/%s/checkins' % user.username, 'badtime')
 	location = request.params['location']
 	Checkin(time=time,location=location,player=user)
 	redirect('/user/%s/checkins' % name, 303)
@@ -676,20 +680,19 @@ def view_pass_reset():
 	i18n_reg_f = i18n.i18n_over({'nonsensical':'bullshit'})['f']['pages']['register']
 	del i18n_reg_f['title']
 	if 'success' in request.params:
-		redirect('/', 302)
-	return dict(error=request.params.get('error',None),page='pass_reset',
-				i18n=i18n.i18n_over({'e':{'pages':{'pass_reset':i18n_reg_e}},
+		redirect('/', 303)
+	return dict(i18n=i18n.i18n_over({'e':{'pages':{'pass_reset':i18n_reg_e}},
 									 'f':{'pages':{'pass_reset':i18n_reg_f}}}))
 @route('/password_reset',method='POST')
 def do_pass_reset():
 	for i in ('email', 'student_num'):
 		if i not in request.params:
-			redirect('/password_reset?error=missinginfo', code=302)
+			seterr('/password_reset', 'missinginfo')
 	user = User.get_user(request.params['email'])
 	if not user:
-		redirect('/password_reset?error=wronginfo', code=302)
+		seterr('/password_reset', 'wronginfo')
 	if user.student_num != int(request.params['student_num']):
-		redirect('/password_reset?error=wronginfo', code=302)
+		seterr('/password_reset', 'wronginfo')
 	user.hashed_pass = str(user.student_num)
 	redirect('/password_reset?success=true', 303)
 @route('/tag',method='GET')
@@ -698,8 +701,7 @@ def do_pass_reset():
 @lang
 @require_auth
 def view_tag():
-	return dict(error=request.params.get('error',None),page='tag',
-				# copy station errors to tag
+	return dict(# copy station errors to tag
 				i18n=i18n.i18n_over({'e':{'pages':{'tag':i18n.i18n['e']['pages']['station']['errors']}},
 									 'f':{'pages':{'tag':i18n.i18n['f']['pages']['station']['errors']}}}
 				))
@@ -708,11 +710,11 @@ def view_tag():
 @require_auth
 def do_tag():
 	if 'taggee' not in request.params:
-		redirect('/tag?error=badinput', 302)
+		seterr('/tag','badinput')
 	if 'uid' not in request.params:
-		redirect('/tag?error=badinput', 302)
+		seterr('/tag','badinput')
 	if not Game.is_started:
-		redirect('/tag?error=game', 302)
+		seterr('/tag','game')
 	error = None
 	try:
 		kill = add_kill(request.user, request.params['taggee'], request.params['uid'])
@@ -730,16 +732,9 @@ def do_tag():
 		else:
 			error = 'unknown'
 	if error:
-		redirect('/tag?error=' + error, 302)
+		seterr('/tag', error)
 	else:
-		if 'HTTP_REFERER' in request.environ:
-			pg = request.environ['HTTP_REFERER']
-			if 'error' in pg:
-				pg = pg[::-1]
-				pg = pg[pg.find('?')+1][::-1]
-			redirect(pg, 302)
-		else:
-			redirect('/', 302)
+		redirect(request.environ.get('HTTP_REFERER','/'), 303)
 @route('/tags', method='GET')
 @mview('tags')
 @allow_auth
@@ -747,8 +742,7 @@ def do_tag():
 @require_auth
 @require_role(Admin)
 def view_all_tags():
-	return dict(page='tags', error=request.params.get('error',None),
-				tags = Tag.select(orderBy=Tag.q.time))
+	return dict(tags=Tag.select(orderBy=Tag.q.time))
 @route('/tag/:tagger', method='GET')
 @mview('tags')
 @allow_auth
@@ -759,8 +753,7 @@ def view_tags(tagger):
 	tagger = User.get_user(tagger)
 	if not tagger:
 		error(code=404)
-	return dict(page='tags', error=request.params.get('error',None),
-				tagger=tagger,
+	return dict(tagger=tagger,
 				tags=Tag.select(OR(Tag.q.tagger == tagger,Tag.q.taggee == tagger),orderBy=Tag.q.time))
 @route('/tag/:tagger/:taggee', method='GET')
 @mview('tags')
@@ -773,8 +766,7 @@ def view_tags(tagger, taggee):
 	taggee = User.get_user(taggee)
 	if not tagger or not taggee:
 		error(code=404)
-	return dict(page='tags', error=request.params.get('error',None),
-				tagger=tagger,
+	return dict(tagger=tagger,
 				taggee=taggee,
 				tags=Tag.select(OR(
 									AND(Tag.q.tagger == tagger, Tag.q.taggee == taggee),
@@ -798,7 +790,7 @@ def do_tags_rm():
 		tag[0].destroySelf()
 		if tag[1]:
 			taggee.cure()
-	redirect('/station' if 'HTTP_REFERER' not in request.environ else request.environ['HTTP_REFERER'], 302)
+	redirect(request.environ.get('HTTP_REFERER','/station'), 303)
 @route('/webcheckin')
 @mview('webcheckin')
 @allow_auth
@@ -806,7 +798,7 @@ def do_tags_rm():
 @require_auth
 @require_role(Player)
 def view_webcheckin():
-	return dict(page='webcheckin',error=request.params.get('error',None))
+	return dict()
 @route('/webcheckin',method='POST')
 @allow_auth
 @require_auth
@@ -814,19 +806,19 @@ def view_webcheckin():
 def do_webcheckin():
 	p = request.params
 	if 'confirm' not in p:
-		redirect('/webcheckin?error=notconfirmed', 302)
+		redirect('/webcheckin?error=notconfirmed', 303)
 	if request.user.did_webcheckin:
-		redirect('/webcheckin?error=alreadyused', 302)
+		redirect('/webcheckin?error=alreadyused', 303)
 	station = User.get_user('zombie_internet')
 	if not station:
-		redirect('/webcheckin?error=code499', 302)
+		redirect('/webcheckin?error=code499', 303)
 	try:
 		do_checkin(request.user, station)
 	except CheckInException, e:
 		err = e.message[::-1]
 		err = err[:err.find(' ')][::-1]
-		redirect('/webcheckin?error=' + err, 302)
-	redirect('/', 302)
+		seterr('/webcheckin', err)
+	redirect('/', 303)
 @route('/post/view/:pid')
 @mview('index')
 @allow_auth
@@ -834,7 +826,7 @@ def do_webcheckin():
 def view_post(pid):
 	try:
 		p = Post.from_pid(pid)
-		return dict(error=None,post=p,page='index',i18n=i18n.override_title('index',p.title_e,p.title_f))
+		return dict(post=p,i18n=i18n.override_title('index',p.title_e,p.title_f))
 	except:
 		error(code=404)
 @route('/post/view/:pid/comment',method='POST')
@@ -848,11 +840,11 @@ def do_comment(pid):
 	except:
 		error(code=404)
 	if not p['comment']:
-		redirect('/post/view/' + str(pid) + '?error=nocontent', 302)
+		seterr('/post/view/%s' % str(pid), 'nocontent')
 	if Comment.select(Comment.q.user == request.user and Comment.q.content == p['comment']).count() > 0:
-		redirect('/post/view/' + str(pid) + '?error=exists', 302)
+		seterr('/post/view/%s' % str(pid), 'exists')
 	c = Comment(user=request.user, content=p['comment'], post=po)
-	redirect('/post/view/' + str(pid) + '#comment-' + str(c.id), 302)
+	redirect('/post/view/' + str(pid) + '#comment-' + str(c.id), 303)
 @route('/post/create',method='GET')
 @mview('create_editpost')
 @allow_auth
@@ -860,7 +852,7 @@ def do_comment(pid):
 @require_auth
 @require_role(Admin)
 def create_post():
-	return dict(error=None,mode='create',page='post_create')
+	return dict(mode='create',page='post_create')
 
 @route('/post/create',method='POST')
 @allow_auth
@@ -870,7 +862,8 @@ def create_post_post():
 	p = request.params
 	# content_e, content_f, title_e, title_f
 	if not p['content_e'] or not p['content_f'] or not p['title_e'] or not p['title_f']:
-		redirect('/post/create?error=missinginfo', 302)
+		bottle.request.session.data = simplejson.dumps(p)
+		seterr('/post/create','missinginfo')
 	if p['content_e_hidden']:
 		p['content_e'] = p['content_e_hidden']
 	if p['content_f_hidden']:
@@ -892,11 +885,13 @@ def create_post_post():
 def view_edit_post(pid):
 	try:
 		p = Post.from_pid(pid)
-		return dict(error=None,post=p,mode='edit',page='post_edit',
+		return dict(post=p,mode='edit',page='post_edit',
 					i18n=i18n.override_title('post_edit','Editing EN:"' + p.title_e + '" FR:"' + p.title_f + '"','Editing "' + p.title_f + '"'))
 	except IndexError, e:
+		request.session.error = 'nopostpid'
 		return dict(error='nopostpid',mode='edit')
 	except:
+		request.session.error = 'unknown'
 		return dict(error='unknown',mode='edit')
 @route('/post/edit/:pid',method='POST')
 @allow_auth
@@ -908,9 +903,9 @@ def do_edit_post(pid):
 	try:
 		post=Post.from_pid(pid)
 	except IndexError, e:
-		redirect(request.path+'?error=nopostpid', 302)
+		error(code=404)
 	except:
-		redirect(request.path+'?error=unknown', 302)
+		seterr(request.path, 'unknown')
 	if p['content_e_hidden']:
 		p['content_e'] = p['content_e_hidden']
 	if p['content_f_hidden']:
@@ -945,8 +940,9 @@ def delete_post(pid):
 @require_role(Admin, Station)
 def view_stationops():
 	if 'section' in request.params:
-		return dict(error='generic',section=request.params['section'],err=request.params['err'],page='station',post=Post.from_pid(5))
-	return dict(error=None,page='station',post=Post.from_pid(5))
+		request.session.error = 'generic'
+		return dict(section=request.params['section'],err=request.params['err'],page='station',post=Post.from_pid(5))
+	return dict(post=Post.from_pid(5))
 @route('/station/checkin', method='POST')
 @allow_auth
 @require_auth
@@ -1061,7 +1057,7 @@ def do_station_tag():
 @require_auth
 @require_role(Admin)
 def view_cures():
-	return dict(page='cures',error=None,cures=Cure.select())
+	return dict(cures=Cure.select())
 
 @route('/cures/edit/:cid',method='GET')
 @mview('cure_edit')
@@ -1076,7 +1072,7 @@ def view_edit_cure(cid):
 		c = Cure.get_cure(cid)
 	if not c:
 		error(code=404)
-	return dict(error=None,page='editcure',cure=c)
+	return dict(cure=c)
 @route('/cures/edit/:cid',method='POST')
 @allow_auth
 @require_auth
@@ -1134,8 +1130,8 @@ def do_mass_rm_cure():
 @lang
 def graph():
 	if not Game.is_started:
-		redirect('/index', 302)
-	return dict(error=None,page='stats')
+		redirect('/index', 303)
+	return dict()
 @route('/email', method='GET')
 @mview('email')
 @allow_auth
@@ -1143,7 +1139,7 @@ def graph():
 @require_auth
 @require_role(Admin)
 def view_shotgun_email():
-	return dict(error=(None if 'error' not in request.params else request.params['error']), page='email')
+	return dict()
 @route('/email', method='POST')
 @allow_auth
 @require_auth
@@ -1151,14 +1147,15 @@ def view_shotgun_email():
 def do_shotgun_email():
 	s = smtplib.SMTP_SSL('localhost',465)
 	s.login('hvsi@hvsi.ca','HvsI_email_sender')
+	request.session.data = simplejson.dumps(request.params)
 	if 'msg' not in request.params:
-		redirect('/email?error=nomsg', 302)
+		seterr('/email', 'nomsg')
 	msg = MIMEText(request.params['msg'])
 	if 'subject' not in request.params:
-		redirect('/email?error=nosubj', 302)
+		seterr('/email', 'nosubj')
 	msg['Subject'] = request.params['subject']
 	if 'from' not in request.params:
-		redirect('/email?error=nofrom', 302)
+		seterr('/email', 'nofrom')
 	msg['From'] = request.params['from']
 	if request.params['target'] == 'humans':
 		to = [x.email for x in Player.humans]
