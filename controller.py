@@ -80,7 +80,7 @@ def allow_auth(func):
 		if 'eula' not in request.path and request.player and not (request.user.liability and request.user.safety):
 #				for i in ('liability', 'safety'):
 #					response.set_cookie(i+'_read', '', path='/')
-			redirect('/eula', 302)
+			redirect('/eula', 303)
 		func_dict = func(*args, **kwargs)
 		if func_dict and isinstance(func_dict, dict):
 			if '/tag/' not in request.path:
@@ -191,11 +191,11 @@ def eula_file(file):
 #	response.set_cookie(file.replace('.pdf','') + '_read', 'true',path='/')
 #	data = (None if 'lang' not in request.COOKIES else request.COOKIES['lang']) or (None if not (hasattr(request, 'user') and request.user) else request.user.language)
 #	if not data:
-#		redirect('/pdf/' + file, 302)
+#		redirect('/pdf/' + file, 303)
 #	else:
-#		redirect('/pdf/' + file.replace('.pdf','_' + data + '.pdf'), 302)
+#		redirect('/pdf/' + file.replace('.pdf','_' + data + '.pdf'), 303)
 	from imports import static
-	redirect(static('/pdf/%s' % file), 302)
+	redirect(static('/pdf/%s' % file), 303)
 
 @route('/index')
 @view('index')
@@ -247,21 +247,21 @@ def view_game():
 @require_role(Admin)
 def do_game():
 	Game.toggle_game()
-	redirect('/game', 302)
+	redirect('/game', 303)
 @route('/reg',method='POST')
 @allow_auth
 @require_auth
 @require_role(Admin)
 def do_reg():
 	Game.toggle_reg()
-	redirect('/game', 302)
+	redirect('/game', 303)
 @route('/count',method='POST')
 @allow_auth
 @require_auth
 @require_role(Admin)
 def do_count():
 	Game.toggle_countdown()
-	redirect('/game', 302)
+	redirect('/game', 303)
 @route('/count_time',method='POST')
 @allow_auth
 @require_auth
@@ -271,7 +271,7 @@ def do_countdown():
 	if not c_t:
 		redirect('/game?error=notime', 302)
 	Game.countdown_time = datetime.datetime.strptime(c_t,'%Y-%m-%d %H:%M:%S')
-	redirect('/game', 302)
+	redirect('/game', 303)
 @route('/startend',method='POST')
 @allow_auth
 @require_auth
@@ -283,7 +283,7 @@ def do_startend():
 		redirect('/game?error=notime', 302)
 	Game.game_start = datetime.datetime.strptime(s_t,'%Y-%m-%d %H:%M:%S')
 	Game.game_end = datetime.datetime.strptime(e_t,'%Y-%m-%d %H:%M:%S')
-	redirect('/game', 302)
+	redirect('/game', 303)
 @route('/rego',method='POST')
 @allow_auth
 @require_auth
@@ -293,7 +293,7 @@ def do_rego():
 	if not r_t:
 		redirect('/game?error=notime', 302)
 	Game.game_rego = datetime.datetime.strptime(r_t,'%Y-%m-%d %H:%M:%S')
-	redirect('/game', 302)
+	redirect('/game', 303)
 @route('/hrsbc',method='POST')
 @allow_auth
 @require_auth
@@ -303,7 +303,7 @@ def do_hrsbc():
 	if not hours:
 		redirect('/game?error=notime', 302)
 	Game.hours_between_checkins = int(hours)
-	redirect('/game', 302)
+	redirect('/game', 303)
 @route('/itemail',method='POST')
 @allow_auth
 @require_auth
@@ -313,7 +313,7 @@ def do_hrsbc():
 	if not email:
 		redirect('/game?error=noemail', 302)
 	Game.it_email = email
-	redirect('/game', 302)
+	redirect('/game', 303)
 
 @route('/login',method='GET')
 @view('login')
@@ -357,7 +357,7 @@ def do_logout():
 @lang
 def view_eula():
 	if request.user.liability and request.user.safety:
-		redirect('/', 302)
+		redirect('/', 303)
 	i18n_o = i18n.override_title('eula',i18n.i18n['e']['pages']['eula']['title'],i18n.i18n['f']['pages']['eula']['title'])
 	for i in ('e','f'):
 		i18n_o[i]['pages']['register']['agree'] = i18n.i18n[i]['pages']['eula']['agree']
@@ -375,7 +375,7 @@ def do_eula():
 		if i not in request.params:
 			redirect('/eula?error='+i, 302)
 		setattr(request.user, i, True)
-	redirect('/', 302)
+	redirect('/', 303)
 def reg_cond():
 	if request.admin or request.station:
 		return True
@@ -397,14 +397,14 @@ def do_registration():
 	p = request.params
 	for i in ['username', 'name', 'password', 'password_confirm', 'language', 'student_num', 'email']:
 		if not p[i]:
-			redirect('/register?error=missinginfo', 302)
+			redirect('/register?error=missinginfo', 303)
 	if '/' in p['username']:
-		redirect('/register?error=noslash', 302)
+		redirect('/register?error=noslash', 303)
 	for i in ('liability', 'safety'):
 #		if i+'_read' not in request.COOKIES or request.COOKIES[i+'_read'] != 'true':
-#			redirect('/register?error='+i+'_read', 302)
+#			redirect('/register?error='+i+'_read', 303)
 		if i not in request.params:
-			redirect('/register?error='+i+'_err', 302)
+			redirect('/register?error='+i+'_err', 303)
 	name = p['name']
 	username = p['username']
 	password = p['password']
@@ -416,7 +416,7 @@ def do_registration():
 	user = (User.from_username(username) or User.from_student_num(studentn) or User.from_email(email) or
 		   User.from_twitter(twitter) or User.from_cell(cell))
 	if user:
-		redirect('/register?error=userexists', 302)
+		redirect('/register?error=userexists', 303)
 	u = None
 	try:
 		u = Player(name=name,username=username,hashed_pass=password,language=language,student_num=studentn,
@@ -427,7 +427,7 @@ def do_registration():
 		sess = get_session()
 		sess.user = u
 		set_cookie(sess)
-	redirect('/thanks',302)
+	redirect('/thanks',303)
 
 # end of non-auth pages
 @route('/thanks')
@@ -560,7 +560,7 @@ def do_user_edit(name):
 				setattr(user,prop,None)
 	if p['password']:
 		user.hashed_pass = p['password']
-	redirect('/user/' + name, 302)
+	redirect('/user/' + name, 303)
 @route('/user/:name/zero',method='POST')
 @allow_auth
 @require_auth
@@ -574,7 +574,7 @@ def do_user_zero(name):
 		zombie._SO_set_state(Player.state_human)
 	user._SO_set_state(Player.state_zombie)
 	user.zero = True
-	redirect(request.environ.get('HTTP_REFERER','/'), 302)
+	redirect(request.environ.get('HTTP_REFERER','/'), 303)
 @route('/user/:name/activate',method='POST')
 @allow_auth
 @require_auth
@@ -583,14 +583,14 @@ def do_user_activate(name):
 	# 'liability', 'safety', 'kitted'
 	u = User.get_user(name)
 	if not u:
-		redirect('/station?section=activate&err=noplayer', 302)
+		redirect('/station?section=activate&err=noplayer', 303)
 	for i in ('liability', 'safety', 'signedin'):
 		setattr(u, i, getattr(u, i) or 'kitted' in request.params)
 	u.signedin_time = datetime.datetime.now()
 	Checkin(location=request.user.location,player=u)
 	if request.logged_in and request.admin:
-		redirect(request.environ['HTTP_REFERER'], 302)
-	redirect('/station', 302)
+		redirect(request.environ['HTTP_REFERER'], 303)
+	redirect('/station', 303)
 @route('/user/:name/tags',method='POST')
 @allow_auth
 @require_auth
@@ -638,7 +638,7 @@ def add_user_checkin(name):
 		redirect('/user/%s/checkins?error=badtime' % user.username, 302)
 	location = request.params['location']
 	Checkin(time=time,location=location,player=user)
-	redirect('/user/%s/checkins' % name, 302)
+	redirect('/user/%s/checkins' % name, 303)
 @route('/user/:name/checkins/delete',method='POST')
 @allow_auth
 @require_auth
@@ -650,7 +650,7 @@ def del_user_checkins(name):
 	# checkins are like checkin_[id]
 	ids = [int(x[x.find('_')+1:]) for x in request.params if 'checkin_' in x]
 	_ = [Checkin.select(Checkin.q.id == x)[0].destroySelf() for x in ids]
-	redirect('/user/%s/checkins' % user.username, 302)
+	redirect('/user/%s/checkins' % user.username, 303)
 @route('/password_reset',method='GET')
 @view('pass_reset')
 @allow_auth
@@ -676,7 +676,7 @@ def do_pass_reset():
 	if user.student_num != int(request.params['student_num']):
 		redirect('/password_reset?error=wronginfo', code=302)
 	user.hashed_pass = str(user.student_num)
-	redirect('/password_reset?success=true', 302)
+	redirect('/password_reset?success=true', 303)
 @route('/tag',method='GET')
 @view('tag')
 @allow_auth
@@ -920,7 +920,7 @@ def do_edit_post(pid):
 	p['time'] = datetime.datetime.now()
 	for i in p:
 		setattr(post, i, p[i])
-	redirect('/post/view/' + str(pid), 302)
+	redirect('/post/view/' + str(pid), 303)
 @route('/post/delete/:pid')
 @allow_auth
 @require_auth
@@ -931,7 +931,7 @@ def delete_post(pid):
 	except IndexError, e:
 		return
 	p.delete()
-	redirect('/', 302)
+	redirect('/', 303)
 
 @route('/twitter', method='POST')
 @allow_auth
@@ -959,25 +959,25 @@ def view_stationops():
 @require_role(Admin,Station)
 def do_station_checkin():
 	if 'user_id' not in request.params:
-		redirect('/station?section=checkin&err=nouid', 302)
+		redirect('/station?section=checkin&err=nouid', 303)
 	try:
 		do_checkin(request.params['user_id'], request.user)
 	except CheckInException, e:
 		if e.message == ops.EXC_NOTHUMAN:
-			redirect('/station?section=checkin&err=nothuman', 302)
+			redirect('/station?section=checkin&err=nothuman', 303)
 		elif e.message == ops.EXC_KITHUMAN:
-			redirect('/station?section=checkin&err=kithuman', 302)
+			redirect('/station?section=checkin&err=kithuman', 303)
 		elif e.message == ops.CHECKIN_TOOSOON:
-			redirect('/station?section=checkin&err=toosoon', 302)
+			redirect('/station?section=checkin&err=toosoon', 303)
 		elif e.message == ops.EXC_NOTSTATION:
-			redirect('/station?section=checkin&err=wtf', 302)
+			redirect('/station?section=checkin&err=wtf', 303)
 		elif e.message == ops.EXC_NOSUCHHUMAN:
-			redirect('/station?section=checkin&err=nohuman', 302)
+			redirect('/station?section=checkin&err=nohuman', 303)
 		else:
-			redirect('/station?section=checkin&err=unknown', 302)
+			redirect('/station?section=checkin&err=unknown', 303)
 	except:
-		redirect('/station?section=checkin&err=unknown', 302)
-	redirect('/station', code=302)
+		redirect('/station?section=checkin&err=unknown', 303)
+	redirect('/station', code=303)
 
 @route('/station/activate', method='POST')
 @allow_auth
@@ -985,80 +985,80 @@ def do_station_checkin():
 @require_role(Admin,Station)
 def do_station_activate():
 	if 'user_id' not in request.params:
-		redirect('/station?section=activate&err=nuid', 302)
+		redirect('/station?section=activate&err=nuid', 303)
 	try:
 		i = int(request.params['user_id'])
 	except:
-		redirect('/station?section=activate&err=nuid', 302)
+		redirect('/station?section=activate&err=nuid', 303)
 	user = User.from_student_num(int(request.params['user_id']))
 	if not user:
-		redirect('/station?section=activate&err=noplayer', 302)
+		redirect('/station?section=activate&err=noplayer', 303)
 	if user.signedin:
-		redirect('/station?section=activate&err=activated', 302)
-	redirect('/user/' + user.username, 302)
+		redirect('/station?section=activate&err=activated', 303)
+	redirect('/user/' + user.username, 303)
 @route('/station/cure', method='POST')
 @allow_auth
 @require_auth
 @require_role(Admin,Station)
 def do_station_cure():
 	if 'user_id' not in request.params:
-		redirect('/station?section=cure&err=nouid', 302)
+		redirect('/station?section=cure&err=nouid', 303)
 	if 'cure_id' not in request.params:
-		redirect('/station?section=cure&err=nocid', 302)
+		redirect('/station?section=cure&err=nocid', 303)
 	try:
 		do_cure(request.params['user_id'], request.user, request.params['cure_id'])
 	except CureException, e:
 		if e.message == ops.EXC_NOTZOMBIE:
-			redirect('/station?section=cure&err=notzombie', 302)
+			redirect('/station?section=cure&err=notzombie', 303)
 		elif e.message == ops.EXC_KITZOMBIE:
-			redirect('/station?section=cure&err=kitzombie', 302)
+			redirect('/station?section=cure&err=kitzombie', 303)
 		elif e.message == ops.EXC_NOTSTATION:
-			redirect('/station?section=cure&err=wtf', 302)
+			redirect('/station?section=cure&err=wtf', 303)
 		elif e.message == ops.CURE_DISQUALIFIED:
-			redirect('/station?section=cure&err=disq', 302)
+			redirect('/station?section=cure&err=disq', 303)
 		elif e.message == ops.CURE_ALREADYUSED:
-			redirect('/station?section=cure&err=used', 302)
+			redirect('/station?section=cure&err=used', 303)
 		elif e.message == ops.CURE_EXPIRED:
-			redirect('/station?section=cure&err=exp', 302)
+			redirect('/station?section=cure&err=exp', 303)
 		elif e.message == ops.EXC_NOSUCHZOMBIE:
-			redirect('/station?section=checkin&err=nozombie', 302)
+			redirect('/station?section=checkin&err=nozombie', 303)
 		else:
-			redirect('/station?section=cure&err=unknown', 302)
+			redirect('/station?section=cure&err=unknown', 303)
 	except:
-		redirect('/station?section=cure&err=unknown', 302)
-	redirect('/station', code=302)
+		redirect('/station?section=cure&err=unknown', 303)
+	redirect('/station', code=303)
 @route('/station/tag', method='POST')
 @allow_auth
 @require_auth
 @require_role(Admin,Station)
 def do_station_tag():
 	if 'tagger_id' not in request.params:
-		redirect('/station?section=kill&err=notzombie', 302)
+		redirect('/station?section=kill&err=notzombie', 303)
 	if 'taggee_id' not in request.params:
-		redirect('/station?section=kill&err=nothuman', 302)
+		redirect('/station?section=kill&err=nothuman', 303)
 	if not Game.is_started:
-		redirect('/station?error=game', 302)
+		redirect('/station?error=game', 303)
 	try:
 		uid = request.user.username + '_' + ''.join(random.sample(string.ascii_letters+string.digits, 36))
 		add_kill(request.params['tagger_id'],request.params['taggee_id'].upper(), uid)
 	except TagException, e:
 		if e.message == ops.EXC_NOTHUMAN:
-			redirect('/station?section=kill&err=nothuman', 302)
+			redirect('/station?section=kill&err=nothuman', 303)
 		elif e.message == ops.EXC_NOTZOMBIE:
-			redirect('/station?section=kill&err=notzombie', 302)
+			redirect('/station?section=kill&err=notzombie', 303)
 		elif e.message == ops.EXC_KITHUMAN:
-			redirect('/station?section=kill&err=kithuman', 302)
+			redirect('/station?section=kill&err=kithuman', 303)
 		elif e.message == ops.EXC_KITZOMBIE:
-			redirect('/station?section=kill&err=kitzombie', 302)
+			redirect('/station?section=kill&err=kitzombie', 303)
 		elif e.message == ops.EXC_NOSUCHHUMAN:
-			redirect('/station?section=kill&err=nohuman', 302)
+			redirect('/station?section=kill&err=nohuman', 303)
 		elif e.message == ops.EXC_NOSUCHZOMBIE:
-			redirect('/station?section=kill&err=nozombie', 302)
+			redirect('/station?section=kill&err=nozombie', 303)
 		elif e.message == ops.EXC_CHEATER:
-			redirect('/station?section=kill&err=duplicate', 302)
+			redirect('/station?section=kill&err=duplicate', 303)
 		else:
-			redirect('/station?section=kill&err=unknown', 302)
-	redirect('/station', code=302)
+			redirect('/station?section=kill&err=unknown', 303)
+	redirect('/station', code=303)
 
 @route('/cures')
 @view('cures')
@@ -1111,21 +1111,21 @@ def do_edit_cure(cid):
 		c.player.cure()
 	c.used = used
 	c.disqualified = disqualified
-	redirect(request.path, 302)
+	redirect(request.path, 303)
 @route('/cures/add', method='POST')
 @allow_auth
 @require_auth
 @require_role(Admin)
 def do_add_cure():
 	Cure()
-	redirect('/cures', 302)
+	redirect('/cures', 303)
 @route('/cures/massdelete', method='POST')
 @allow_auth
 @require_auth
 @require_role(Admin)
 def do_mass_rm_cure():
 	if not request.params.keys():
-		redirect('/cures', 302)
+		redirect('/cures', 303)
 	cure_ids = [int(x.replace('cure_','')) for x in request.params.keys()]
 	cures = [Cure.get_cure(x) for x in cure_ids]
 	cures = [x for x in cures if x]
@@ -1133,7 +1133,7 @@ def do_mass_rm_cure():
 		if cure.used:
 			cure.player.kill()
 		cure.destroySelf()
-	redirect('/cures', 302)
+	redirect('/cures', 303)
 @route('/stats')
 @view('graph')
 @allow_auth
