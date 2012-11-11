@@ -201,7 +201,7 @@ i18n = {
 			'cell': 'cell',
 			'student_num': 'student number'
 		},
-		'useredit': {
+		'user_edit': {
 			'title': '',
 			'editing': 'Modifier',
 			'oldpass': 'Ancien mot de passe',
@@ -257,7 +257,7 @@ i18n = {
 		'editcure': {
 			'title': 'Modifier remède',
 		},
-		'user': {
+		'user_view': {
 			'title': '',
 			'none': 'Aucun',
 			'stats': 'Statistiques',

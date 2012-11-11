@@ -55,7 +55,7 @@ i18n = {
 			'title': 'Login',
 			'nouser': 'No such user or incorrect password'
 		},
-		'stats': {
+		'graph': {
 			'title': 'Statistics',
 			'zombiecount24': 'Zombie Count (24 hours)',
 			'zombiecountw': 'Zombie Count (Week)',
@@ -192,7 +192,7 @@ i18n = {
 				'exp': 'Cure card expired'
 			}
 		},
-		'userlist': {
+		'users': {
 			'title': 'Users',
 			'table': {
 				'id': 'ID',
@@ -211,7 +211,7 @@ i18n = {
 			'cell': 'cell',
 			'student_num': 'student number'
 		},
-		'useredit': {
+		'user_edit': {
 			'title': '',
 			'editing': 'Editing',
 			'oldpass': 'Old Password',
@@ -237,7 +237,7 @@ i18n = {
 			'addcure': 'Add Cure',
 			'deletecures': 'Delete Cures'
 		},
-		'editcure': {
+		'cure_edit': {
 			'title': 'Edit Cure',
 		},
 		'tags': {
@@ -275,7 +275,7 @@ i18n = {
 		'email': {
 			'title': 'Mass Email'
 		},
-		'user': {
+		'user_view': {
 			'title': '',
 			'none': 'None',
 			'stats': 'Statistics',

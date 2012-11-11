@@ -116,7 +116,7 @@
 						</label>
 					</div>
 					<div>
-						<input type="submit" value="{{i18n[lang]['pages']['user']['edit']}}" />
+						<input type="submit" value="{{i18n[lang]['pages']['user_view']['edit']}}" />
 					</div>
 				</form>
 				<br/>
