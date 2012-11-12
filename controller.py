@@ -415,6 +415,9 @@ def view_registration():
 @require_cond(reg_cond)
 def do_registration():
 	p = request.params
+	data = dict([(x, request.params[x]) for x in request.params.keys()])
+	del data['password_confirm']
+	request.session.data = simplejson.dumps(data)
 	for i in ['username', 'name', 'password', 'password_confirm', 'language', 'student_num', 'email']:
 		if not p[i]:
 			redirect('/register?error=missinginfo', 303)
@@ -432,7 +435,7 @@ def do_registration():
 	studentn = int(p['student_num'])
 	email = p['email']
 	twitter = None if not p['twitter'] else p['twitter'].replace('@','')
-	cell = None if not p['cell'] else p['cell']
+	cell = p.get('cell', None)
 	user = (User.from_username(username) or User.from_student_num(studentn) or User.from_email(email) or
 		   User.from_twitter(twitter) or User.from_cell(cell))
 	if user:
@@ -1147,16 +1150,19 @@ def view_shotgun_email():
 def do_shotgun_email():
 	s = smtplib.SMTP_SSL('localhost',465)
 	s.login('hvsi@hvsi.ca','HvsI_email_sender')
-	request.session.data = simplejson.dumps(request.params)
-	if 'msg' not in request.params:
+	request.session.data = simplejson.dumps(dict([(x, request.params[x]) for x in request.params.keys()]))
+	msg = request.params.get('msg', None)
+	subject = request.params.get('subject', None)
+	from_ = request.params.get('from', None)
+	if msg == '' or msg is None:
 		seterr('/email', 'nomsg')
-	msg = MIMEText(request.params['msg'])
-	if 'subject' not in request.params:
+	msg = MIMEText(msg)
+	if subject == '' or subject is None:
 		seterr('/email', 'nosubj')
-	msg['Subject'] = request.params['subject']
-	if 'from' not in request.params:
+	msg['Subject'] = subject
+	if from_ == '' or from_ is None:
 		seterr('/email', 'nofrom')
-	msg['From'] = request.params['from']
+	msg['From'] = from_
 	if request.params['target'] == 'humans':
 		to = [x.email for x in Player.humans]
 	elif request.params['target'] == 'zombies':

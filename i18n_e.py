@@ -273,7 +273,9 @@ i18n = {
 			}
 		},
 		'email': {
-			'title': 'Mass Email'
+			'title': 'Mass Email',
+			'nomsg': 'No body for email',
+			'nosubj': 'No subject given'
 		},
 		'user_view': {
 			'title': '',

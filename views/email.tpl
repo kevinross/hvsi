@@ -1,7 +1,4 @@
-%if 'i18n' not in globals():
-	%from i18n import i18n
-%end
-%import calendar
+%from imports import *
 %cinclude parts part=1
 <head>
 %	cinclude head
@@ -21,7 +18,7 @@
 						</label>
 					</div>
 					<div>
-						<input type="textbox" name="from" value="{{data.get('from')}}"/>
+						<input type="textbox" name="from" value="{{data.get('from','')}}"/>
 					</div>
 					<div>
 						<label for="target">
@@ -31,7 +28,7 @@
 					<div>
 						<select name="target">
 %						  for i in ['humans','zombies','actives','inactives','all']:
-							<option value="{{i}}" {{"selected" if data.get('target','') == i}}>{{i.capitalize()}}</option>
+							<option value="{{i}}" {{"selected" if data.get('target','') == i else ''}}>{{i.capitalize()}}</option>
 %						  end
 						</select>
 					</div>
@@ -41,7 +38,7 @@
 						</label>
 					</div>
 					<div>
-						<input type="textbox" name="subject" value="{{data.get('subject')}}">
+						<input type="textbox" name="subject" value="{{data.get('subject','')}}">
 					</div>
 					<div>
 						<label for="msg">
@@ -49,7 +46,7 @@
 						</label>
 					</div>
 					<div>
-						<textarea rows="20" cols="70" name="msg">{{data.get('msg')}}</textarea>
+						<textarea rows="20" cols="70" name="msg">{{data.get('msg','')}}</textarea>
 					</div>
 					<div>
 						<label for="submit">
