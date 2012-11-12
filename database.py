@@ -48,18 +48,34 @@ class Game(SQLObject):
 		def __init__(self, index):
 			self.i = index
 		def __get__(self, obj, objtype):
-			return Game.select(Game.q.id == self.i)[0].started
+			try:
+				return Game.select(Game.q.id == self.i)[0].started
+			except:
+				return Game(id=self.i).started
 		def __set__(self, obj, value):
-			Game.select(Game.q.id == self.i)[0].started = value
-			Game.select(Game.q.id == self.i)[0].time = datetime.datetime.now()
+			try:
+				Game.select(Game.q.id == self.i)[0].started = value
+				Game.select(Game.q.id == self.i)[0].time = datetime.datetime.now()
+			except:
+				g = Game(id=self.i)
+				g.started = value
+				g.time = datetime.datetime.now()
 	class value_class(object):
 		def __init__(self, attr, index):
 			self.i = index
 			self.attr = attr
 		def __get__(self, obj, objtype):
-			return getattr(Game.select(Game.q.id == self.i)[0], self.attr)
+			try:
+				return getattr(Game.select(Game.q.id == self.i)[0], self.attr)
+			except:
+				g = Game(id=self.i)
+				return getattr(g, self.attr)
 		def __set__(self, obj, value):
-			setattr(Game.select(Game.q.id == self.i)[0], self.attr, value)
+			try:
+				setattr(Game.select(Game.q.id == self.i)[0], self.attr, value)
+			except:
+				g = Game(id=self.i)
+				setattr(g, self.attr, value)
 	is_started = started_class(1)
 	is_reg	   = started_class(2)
 	game_start = value_class('time',3)
