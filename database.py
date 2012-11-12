@@ -2,8 +2,9 @@ from sqlobject import *
 from sqlobject.mysql import builder
 from sqlobject.inheritance import *
 import bcrypt, datetime, time, markdown, os, urllib, uuid, hashlib
-__all__ = ['Game','User','Player','Station','Admin','Tag','Checkin','Cure','Post','Comment','Snapshot','Score','Session', 'Twitter']
+__all__ = ['Game','User','Player','Bounty','Station','Admin','Tag','Checkin','Cure','Post','Comment','Snapshot','Score','Session']
 NAMESPACE = 'hvsi'
+proto = 'mysql'
 host = 'localhost'
 db = 'uottawae_hvsi'
 user = 'uottawae_hvsi'
@@ -17,7 +18,7 @@ if 'RDS_HOSTNAME' in os.environ:
 	db = os.environ['RDS_DB_NAME']
 	user = os.environ['RDS_USERNAME']
 	passw = os.environ['RDS_PASSWORD']
-sqlhub.processConnection = connectionForURI('mysql://%s:%s@%s/%s' % (user, passw, host, db))
+sqlhub.processConnection = connectionForURI('%s://%s:%s@%s/%s' % (proto, user, passw, host, db))
 def norm_cell(val):
 	# strip everything out leaving just the numbers.
 	# prefix with a 1 if not already done
@@ -565,16 +566,7 @@ class Score(SQLObject):
 	class latest_class(object):
 		def __get__(self, obj, objtype):
 			return Score.select(Score.q.player != Player.get_player('military.militaire'),orderBy=DESC(Score.q.kills))
-	top = latest_class()	
-class Twitter(SQLObject):
-	class sqlmeta:
-		registry = NAMESPACE
-	time = DateTimeCol(default=datetime.datetime.now)
-	query = StringCol()
-	content = StringCol(default=None)
-	def _set_content(self, new_content):
-		self.time = datetime.datetime.now()
-		self._SO_set_content(new_content)
+	top = latest_class()
 	
 def set_class_enum(klass, var, array):
 	for i in array:
@@ -597,5 +589,4 @@ def createTables():
 	Snapshot.createTable(ifNotExists=True)
 	Score.createTable(ifNotExists=True)
 	Session.createTable(ifNotExists=True)
-	Twitter.createTable(ifNotExists=True)
 createTables()
