@@ -1,5 +1,5 @@
 from bottle import view, route, run, request, response, redirect, static_file as send_file, template
-import bottle, os, urllib, error_page, ops, i18n, datetime, random, string
+import bottle, os, urllib, error_page, ops, i18n, datetime, random, string, simplejson
 from database import *
 from ops import *
 from sqlobject import *
