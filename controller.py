@@ -420,14 +420,14 @@ def do_registration():
 	request.session.data = simplejson.dumps(data)
 	for i in ['username', 'name', 'password', 'password_confirm', 'language', 'student_num', 'email']:
 		if not p[i]:
-			redirect('/register?error=missinginfo', 303)
+			seterr('/register','missinginfo')
 	if '/' in p['username']:
-		redirect('/register?error=noslash', 303)
+		seterr('/register','noslash')
 	for i in ('liability', 'safety'):
 #		if i+'_read' not in request.COOKIES or request.COOKIES[i+'_read'] != 'true':
 #			redirect('/register?error='+i+'_read', 303)
 		if i not in request.params:
-			redirect('/register?error='+i+'_err', 303)
+			seterr('/register',i+'_err')
 	name = p['name']
 	username = p['username']
 	password = p['password']
@@ -439,7 +439,7 @@ def do_registration():
 	user = (User.from_username(username) or User.from_student_num(studentn) or User.from_email(email) or
 		   User.from_twitter(twitter) or User.from_cell(cell))
 	if user:
-		redirect('/register?error=userexists', 303)
+		seterr('/register','userexists')
 	u = None
 	try:
 		u = Player(name=name,username=username,hashed_pass=password,language=language,student_num=studentn,
