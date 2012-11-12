@@ -2,7 +2,7 @@ from sqlobject import *
 from sqlobject.mysql import builder
 from sqlobject.inheritance import *
 import bcrypt, datetime, time, markdown, os, urllib, uuid, hashlib
-__all__ = ['Game','User','Player','Bounty','Station','Admin','Tag','Checkin','Cure','Post','Comment','Snapshot','Score','Session']
+__all__ = ['Game','Account','Player','Bounty','Station','Admin','Tag','Checkin','Cure','Post','Comment','Snapshot','Score','Session']
 NAMESPACE = 'hvsi'
 proto = 'mysql'
 host = 'localhost'
@@ -18,6 +18,12 @@ if 'RDS_HOSTNAME' in os.environ:
 	db = os.environ['RDS_DB_NAME']
 	user = os.environ['RDS_USERNAME']
 	passw = os.environ['RDS_PASSWORD']
+if 'stickshift' in os.getcwd():
+    proto = 'postgres'
+    host = 'ec2-54-243-181-33.compute-1.amazonaws.com'
+    db = 'd3m50vge7klt3i'
+    user = 'uhmmztavfuystp'
+    passw = 'al1dNyhYTANac3WDpfaztS4oze'
 sqlhub.processConnection = connectionForURI('%s://%s:%s@%s/%s' % (proto, user, passw, host, db))
 def norm_cell(val):
 	# strip everything out leaving just the numbers.
@@ -111,7 +117,7 @@ class Session(InheritableSQLObject):
 	expires		 = DateTimeCol(notNone=True,default=lambda:datetime.datetime.now()+datetime.timedelta(0,DEFAULT_LIFETIME))
 	ttl			 = IntCol(default=DEFAULT_LIFETIME)
 	language	 = EnumCol(enumValues=['e','f'],default='e')
-	user		 = ForeignKey('User',default=None)
+	user		 = ForeignKey('Account',default=None)
 	error		 = StringCol(default=None)
 	data		 = StringCol(default=None)
 	
@@ -133,7 +139,7 @@ class Session(InheritableSQLObject):
 	def session(user):
 		u = user
 		if isinstance(u, basestring):
-			u = User.get_user(u)
+			u = Account.get_user(u)
 		if not u:
 			return None
 		if Session.select(Session.q.user == u).count() == 0:
@@ -142,7 +148,7 @@ class Session(InheritableSQLObject):
 			s = Session.grab(u, 'user')
 		return s
 	
-class User(InheritableSQLObject):
+class Account(InheritableSQLObject):
 	class sqlmeta:
 		registry = NAMESPACE
 	name		 = StringCol(length=50,varchar=True,notNone=True)
@@ -171,19 +177,19 @@ class User(InheritableSQLObject):
 	@staticmethod
 	def from_id(num):
 		try:
-			return User.select(User.q.id == num)[0]
+			return Account.select(Account.q.id == num)[0]
 		except:
 			return None
 	@staticmethod
 	def from_student_num(num):
 		try:
-			return User.select(User.q.student_num == num)[0]
+			return Account.select(Account.q.student_num == num)[0]
 		except:
 			return None
 	@staticmethod
 	def from_username(uname):
 		try:
-			return User.select(User.q.username == uname)[0]
+			return Account.select(Account.q.username == uname)[0]
 		except:
 			return None
 	@staticmethod
@@ -191,13 +197,13 @@ class User(InheritableSQLObject):
 		if not twit:
 			return None
 		try:
-			return User.select(User.q.twitter == twit)[0]
+			return Account.select(Account.q.twitter == twit)[0]
 		except:
 			return None
 	@staticmethod
 	def from_email(email):
 		try:
-			return User.select(User.q.email == email)[0]
+			return Account.select(Account.q.email == email)[0]
 		except:
 			return None
 	@staticmethod
@@ -208,24 +214,24 @@ class User(InheritableSQLObject):
 		if not cell:
 			return None
 		try:
-			return User.select(User.q.cell == cell)[0]
+			return Account.select(Account.q.cell == cell)[0]
 		except:
 			return None
 	@staticmethod
 	def get_user(v):
-		if isinstance(v, User):
+		if isinstance(v, Account):
 			return v
 		elif isinstance(v, str):
-			return User.from_username(v) or User.from_twitter(v) or User.from_email(v) or User.from_cell(v)
+			return Account.from_username(v) or Account.from_twitter(v) or Account.from_email(v) or Account.from_cell(v)
 		elif isinstance(v, int):
 			# num is large: 12345.  Probably a student number
 			if v > 10000:
-				return User.from_student_num(v)
+				return Account.from_student_num(v)
 			else:
-				return User.from_id(v)
+				return Account.from_id(v)
 locations = ['cby','ucu','cafealt','manual','twitter','email','internet','admin','unset']
 states = ['human','zombie','inactive','banned']
-class Player(User):
+class Player(Account):
 	class sqlmeta:
 		registry = NAMESPACE
 	state			 = EnumCol(enumValues=states,default='human',notNone=True)
@@ -366,7 +372,7 @@ class Bounty(Player):
 		registry = NAMESPACE
 	def _set_state(self, val):
 		self._SO_set_state(val)
-class Station(User):
+class Station(Account):
 	class sqlmeta:
 		registry = NAMESPACE
 	location		 = EnumCol(enumValues=locations,default='unset',notNone=True)
@@ -374,7 +380,7 @@ class Station(User):
 		d = super(Station, self).to_dict()
 		d['location'] = self.location
 		return d
-class Admin(User):
+class Admin(Account):
 	class sqlmeta:
 		registry = NAMESPACE
 	def _get_location(self):
@@ -499,7 +505,7 @@ class Comment(SQLObject):
 		registry = NAMESPACE
 	time		= DateTimeCol(default=datetime.datetime.now,notNone=True)
 	content		= StringCol()
-	user		= ForeignKey('User',notNone=True)
+	user		= ForeignKey('Account',notNone=True)
 	post		= ForeignKey('Post',notNone=True)
 	def _get_html(self):
 		return markdown.markdown(self.content, safe_mode="remove")
@@ -577,7 +583,7 @@ set_class_enum(Station,'location',locations)
 set_class_enum(Checkin,'location',locations)
 def createTables():
 	Game.createTable(ifNotExists=True)
-	User.createTable(ifNotExists=True)
+	Account.createTable(ifNotExists=True)
 	Admin.createTable(ifNotExists=True)
 	Station.createTable(ifNotExists=True)
 	Player.createTable(ifNotExists=True)
