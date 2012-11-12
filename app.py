@@ -1,3 +1,6 @@
 from controller import *
-from bottle import run
-run(port=9055)
+from bottle import run, default_app
+from werkzeug.debug import DebuggedApplication
+default_app().catchall = False
+app = DebuggedApplication(default_app(), evalex=True)
+run(app, port=9055)
