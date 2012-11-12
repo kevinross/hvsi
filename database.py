@@ -69,6 +69,9 @@ class Game(SQLObject):
 	hours_between_checkins = value_class('number',7)
 	is_countdown  = started_class(8)
 	countdown_time = value_class('time',9)
+	email_host = value_class('string',10)
+	email_user = value_class('string',11)
+	email_pass = value_class('string',12)
 	@staticmethod
 	def toggle_game():
 		Game.select(Game.q.id == 1)[0].started = not Game.select(Game.q.id == 1)[0].started

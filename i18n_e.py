@@ -275,7 +275,10 @@ i18n = {
 		'email': {
 			'title': 'Mass Email',
 			'nomsg': 'No body for email',
-			'nosubj': 'No subject given'
+			'nosubj': 'No subject given',
+			'nocon': 'Unable to connect to SMTP server',
+			'badlogin': 'Unable to login to SMTP server',
+			'nosend': 'Unable to send email, try again'
 		},
 		'user_view': {
 			'title': '',

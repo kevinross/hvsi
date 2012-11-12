@@ -1148,8 +1148,6 @@ def view_shotgun_email():
 @require_auth
 @require_role(Admin)
 def do_shotgun_email():
-	s = smtplib.SMTP_SSL('localhost',465)
-	s.login('hvsi@hvsi.ca','HvsI_email_sender')
 	request.session.data = simplejson.dumps(dict([(x, request.params[x]) for x in request.params.keys()]))
 	msg = request.params.get('msg', None)
 	subject = request.params.get('subject', None)
@@ -1173,7 +1171,19 @@ def do_shotgun_email():
 		to = [x.email for x in Player.select(Player.q.signedin == False).filter(Player.q.username != 'military.militaire')]
 	elif request.params['target'] == 'all':
 		to = [x.email for x in Player.select(Player.q.username != 'military.militaire')]
-	s.sendmail(msg['From'], ['president@hvsi.ca'] + to, msg.as_string())
+	s = None
+	try:
+		s = smtplib.SMTP_SSL(Game.email_host,465)
+	except:
+		seterr('/email', 'nocon')
+	try:
+		s.login(Game.email_user,Game.email_pass)
+	except:
+		seterr('/email', 'badlogin')
+	try:
+		s.sendmail(msg['From'], ['president@hvsi.ca'] + to, msg.as_string())
+	except:
+		seterr('/email', 'nosend')
 	redirect('/', 303)
 # catch all perm-redirect
 @route('/:page#.+#/')
