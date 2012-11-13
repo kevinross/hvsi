@@ -1,6 +1,7 @@
 FormEncode
 Markdown
 Paste
+mysql-python
 SQLObject
 py-bcrypt
 simplejson

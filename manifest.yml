@@ -1,0 +1,17 @@
+--- 
+applications: 
+  .: 
+    infra: aws
+    name: hvsi_devel
+    mem: "128"
+    instances: 2
+    framework: 
+      name: wsgi
+      info: 
+        mem: 128M
+        description: Python WSGI Application
+        exec: 
+    services: 
+      hvsi_devel: 
+        type: mysql
+    url: ${name}.${target-base}

@@ -601,4 +601,17 @@ def createTables():
 	Snapshot.createTable(ifNotExists=True)
 	Score.createTable(ifNotExists=True)
 	Session.createTable(ifNotExists=True)
+def create_default_data():
+	for i in range(0, 5):
+		try:
+			Post.from_pid(i)
+		except:
+			Post(id=i, title_e="Default Title", title_f="Default French Title",
+				 content_e="Default Content", content_f="Default French Content")
+	if not Account.get_user('admin'):
+		Admin(name='Admin',username='admin',hashed_pass='admin',student_num=0,email='admin@hvsi.ca')
+	if not Account.get_user('military.militaire'):
+		Player(name='Military / Militaire',username='military.militaire',hashed_pass='asiod8ofa9s8df',
+			   student_num=1,email='military@hvsi.ca')
 createTables()
+create_default_data()
