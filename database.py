@@ -247,10 +247,10 @@ class Player(Account):
 	checkins		 = SQLMultipleJoin('Checkin',joinColumn='player_id',orderBy='time')
 	cures			 = SQLMultipleJoin('Cure',joinColumn='player_id',orderBy='time')
 	signedin		 = BoolCol(default=False,notNone=True)
-	signedin_time		 = DateTimeCol(default=None)
-	liability		 = BoolCol(default=False)
-	safety			 = BoolCol(default=False)
-	zero			 = BoolCol(default=False)
+	signedin_time	 = DateTimeCol(default=None)
+	liability		 = BoolCol(default=False,notNone=True)
+	safety			 = BoolCol(default=False,notNone=True)
+	zero			 = BoolCol(default=False,notNone=True)
 	def to_dict(self):
 		d = super(Player, self).to_dict()
 		d.update(dict(
@@ -264,6 +264,10 @@ class Player(Account):
 					signedin_time=self.signedin_time.isoformat()))
 		return d
 	def _set_zero(self, zero):
+		# subtle bug here.  If creating the first Player in the db, the class won't have an ID column yet
+		# so if there aren't any players yet, just set zero and return
+		if sqlhub.processConnection.queryOne('SELECT COUNT(*) FROM player')[0] == 0:
+			return
 		for i in Player.select(Player.q.id != self.id):
 			i._SO_set_state('human')
 			i._SO_set_zero(False)
@@ -602,16 +606,19 @@ def createTables():
 	Score.createTable(ifNotExists=True)
 	Session.createTable(ifNotExists=True)
 def create_default_data():
-	for i in range(0, 5):
+	for i in range(1, 6):
 		try:
 			Post.from_pid(i)
 		except:
-			Post(id=i, title_e="Default Title", title_f="Default French Title",
-				 content_e="Default Content", content_f="Default French Content")
+			try:
+				Post(id=i, title_e="Default Title", title_f="Default French Title",
+					 content_e="Default Content", content_f="Default French Content")
+			except:
+				pass
 	if not Account.get_user('admin'):
-		Admin(name='Admin',username='admin',hashed_pass='admin',student_num=0,email='admin@hvsi.ca')
+		a = Admin(name='Admin',username='admin',hashed_pass='admin',student_num=0,email='admin@hvsi.ca')
 	if not Account.get_user('military.militaire'):
-		Player(name='Military / Militaire',username='military.militaire',hashed_pass='asiod8ofa9s8df',
+		p = Player(name='Military / Militaire',username='military.militaire',hashed_pass='asiod8ofa9s8df',
 			   student_num=1,email='military@hvsi.ca')
 createTables()
 create_default_data()
