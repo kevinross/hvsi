@@ -179,12 +179,16 @@ def logged_in():
 ###################################################################################################################################
 ###################################################################################################################################
 css_root = os.path.join(static_root, 'css')
+css_image_root = os.path.join(static_root, 'images')
 img_root = os.path.join(static_root, 'img')
 js_root  = os.path.join(static_root, 'js')
 pdf_root =os.path.join(static_root, 'pdf')
 @route('/css/:file#.*#')
 def static_css(file):
 	return send_file(file, root=css_root)
+@route('/css/images/:file#.*#')
+def static_css_image(file):
+	return send_file(file, root=css_image_root)
 @route('/img/:file#.*#')
 def static_img(file):
 	return send_file(file, root=img_root)
