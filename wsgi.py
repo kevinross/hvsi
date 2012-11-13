@@ -1,7 +1,6 @@
-import sys, os
-BASE=os.path.dirname(os.path.abspath(__file__))
-sys.path.append(BASE)
-os.chdir(BASE)
-from bottle import route, default_app, send_file
-from controller import *
-application = default_app()
+#from controller import *
+import controller
+from bottle import run, default_app
+from werkzeug.debug import DebuggedApplication
+default_app().catchall = False
+application = DebuggedApplication(default_app(), evalex=True)
