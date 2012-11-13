@@ -50,6 +50,7 @@ def norm_cell(val):
 class Game(SQLObject):
 	class sqlmeta:
 		registry = NAMESPACE
+	max_id		= 12+1
 	started		= BoolCol(default=False)
 	time		= DateTimeCol(default=datetime.datetime.now)
 	string		= StringCol(default=None)
@@ -110,6 +111,7 @@ class Game(SQLObject):
 	@staticmethod
 	def toggle_countdown():
 		Game.select(Game.q.id == 8)[0].started = not Game.select(Game.q.id == 8)[0].started
+GameClass = Game
 try:
 	Game = Game.select()[0]
 except:
@@ -620,5 +622,10 @@ def create_default_data():
 	if not Account.get_user('military.militaire'):
 		p = Player(name='Military / Militaire',username='military.militaire',hashed_pass='asiod8ofa9s8df',
 			   student_num=1,email='military@hvsi.ca')
+	for i in range(1, Game.max_id):
+		try:
+			GameClass(id=i)
+		except dberrors.DuplicateEntryError, e:
+			pass
 createTables()
 create_default_data()
