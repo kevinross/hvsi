@@ -5,3 +5,4 @@ mysql-python
 SQLObject
 py-bcrypt
 simplejson
+werkzeug
