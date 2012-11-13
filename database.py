@@ -19,11 +19,17 @@ if 'RDS_HOSTNAME' in os.environ:
 	user = os.environ['RDS_USERNAME']
 	passw = os.environ['RDS_PASSWORD']
 if 'stickshift' in os.getcwd():
-    proto = 'postgres'
-    host = 'ec2-54-243-181-33.compute-1.amazonaws.com'
-    db = 'd3m50vge7klt3i'
-    user = 'uhmmztavfuystp'
-    passw = 'al1dNyhYTANac3WDpfaztS4oze'
+	proto = 'postgres'
+	host = 'ec2-54-243-181-33.compute-1.amazonaws.com'
+	db = 'd3m50vge7klt3i'
+	user = 'uhmmztavfuystp'
+	passw = 'al1dNyhYTANac3WDpfaztS4oze'
+if 'VCAP_SERVICES' in os.environ:
+	d = simplejson.loads(os.environ['VCAP_SERVICES'])['mysql-5.1'][0]['credentials']
+	host = d['hostname']
+	db = d['name']
+	user = d['username']
+	passw = d['password']
 sqlhub.processConnection = connectionForURI('%s://%s:%s@%s/%s' % (proto, user, passw, host, db))
 def norm_cell(val):
 	# strip everything out leaving just the numbers.
