@@ -1,7 +1,7 @@
 from sqlobject import *
 from sqlobject.mysql import builder
 from sqlobject.inheritance import *
-import bcrypt, datetime, time, markdown, os, urllib, uuid, hashlib
+import bcrypt, datetime, time, markdown, os, urllib, uuid, hashlib, simplejson
 __all__ = ['Game','Account','Player','Bounty','Station','Admin','Tag','Checkin','Cure','Post','Comment','Snapshot','Score','Session']
 NAMESPACE = 'hvsi'
 proto = 'mysql'
