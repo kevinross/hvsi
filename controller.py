@@ -12,7 +12,7 @@ if '_debug' in static_root:
 	bottle.debug(True)
 bottle.ERROR_PAGE_TEMPLATE = error_page.ERROR_PAGE_TEMPLATE
 def valid_creds(user, passw):
-	u = User.from_username(user)
+	u = Account.from_username(user)
 	if not u:
 		return False
 	return u.hashed_pass == passw or u.verify_pass(passw)
@@ -347,7 +347,7 @@ def view_login():
 def do_login():
 	usern = request.params['username']
 	passw = request.params['password']
-	user = User.from_username(usern)
+	user = Account.from_username(usern)
 	if not user:
 		seterr('/login','nouser')
 	if user.verify_pass(passw):
@@ -436,8 +436,8 @@ def do_registration():
 	email = p['email']
 	twitter = None if not p['twitter'] else p['twitter'].replace('@','')
 	cell = p.get('cell', None)
-	user = (User.from_username(username) or User.from_student_num(studentn) or User.from_email(email) or
-		   User.from_twitter(twitter) or User.from_cell(cell))
+	user = (Account.from_username(username) or Account.from_student_num(studentn) or Account.from_email(email) or
+		   Account.from_twitter(twitter) or Account.from_cell(cell))
 	if user:
 		seterr('/register','userexists')
 	u = None
@@ -471,7 +471,7 @@ def view_users():
 	return dict(users=
 					Player.select(
 						Player.q.username != 'military.militaire',
-						orderBy=[Player.q.state,User.q.username]))
+						orderBy=[Player.q.state,Account.q.username]))
 
 @route('/users',method='POST')
 @allow_auth
@@ -533,7 +533,7 @@ def view_user(name):
 		error(code=401)
 	if (not request.admin) and (request.user.username != name) and not request.station:
 		error(code=401)
-	user = User.get_user(name)
+	user = Account.get_user(name)
 	if not user:
 		error(code=404)
 	return dict(vuser=user,i18n=i18n.override_title('user',user.username,user.username))
@@ -547,7 +547,7 @@ def view_user(name):
 def view_user_edit(name):
 	if not request.admin and request.user.username != name:
 		error(code=401)
-	user = User.get_user(name)
+	user = Account.get_user(name)
 	if not user:
 		error(code=404)
 	return dict(vuser=user,
@@ -563,7 +563,7 @@ def do_user_edit(name):
 	if not request.admin and request.user.username != name:
 		error(code=401)
 	p = request.params
-	user = User.get_user(name)
+	user = Account.get_user(name)
 	# whitelist the paras a player may pass in
 	perm_user = ['verify_password','password','confirm_password','language','cell','twitter','email']
 	if request.player:
@@ -592,7 +592,7 @@ def do_user_edit(name):
 @require_auth
 @require_role(Admin)
 def do_user_zero(name):
-	user = User.get_user(name)
+	user = Account.get_user(name)
 	if not user:
 		error(code=404)
 	user.zero = True
@@ -603,7 +603,7 @@ def do_user_zero(name):
 @require_role(Admin,Station)
 def do_user_activate(name):
 	# 'liability', 'safety', 'kitted'
-	u = User.get_user(name)
+	u = Account.get_user(name)
 	if not u:
 		redirect('/station?section=activate&err=noplayer', 303)
 	for i in ('liability', 'safety', 'signedin'):
@@ -618,7 +618,7 @@ def do_user_activate(name):
 @require_auth
 @require_role(Admin)
 def do_user_tags(name):
-	user = User.get_user(name)
+	user = Account.get_user(name)
 	if not user:
 		error(code=404)
 	if 'username' not in request.params:
@@ -632,7 +632,7 @@ def do_user_tags(name):
 @require_auth
 @require_role(Admin)
 def get_user_checkins(name):
-	user = User.get_user(name)
+	user = Account.get_user(name)
 	if not user:
 		error(code=404)
 	return dict(vuser=user,checkins=user.checkins.orderBy(Checkin.q.time))
@@ -641,7 +641,7 @@ def get_user_checkins(name):
 @require_auth
 @require_role(Admin)
 def add_user_checkin(name):
-	user = User.get_user(name)
+	user = Account.get_user(name)
 	if not user:
 		error(code=404)
 	# no location or time
@@ -666,7 +666,7 @@ def add_user_checkin(name):
 @require_auth
 @require_role(Admin)
 def del_user_checkins(name):
-	user = User.get_user(name)
+	user = Account.get_user(name)
 	if not user:
 		error(code=404)
 	# checkins are like checkin_[id]
@@ -691,7 +691,7 @@ def do_pass_reset():
 	for i in ('email', 'student_num'):
 		if i not in request.params:
 			seterr('/password_reset', 'missinginfo')
-	user = User.get_user(request.params['email'])
+	user = Account.get_user(request.params['email'])
 	if not user:
 		seterr('/password_reset', 'wronginfo')
 	if user.student_num != int(request.params['student_num']):
@@ -753,7 +753,7 @@ def view_all_tags():
 @require_auth
 @require_role(Admin)
 def view_tags(tagger):
-	tagger = User.get_user(tagger)
+	tagger = Account.get_user(tagger)
 	if not tagger:
 		error(code=404)
 	return dict(tagger=tagger,
@@ -765,8 +765,8 @@ def view_tags(tagger):
 @require_auth
 @require_role(Admin)
 def view_tags(tagger, taggee):
-	tagger = User.get_user(tagger)
-	taggee = User.get_user(taggee)
+	tagger = Account.get_user(tagger)
+	taggee = Account.get_user(taggee)
 	if not tagger or not taggee:
 		error(code=404)
 	return dict(tagger=tagger,
@@ -785,7 +785,7 @@ def do_tags_rm():
 	# get the zombies to cure
 	raw_text = [(x[0].split('/'),('cu' + x[0]) in request.params) for x in raw_text]
 	# raw_text = [[time, tagger, taggee], ...]
-	raw_vals = [(datetime.datetime.strptime(x[0][0],"%Y-%m-%dT%H:%M:%S"), User.get_user(x[0][1]), User.get_user(x[0][2]),x[1]) for x in raw_text]
+	raw_vals = [(datetime.datetime.strptime(x[0][0],"%Y-%m-%dT%H:%M:%S"), Account.get_user(x[0][1]), Account.get_user(x[0][2]),x[1]) for x in raw_text]
 	tags = [(Tag.select(Tag.q.time == x[0] and Tag.q.tagger == x[1] and Tag.q.taggee == x[2]),x[3]) for x in raw_vals]
 	tags = [(x[0][0],x[1]) for x in tags if x[0].count() > 0]
 	for tag in tags:
@@ -812,7 +812,7 @@ def do_webcheckin():
 		redirect('/webcheckin?error=notconfirmed', 303)
 	if request.user.did_webcheckin:
 		redirect('/webcheckin?error=alreadyused', 303)
-	station = User.get_user('zombie_internet')
+	station = Account.get_user('zombie_internet')
 	if not station:
 		redirect('/webcheckin?error=code499', 303)
 	try:
@@ -983,7 +983,7 @@ def do_station_activate():
 		i = int(request.params['user_id'])
 	except:
 		redirect('/station?section=activate&err=nuid', 303)
-	user = User.from_student_num(int(request.params['user_id']))
+	user = Account.from_student_num(int(request.params['user_id']))
 	if not user:
 		redirect('/station?section=activate&err=noplayer', 303)
 	if user.signedin:
@@ -1098,7 +1098,7 @@ def do_edit_cure(cid):
 	if expiry:
 		c.expiry = datetime.datetime.strptime(expiry,"%Y-%m-%dT%H:%M:%S")
 	if username:
-		c.player = User.get_user(username)
+		c.player = Account.get_user(username)
 	if c.player:
 		used = True
 		c.player.cure()
