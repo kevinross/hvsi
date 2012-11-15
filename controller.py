@@ -896,8 +896,8 @@ def do_create_post():
 def view_edit_post(pid):
 	try:
 		p = Post.from_pid(pid)
-		return dict(post=p,mode='edit',page='post_edit',
-					i18n=i18n.override_title('post_edit','Editing EN:"' + p.title_e + '" FR:"' + p.title_f + '"','Editing "' + p.title_f + '"'))
+		return dict(post=p,mode='edit',
+					i18n=i18n.override_title('create_editpost','Editing EN:"' + p.title_e + '" FR:"' + p.title_f + '"','Editing "' + p.title_f + '"'))
 	except IndexError, e:
 		request.session.error = 'nopostpid'
 		return dict(error='nopostpid',mode='edit')
