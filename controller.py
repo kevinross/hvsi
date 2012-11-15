@@ -882,7 +882,9 @@ def do_create_post():
 	else:
 		p['allow_comments'] = False
 	p = dict([(x,p[x]) for x in ['content_e','content_f','title_e','title_f','allow_comments']])
-	post = Post(**p)
+	post = Post(allow_comments=p['allow_comments'])
+	for k in p:
+		setattr(post, k, p[k])
 	redirect('/post/view/' + str(post.id),303)
 	
 @route('/post/edit/:pid',method='GET')
