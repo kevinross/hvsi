@@ -128,7 +128,7 @@ class Session(InheritableSQLObject):
 	user		 = ForeignKey('Account',default=None)
 	error		 = StringCol(default=None)
 	data		 = StringCol(default=None)
-	
+
 	@staticmethod
 	def grab(key, attr='skey'):
 		s = Session.select(getattr(Session.q, attr) == key)[0]
@@ -139,10 +139,10 @@ class Session(InheritableSQLObject):
 			s = Session(user=u)
 		s.update_expires()
 		return s
-		
+
 	def update_expires(self):
 		self.expires = datetime.datetime.now() + datetime.timedelta(0, self.ttl)
-		
+
 	@staticmethod
 	def session(user):
 		u = user
@@ -155,7 +155,7 @@ class Session(InheritableSQLObject):
 		else:
 			s = Session.grab(u, 'user')
 		return s
-	
+
 class Account(InheritableSQLObject):
 	class sqlmeta:
 		registry = NAMESPACE
@@ -378,7 +378,7 @@ class Player(Account):
 	humans  = state_class('human')
 	zombies = state_class('zombie')
 	users = state_class2()
-	
+
 class Bounty(Player):
 	class sqlmeta:
 		registry = NAMESPACE
