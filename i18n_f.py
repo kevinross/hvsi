@@ -64,7 +64,7 @@ i18n = {
 			'topzombies': 'Meilleurs tageurs',
 			'count': 'Nombre de tags'
 		},
-		'createedit': {
+		'create_editpost': {
 			'missinginfo': u'Il manque une entrée. Prière de vérifier que toute information nécessaire est fournie.',
 			'unknown': u"Une erreur s'est produite, SVP réessayer.",
 			'nopostpid': u"L'article demandé n'existe pas.",

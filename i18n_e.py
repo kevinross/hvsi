@@ -64,7 +64,7 @@ i18n = {
 			'topzombies': 'Top Zombies',
 			'count': 'Count'
 		},
-		'createedit': {
+		'create_editpost': {
 			'missinginfo': 'Missing a field, make sure all fields have beein submitted.',
 			'unknown': 'Unknown error occured, please try again.',
 			'nopostpid': "A post with this ID doesn't exist.",

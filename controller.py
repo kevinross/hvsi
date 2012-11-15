@@ -126,6 +126,7 @@ def lang(func):
 			if request.method == 'GET':
 				func_dict['request'] = request
 				func_dict['started'] = Game.is_started
+			request.environ['i18n'] = func_dict.get('i18n',i18n.i18n)
 		return func_dict
 	return lang
 # decorator that whitelists access based on roles
