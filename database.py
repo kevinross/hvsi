@@ -474,20 +474,69 @@ class Cure(SQLObject):
 			return Cure.select(Cure.q.used == self.used)
 	used_cards = state_class(True)
 	unused_cards = state_class(False)
+class String(SQLObject):
+	class sqlmeta:
+		registry = NAMESPACE
+	lang			= EnumCol(enumValues=['e','f'])
+	field			= StringCol()
+	content			= UnicodeCol()
+	post			= ForeignKey('Post')
 class Post(SQLObject):
 	class sqlmeta:
 		registry = NAMESPACE
 	time			= DateTimeCol(default=datetime.datetime.now,notNone=True)
-	title_e			= StringCol()
-	title_f			= StringCol()
-	content_e		= UnicodeCol()
-	content_f		= UnicodeCol()
+	title			= SQLMultipleJoin('String',joinColumn='post_id')
+	content			= SQLMultipleJoin('String',joinColumn='post_id')
 	allow_comments 	= BoolCol(default=True,notNone=True)
 	comments		= SQLMultipleJoin('Comment',joinColumn='post_id',orderBy='time')
+	def _get_content(self):
+		return self._SO_get_content().filter(String.q.field == 'content')
+	def _get_title(self):
+		return self._SO_get_title().filter(String.q.field == 'title')
+	def _get_content_e(self):
+		try:
+			return self.content.filter(String.q.lang == 'e')[0].content
+		except:
+			return None
+	def _get_title_e(self):
+		try:
+			return self.title.filter(String.q.lang == 'e')[0].content
+		except:
+			return None
+	def _get_content_f(self):
+		try:
+			return self.content.filter(String.q.lang == 'f')[0].content
+		except:
+			return None
+	def _get_title_f(self):
+		try:
+			return self.title.filter(String.q.lang == 'f')[0].content
+		except:
+			return None
+	def _set_content_e(self, val):
+		try:
+			self.content.filter(String.q.lang == 'e')[0].content = val
+		except:
+			c = String(lang='e',content=val,field='content',post=self)
+	def _set_title_e(self, val):
+		try:
+			self.title.filter(String.q.lang == 'e')[0].content = val
+		except:
+			c = String(lang='e',content=val,field='title',post=self)
+	def _set_content_f(self, val):
+		try:
+			self.content.filter(String.q.lang == 'f')[0].content = val
+		except:
+			c = String(lang='f',content=val,field='content',post=self)
+	def _set_title_f(self, val):
+		try:
+			self.title.filter(String.q.lang == 'f')[0].content = val
+		except:
+			c = String(lang='f',content=val,field='title',post=self)
 	def _get_html_e(self):
 		return markdown.markdown(self.content_e,output_format='html')
 	def _get_html_f(self):
-		return markdown.markdown(self.content_f)
+		return markdown.markdown(self.content_f,output_format='html')
 	@staticmethod
 	def from_pid(pid):
 		return Post.select(Post.q.id == pid)[0]
@@ -518,9 +567,9 @@ class Comment(SQLObject):
 		return markdown.markdown(self.content, safe_mode="remove")
 	def to_dict(self):
 		return dict(
-			time = self.time.isoformat(),
-			content = self.content,
-			user = dict(username = self.user.username, name = self.user.name),
+				time = self.time.isoformat(),
+				content = self.content,
+				user = dict(username = self.user.username, name = self.user.name),
 			)
 class Snapshot(SQLObject):
 	class sqlmeta:
@@ -575,12 +624,12 @@ class Score(SQLObject):
 		try:
 			return Score.select(Score.q.player == player)[0]
 		except:
-			return Score(player=player, kills=player.kills.count())	
+			return Score(player=player, kills=player.kills.count())
 	class latest_class(object):
 		def __get__(self, obj, objtype):
 			return Score.select(Score.q.player != Player.get_player('military.militaire'),orderBy=DESC(Score.q.kills))
 	top = latest_class()
-	
+
 def set_class_enum(klass, var, array):
 	for i in array:
 		setattr(klass, var + '_' + i, i)
@@ -602,16 +651,13 @@ def createTables():
 	Snapshot.createTable(ifNotExists=True)
 	Score.createTable(ifNotExists=True)
 	Session.createTable(ifNotExists=True)
+	String.createTable(ifNotExists=True)
 def create_default_data():
 	for i in range(1, 6):
 		try:
-			Post.from_pid(i)
+			Post.get(i)
 		except:
-			try:
-				Post(id=i, title_e="Default Title", title_f="Default French Title",
-					 content_e="Default Content", content_f="Default French Content")
-			except:
-				pass
+			Post(id=i, allow_comments=False)
 	if not Account.get_user('admin'):
 		a = Admin(name='Admin',username='admin',hashed_pass='admin',email='admin@hvsi.ca')
 	if not Account.get_user('military.militaire'):
