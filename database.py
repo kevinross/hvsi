@@ -497,22 +497,22 @@ class Post(SQLObject):
 		try:
 			return self.content.filter(String.q.lang == 'e')[0].content
 		except:
-			return None
+			return ''
 	def _get_title_e(self):
 		try:
 			return self.title.filter(String.q.lang == 'e')[0].content
 		except:
-			return None
+			return ''
 	def _get_content_f(self):
 		try:
 			return self.content.filter(String.q.lang == 'f')[0].content
 		except:
-			return None
+			return ''
 	def _get_title_f(self):
 		try:
 			return self.title.filter(String.q.lang == 'f')[0].content
 		except:
-			return None
+			return ''
 	def _set_content_e(self, val):
 		try:
 			self.content.filter(String.q.lang == 'e')[0].content = val
