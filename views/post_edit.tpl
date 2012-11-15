@@ -14,7 +14,7 @@
 						<div class="post_editor">
 							<div>
 								<label for="title_{{i}}">
-									{{i18n[i]['pages']['createedit']['post_title']}} ({{i18n[i]['lang']}}):
+									{{i18n[i]['pages'][page]['post_title']}} ({{i18n[i]['lang']}}):
 								</label>
 							</div>
 							<div>
@@ -22,7 +22,7 @@
 							</div>
 							<div>
 								<label for="content_e">
-									{{i18n[i]['pages']['createedit']['post_content']}} ({{i18n[i]['lang']}}):
+									{{i18n[i]['pages'][page]['post_content']}} ({{i18n[i]['lang']}}):
 								</label>
 							</div>
 							<div>
@@ -38,15 +38,15 @@
 %					end
 						<div>
 							<label for="allow_comments">
-								{{i18n[lang]['pages']['createedit']['allow_comments']}}
+								{{i18n[lang]['pages'][page]['allow_comments']}}
 							</label>
 						</div>
 						<div>
 							<input type="checkbox" name="allow_comments" {{'' if mode=='create' else ('checked="1"' if post.allow_comments else '')}}/>
 						</div>
 						<div style="width: 100%; height: 100%;">
-							<button style="float: none; width: 100px; margin: 10px auto;" value="{{i18n[lang]['pages']['createedit']['cancel']}}" onclick="history.back()">{{i18n[lang]['pages']['createedit']['cancel']}}</button>
-							<input style="float: none; width: 100px; margin: 10px auto;" type="submit" value="{{i18n[lang]['pages'][page]['submit']}}" />
+							<button style="float: none; width: 100px; margin: 10px auto;" value="{{i18n[lang]['pages']['create_editpost']['cancel']}}" onclick="history.back()">{{i18n[lang]['pages'][page]['cancel']}}</button>
+							<input style="float: none; width: 100px; margin: 10px auto;" type="submit" value="{{i18n[lang]['pages']['post_' + mode]['submit']}}" />
 						</div>
 					</form>
 				</div>
