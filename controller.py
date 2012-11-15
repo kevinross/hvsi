@@ -345,7 +345,7 @@ def do_hrsbc():
 @lang
 def view_login():
 	if request.logged_in:
-		redirect('/', 303)
+		redirect('/index', 303)
 	return dict()
 @route('/login',method='POST')
 def do_login():
