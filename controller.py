@@ -860,14 +860,14 @@ def do_comment(pid):
 @lang
 @require_auth
 @require_role(Admin)
-def create_post():
-	return dict(mode='create',page='post_create')
+def view_create_post():
+	return dict(mode='create')
 
 @route('/post/create',method='POST')
 @allow_auth
 @require_auth
 @require_role(Admin)
-def create_post_post():
+def do_create_post():
 	p = request.params
 	# content_e, content_f, title_e, title_f
 	if not p['content_e'] or not p['content_f'] or not p['title_e'] or not p['title_f']:
