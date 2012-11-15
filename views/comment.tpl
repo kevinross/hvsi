@@ -6,7 +6,7 @@
 
 								<div class="comment-meta commentmetadata">
 									<a href="{{request.path}}#comment-{{comment.id}}">
-									{{calendar.month_name[comment.time.month]}} {{comment.time.day}}, {{comment.time.year}} @ {{comment.time.hour}}:{{('0' + str(comment.time.minute)) if len(str(comment.time.minute==1)) else comment.time.minute}}</a>&nbsp;&nbsp;
+									{{calendar.month_name[comment.time.month]}} {{comment.time.day}}, {{comment.time.year}} @ {{comment.time.strftime('%H:%M')}}</a>&nbsp;&nbsp;
 								</div>
 
 								<p>{{comment.content}}</p>
