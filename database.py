@@ -163,13 +163,10 @@ class Account(InheritableSQLObject):
 	username	 = StringCol(length=25,varchar=True,unique=True,notNone=True)
 	hashed_pass	 = StringCol(notNone=True)
 	language	 = EnumCol(enumValues=['e','f'],default='e')
-	student_num	 = IntCol(unique=True,notNone=True)
 	email		 = StringCol(length=50,varchar=True,unique=True,notNone=True)
-	twitter		 = StringCol(length=50,varchar=True,unique=True,default=None)
-	cell		 = StringCol(length=11,varchar=True,unique=True,default=None)
 	creation_time= DateTimeCol(default=datetime.datetime.now)
 	def to_dict(self):
-		return dict([(x,getattr(self, x)) for x in self.sqlmeta.columns if 
+		return dict([(x,getattr(self, x)) for x in self.sqlmeta.columns if
 						(not isinstance(self.sqlmeta.columns[x], SOForeignKey) and not self.sqlmeta.columns[x].name == 'childName')])
 	def _set_hashed_pass(self, pas):
 		self._SO_set_hashed_pass(bcrypt.hashpw(pas, bcrypt.gensalt()))
@@ -180,18 +177,10 @@ class Account(InheritableSQLObject):
 			return False
 		self.hashed_pass = new
 		return True
-	def _set_cell(self, val):
-		self._SO_set_cell(None if not val else norm_cell(val))
 	@staticmethod
 	def from_id(num):
 		try:
 			return Account.select(Account.q.id == num)[0]
-		except:
-			return None
-	@staticmethod
-	def from_student_num(num):
-		try:
-			return Account.select(Account.q.student_num == num)[0]
 		except:
 			return None
 	@staticmethod
@@ -201,28 +190,9 @@ class Account(InheritableSQLObject):
 		except:
 			return None
 	@staticmethod
-	def from_twitter(twit):
-		if not twit:
-			return None
-		try:
-			return Account.select(Account.q.twitter == twit)[0]
-		except:
-			return None
-	@staticmethod
 	def from_email(email):
 		try:
 			return Account.select(Account.q.email == email)[0]
-		except:
-			return None
-	@staticmethod
-	def from_cell(cell):
-		if not cell:
-			return None
-		cell = norm_cell(cell)
-		if not cell:
-			return None
-		try:
-			return Account.select(Account.q.cell == cell)[0]
 		except:
 			return None
 	@staticmethod
@@ -230,18 +200,17 @@ class Account(InheritableSQLObject):
 		if isinstance(v, Account):
 			return v
 		elif isinstance(v, str):
-			return Account.from_username(v) or Account.from_twitter(v) or Account.from_email(v) or Account.from_cell(v)
+			return Account.from_username(v) or Account.from_email(v)
 		elif isinstance(v, int):
-			# num is large: 12345.  Probably a student number
-			if v > 10000:
-				return Account.from_student_num(v)
-			else:
-				return Account.from_id(v)
+			return Account.from_id(v)
 locations = ['cby','ucu','cafealt','manual','twitter','email','internet','admin','unset']
 states = ['human','zombie','inactive','banned']
 class Player(Account):
 	class sqlmeta:
 		registry = NAMESPACE
+	student_num	 = IntCol(unique=True,notNone=True)
+	twitter		 = StringCol(length=50,varchar=True,unique=True,default=None)
+	cell		 = StringCol(length=11,varchar=True,unique=True,default=None)
 	state			 = EnumCol(enumValues=states,default='human',notNone=True)
 	game_id			 = StringCol(length=10,varchar=True,unique=True,default=None)
 	kills			 = SQLMultipleJoin('Tag',joinColumn='tagger_id')
@@ -290,6 +259,8 @@ class Player(Account):
 	def _set_game_id(self, val):
 		# attribute is immutable
 		return
+	def _set_cell(self, val):
+		self._SO_set_cell(None if not val else norm_cell(val))
 	def _set_signedin(self, v):
 		self._SO_set_signedin(v)
 		if v:
@@ -340,6 +311,30 @@ class Player(Account):
 		self.state = self.state_zombie
 	def cure(self):
 		self.state = self.state_human
+	def from_twitter(twit):
+		if not twit:
+			return None
+		try:
+			return Account.select(Account.q.twitter == twit)[0]
+		except:
+			return None
+	@staticmethod
+	def from_student_num(num):
+		try:
+			return Account.select(Account.q.student_num == num)[0]
+		except:
+			return None
+	@staticmethod
+	def from_cell(cell):
+		if not cell:
+			return None
+		cell = norm_cell(cell)
+		if not cell:
+			return None
+		try:
+			return Account.select(Account.q.cell == cell)[0]
+		except:
+			return None
 	@staticmethod
 	def from_game_id(gid):
 		try:
@@ -618,7 +613,7 @@ def create_default_data():
 			except:
 				pass
 	if not Account.get_user('admin'):
-		a = Admin(name='Admin',username='admin',hashed_pass='admin',student_num=0,email='admin@hvsi.ca')
+		a = Admin(name='Admin',username='admin',hashed_pass='admin',email='admin@hvsi.ca')
 	if not Account.get_user('military.militaire'):
 		p = Player(name='Military / Militaire',username='military.militaire',hashed_pass='asiod8ofa9s8df',
 			   student_num=1,email='military@hvsi.ca')
