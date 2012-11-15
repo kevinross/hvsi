@@ -24,8 +24,7 @@ p{
 }
 span{
 	display:inline-block;
-	min-width:80px;
-	width:80px;
+	min-width:85px;
 }
 #time_div{
 	margin-top:150px;
