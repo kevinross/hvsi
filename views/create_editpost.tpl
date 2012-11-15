@@ -4,10 +4,11 @@
 %import calendar
 %cinclude parts part=1
 <head>
-%	cinclude head
+%	cinclude head notitle=1
+	<title>{{i18n[lang]['pages']['post_' + mode]['title']}}</title>
 </head>
 %cinclude parts part=2
-				<h1>{{i18n[lang]['pages'][page]['title']}}</h1>
+				<h1>{{i18n[lang]['pages']['post_' + mode]['title']}}</h1>
 %				cinclude post_edit
 %				cinclude comments
 			</div>
