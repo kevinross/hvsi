@@ -179,11 +179,12 @@ def logged_in():
 ###################################################################################################################################
 ###################################################################################################################################
 ###################################################################################################################################
-css_root = os.path.join(static_root, 'css')
-css_image_root = os.path.join(static_root, 'images')
-img_root = os.path.join(static_root, 'img')
-js_root  = os.path.join(static_root, 'js')
-pdf_root =os.path.join(static_root, 'pdf')
+css_root 		= os.path.join(static_root, 'css')
+css_image_root 	= os.path.join(static_root, 'images')
+img_root 		= os.path.join(static_root, 'img')
+js_root  		= os.path.join(static_root, 'js')
+pdf_root 		= os.path.join(static_root, 'pdf')
+wmd_root 		= os.path.join(static_root, 'wmd')
 @route('/css/:file#.*#')
 def static_css(file):
 	return send_file(file, root=css_root)
@@ -202,9 +203,9 @@ def static_img_2(file):
 @route('/js/:file#.*#')
 def static_js(file):
 	return send_file(file, root=js_root)
-@route('/wmd/images/:file')
+@route('/wmd/:file')
 def static_wmd(file):
-	return send_file(file, root=css_root + '/images/')
+	return send_file(file, root=wmd_root)
 
 @route('/pdf/:file')
 def static_pdf(file):
