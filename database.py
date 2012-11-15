@@ -555,6 +555,10 @@ class Post(SQLObject):
 	def delete(self):
 		for i in self.comments:
 			i.destroySelf()
+		for i in self.title:
+			i.destroySelf()
+		for i in self.content:
+			i.destroySelf()
 		self.destroySelf()
 class Comment(SQLObject):
 	class sqlmeta:
