@@ -481,6 +481,15 @@ class String(SQLObject):
 	field			= StringCol()
 	content			= UnicodeCol()
 	post			= ForeignKey('Post')
+
+class string_dict():
+	def __init__(self, inst, attr):
+		self.inst = inst
+		self.attr = attr
+	def __getitem__(self, item):
+		return getattr(self.inst, '_SO_get_' + self.attr)().filter(String.q.field == self.attr).filter(String.q.lang == item)[0].content
+	def __setitem__(self, item, val):
+		getattr(self.inst, '_SO_get_' + self.attr)().filter(String.q.field == self.attr).filter(String.q.lang == item)[0].content = val
 class Post(SQLObject):
 	class sqlmeta:
 		registry = NAMESPACE
@@ -490,47 +499,47 @@ class Post(SQLObject):
 	allow_comments 	= BoolCol(default=True,notNone=True)
 	comments		= SQLMultipleJoin('Comment',joinColumn='post_id',orderBy='time')
 	def _get_content(self):
-		return self._SO_get_content().filter(String.q.field == 'content')
+		return string_dict(self, 'content')
 	def _get_title(self):
-		return self._SO_get_title().filter(String.q.field == 'title')
+		return string_dict(self, 'title')
 	def _get_content_e(self):
 		try:
-			return self.content.filter(String.q.lang == 'e')[0].content
+			return self.content['e']
 		except:
 			return ''
 	def _get_title_e(self):
 		try:
-			return self.title.filter(String.q.lang == 'e')[0].content
+			return self.title['e']
 		except:
 			return ''
 	def _get_content_f(self):
 		try:
-			return self.content.filter(String.q.lang == 'f')[0].content
+			return self.content['f']
 		except:
 			return ''
 	def _get_title_f(self):
 		try:
-			return self.title.filter(String.q.lang == 'f')[0].content
+			return self.title['f']
 		except:
 			return ''
 	def _set_content_e(self, val):
 		try:
-			self.content.filter(String.q.lang == 'e')[0].content = val
+			self.content['e'] = val
 		except:
 			c = String(lang='e',content=val,field='content',post=self)
 	def _set_title_e(self, val):
 		try:
-			self.title.filter(String.q.lang == 'e')[0].content = val
+			self.title['e'] = val
 		except:
 			c = String(lang='e',content=val,field='title',post=self)
 	def _set_content_f(self, val):
 		try:
-			self.content.filter(String.q.lang == 'f')[0].content = val
+			self.content['f'] = val
 		except:
 			c = String(lang='f',content=val,field='content',post=self)
 	def _set_title_f(self, val):
 		try:
-			self.title.filter(String.q.lang == 'f')[0].content = val
+			self.title['f'] = val
 		except:
 			c = String(lang='f',content=val,field='title',post=self)
 	def _get_html_e(self):
