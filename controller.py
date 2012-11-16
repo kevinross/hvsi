@@ -3,6 +3,9 @@ import bottle, os, datetime, error_page
 # all the pages
 from database import *
 static_root = os.getcwd()
+if not os.path.exists(os.path.join(static_root, 'instanceconfig.py')):
+	import config
+	bottle.default_app().mount('/setup', config.app)
 if '_debug' in static_root:
 	bottle.debug(True)
 bottle.ERROR_PAGE_TEMPLATE = error_page.ERROR_PAGE_TEMPLATE
