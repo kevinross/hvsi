@@ -227,36 +227,36 @@ def eula_file(file):
 @mview('index')
 @allow_auth
 @lang
-def index():
+def view_index():
 	return dict(post=Post.from_pid(1),posts=Post.select(Post.q.id > 5,orderBy='-id'))
 @route('/')
 @mview('countdown')
 @lang
-def countdown():
+def view_countdown():
 	return dict()
 @route('/missions')
 @mview('index')
 @allow_auth
 @lang
-def index():
+def view_missions():
 	return dict(page='missions',post=Post.from_pid(2))
 @route('/party')
 @mview('index')
 @allow_auth
 @lang
-def index():
+def view_party():
 	return dict(page='party',post=Post.from_pid(3))
 @route('/rules')
 @mview('index')
 @allow_auth
 @lang
-def index():
+def view_rules():
 	return dict(page='rules',post=Post.from_pid(4))
 @route('/blog')
 @mview('blog')
 @allow_auth
 @lang
-def blog():
+def view_blog():
 	return dict(posts=Post.select(Post.q.id > 5,orderBy='-id'))
 	
 @route('/game')
@@ -510,7 +510,7 @@ def find_user():
 @lang
 @require_auth
 @require_role(Admin)
-def find_user():
+def do_find_user():
 	value = request.params['value']
 	cat = request.params['cat']
 	try:
@@ -637,7 +637,7 @@ def do_user_tags(name):
 @lang
 @require_auth
 @require_role(Admin)
-def get_user_checkins(name):
+def view_user_checkins(name):
 	user = Account.get_user(name)
 	if not user:
 		error(code=404)
@@ -646,7 +646,7 @@ def get_user_checkins(name):
 @allow_auth
 @require_auth
 @require_role(Admin)
-def add_user_checkin(name):
+def do_add_user_checkin(name):
 	user = Account.get_user(name)
 	if not user:
 		error(code=404)
@@ -671,7 +671,7 @@ def add_user_checkin(name):
 @allow_auth
 @require_auth
 @require_role(Admin)
-def del_user_checkins(name):
+def do_del_user_checkins(name):
 	user = Account.get_user(name)
 	if not user:
 		error(code=404)
@@ -785,7 +785,7 @@ def view_tags(tagger, taggee):
 @allow_auth
 @require_auth
 @require_role(Admin)
-def do_tags_rm():
+def do_del_tags():
 	# get the removals
 	raw_text = [(x[2:],False) for x in request.params.keys() if x[0:2] == 'rm']
 	# get the zombies to cure
@@ -934,7 +934,7 @@ def do_edit_post(pid):
 @allow_auth
 @require_auth
 @require_role(Admin)
-def delete_post(pid):
+def do_delete_post(pid):
 	try:
 		p = Post.from_pid(pid)
 	except IndexError, e:
@@ -1124,7 +1124,7 @@ def do_add_cure():
 @allow_auth
 @require_auth
 @require_role(Admin)
-def do_mass_rm_cure():
+def do_del_cure():
 	if not request.params.keys():
 		redirect('/cures', 303)
 	cure_ids = [int(x.replace('cure_','')) for x in request.params.keys()]
@@ -1139,7 +1139,7 @@ def do_mass_rm_cure():
 @mview('graph')
 @allow_auth
 @lang
-def graph():
+def view_graph():
 	if not Game.is_started:
 		redirect('/index', 303)
 	return dict()
