@@ -104,7 +104,7 @@ class Session(InheritableSQLObject):
 	skey		 = StringCol(length=32,varchar=True,unique=True,notNone=True,default=lambda:uuid.uuid4().get_hex())
 	expires		 = DateTimeCol(notNone=True,default=lambda:datetime.datetime.now()+datetime.timedelta(0,DEFAULT_LIFETIME))
 	ttl			 = IntCol(default=DEFAULT_LIFETIME)
-	language	 = EnumCol(enumValues=['e','f'],default='e')
+	language	 = StringCol(default='e')
 	user		 = ForeignKey('Account',default=None)
 	error		 = StringCol(default=None)
 	data		 = StringCol(default=None)
@@ -142,7 +142,7 @@ class Account(InheritableSQLObject):
 	name		 = StringCol(length=50,varchar=True,notNone=True)
 	username	 = StringCol(length=25,varchar=True,unique=True,notNone=True)
 	hashed_pass	 = StringCol(notNone=True)
-	language	 = EnumCol(enumValues=['e','f'],default='e')
+	language	 = StringCol(default='e')
 	email		 = StringCol(length=50,varchar=True,unique=True,notNone=True)
 	creation_time= DateTimeCol(default=datetime.datetime.now)
 	def to_dict(self):
@@ -457,7 +457,7 @@ class Cure(SQLObject):
 class String(SQLObject):
 	class sqlmeta:
 		registry = NAMESPACE
-	lang			= EnumCol(enumValues=['e','f'])
+	lang			= StringCol()
 	field			= StringCol()
 	content			= UnicodeCol()
 	post			= ForeignKey('Post')
@@ -661,5 +661,6 @@ def create_default_data():
 			GameClass(id=i)
 		except dberrors.DuplicateEntryError, e:
 			pass
-createTables()
-create_default_data()
+#if sqlhub.processConnection:
+#	createTables()
+#	create_default_data()
