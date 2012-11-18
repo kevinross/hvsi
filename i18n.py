@@ -1,11 +1,12 @@
 # coding=utf-8
-import copy
-from i18n_e import i18n as e
-from i18n_f import i18n as f
-i18n_global = {
-	'e': e,
-	'f': f
-}
+import copy, glob
+i18n_global = {}
+for file in glob.glob("i18n_*.py"):
+	if 'diff' in file:
+		continue
+	code = file.replace('i18n_','').replace('.py','').replace('_','-')
+	mod = file.replace('.py','')
+	i18n_global[code] = __import__(mod).i18n
 def update_dict(orig, new):
 	for k in new:
 		if isinstance(new[k], dict):
