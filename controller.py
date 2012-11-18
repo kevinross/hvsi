@@ -49,7 +49,7 @@ def logged_in():
 	return hasattr(request, 'logged_in') and request.logged_in
 
 import basics, blog, gameops, user, admin
-if instanceconfig.statichost == '[builtin]':
+if not instanceconfig.statichost:
 	import static
 # catch all perm-redirect to make slashless
 @route('/:page#.+#/')

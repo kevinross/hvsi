@@ -4,6 +4,6 @@ import bottle, re, os, simplejson
 i18n = bottle.request.environ['i18n']
 import calendar, datetime as datetime
 def static(path):
-	if instanceconfig.statichost == '[builtin]':
+	if not instanceconfig.statichost:
 		return path
 	return '//%s/%s' % (instanceconfig.statichost, path.lstrip('/'))
