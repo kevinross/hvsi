@@ -3,8 +3,8 @@ import bottle, os, sys, datetime, error_page, urlimport
 from settings import instanceconfig
 # all the pages
 static_root = os.getcwd()
-if '_debug' in static_root:
-	bottle.debug(True)
+from database import *
+bottle.debug(instanceconfig.debug)
 bottle.ERROR_PAGE_TEMPLATE = error_page.ERROR_PAGE_TEMPLATE
 def valid_creds(user, passw):
 	u = Account.from_username(user)
@@ -47,9 +47,11 @@ def error(code):
 	raise bottle.HTTPError(code, bottle.HTTP_CODES[code])
 def logged_in():
 	return hasattr(request, 'logged_in') and request.logged_in
-# catch all perm-redirect
+
+import basics, blog, gameops, user, admin
+if instanceconfig.statichost == '[builtin]':
+	import static
+# catch all perm-redirect to make slashless
 @route('/:page#.+#/')
 def redir(page):
 	redirect('/' + page, 301)
-
-import static, basics, blog, gameops, user, admin
