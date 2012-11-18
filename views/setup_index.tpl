@@ -6,6 +6,7 @@
 		<p>Welcome to the HvsI initial configuration wizard!</p>
 		<p>An overview of the parameters configured by this wizard:</p>
 		<ol>
+			<li>Module Dependency Check</li>
 			<li>
 				Basic information:
 				<ul>
@@ -17,6 +18,6 @@
 			<li>Database connection parameters</li>
 			<li>Languages</li>
 		</ol>
-		<p>Click <a href="1">Next</a> to continue on to step 1.</p>
+		<p>Click <a href="1">Next</a> to check for missing dependencies.</p>
 	</body>
 </html>
