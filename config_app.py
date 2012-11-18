@@ -167,7 +167,7 @@ def update_setup_4():
 def do_setup_4():
 	global langs
 	import shutil
-	for lang in langs:
+	for lang in [x for x in langs if x != 'en-US']:
 		if not os.path.exists('i18n_%s.py' % lang):
 			shutil.copyfile('i18n_en_US.py', 'i18n_%s.py' % lang.replace('-','_'))
 	redirect('done')
@@ -176,7 +176,6 @@ def do_setup_4():
 @app.get('/done')
 @view('setup_done')
 def view_setup_done():
-	os.rename('config_app.py','disabled_configurator_app')
 	return dict()
 
 from bottle import run
