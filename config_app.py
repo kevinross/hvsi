@@ -10,11 +10,9 @@ config = """
 # this is a python module with configuration details for this instance of hvsi
 """
 # 1: module deps
-# 2: configure static file hostname, debug
+# 2: configure static file hostname, debug, timezone
 # 3: configure database
-# 4: create database tables
-# 5: configure accounts
-# 6: configure lang
+# 4: configure lang
 
 langs = ['en-US']
 
@@ -84,6 +82,10 @@ def do_setup_2():
 	host = request.params.get('host', 'hvsi.ca')
 	statichost = request.params.get('statichost', '')
 	external = request.params.get('externalhost','')
+	exceptionpath = request.params.get('exceptionlogs', None)
+	if exceptionpath == '':
+		exceptionpath = None
+	timezone = request.params.get('timezone','America/Toronto')
 	if statichost == 'external':
 		statichost = external
 	else:
@@ -94,9 +96,11 @@ def do_setup_2():
 	else:
 		debug = False
 	config += """
-host	   = %r
-statichost = %r
-debug      = %r""" % (host, statichost, debug)
+host			= %r
+statichost		= %r
+debug			= %r
+exceptionpath	= %r
+timezone		= %r""" % (host, statichost, debug, exceptionpath, timezone)
 	redirect('3')
 
 @app.get('/3')
@@ -113,11 +117,11 @@ def do_setup_3():
 	passw =request.params.get('dbpass', 'hvsi')
 	db   = request.params.get('dbdb', 'hvsi')
 	config += """
-dbprot = %r
-dbhost = %r
-dbuser = %r
-dbpass = %r
-dbdb   = %r""" % (proto, host, user, passw, db)
+dbprot			= %r
+dbhost			= %r
+dbuser			= %r
+dbpass			= %r
+dbdb			= %r""" % (proto, host, user, passw, db)
 	redirect('3.5')
 
 @app.get('/3.5')
