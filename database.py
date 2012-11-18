@@ -10,7 +10,10 @@ host = instanceconfig.dbhost
 db = instanceconfig.dbdb
 user = instanceconfig.dbuser
 passw = instanceconfig.dbpass
-sqlhub.processConnection = connectionForURI('%s://%s:%s@%s/%s' % (proto, user, passw, host, db))
+if proto == 'sqlite':
+	sqlhub.processConnection = connectionForURI('sqlite:%s/%s' % (host, db))
+else:
+	sqlhub.processConnection = connectionForURI('%s://%s:%s@%s/%s' % (proto, user, passw, host, db))
 def norm_cell(val):
 	# strip everything out leaving just the numbers.
 	# prefix with a 1 if not already done
@@ -661,6 +664,9 @@ def create_default_data():
 			GameClass(id=i)
 		except dberrors.DuplicateEntryError, e:
 			pass
-#if sqlhub.processConnection:
-#	createTables()
-#	create_default_data()
+try:
+	if sqlhub.processConnection:
+		createTables()
+		create_default_data()
+except:
+	pass
