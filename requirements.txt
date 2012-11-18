@@ -7,3 +7,5 @@ SQLObject
 py-bcrypt
 simplejson
 werkzeug
+pytz
+flup
