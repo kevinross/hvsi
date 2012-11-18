@@ -140,6 +140,7 @@ sys.path.extend([os.path.join(os.getcwd(), 'lib', x) for x in os.listdir(libdir)
 """ + request.params['config'] + """
 if 'VCAP_SERVICES' in os.environ:
 	d = simplejson.loads(os.environ['VCAP_SERVICES'])['mysql-5.1'][0]['credentials']
+	dbprot = 'mysql'
 	dbhost = d['hostname']
 	dbdb = d['name']
 	dbuser = d['username']
