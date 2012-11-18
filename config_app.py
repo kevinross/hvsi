@@ -11,8 +11,9 @@ config = """
 """
 # 1: module deps
 # 2: configure static file hostname, debug, timezone
-# 3: configure database
-# 4: configure lang
+# 3: configure exception logging
+# 4: configure database
+# 5: configure lang
 
 langs = ['en-US']
 
@@ -82,9 +83,6 @@ def do_setup_2():
 	host = request.params.get('host', 'hvsi.ca')
 	statichost = request.params.get('statichost', '')
 	external = request.params.get('externalhost','')
-	exceptionpath = request.params.get('exceptionlogs', None)
-	if exceptionpath == '':
-		exceptionpath = None
 	timezone = request.params.get('timezone','America/Toronto')
 	if statichost == 'external':
 		statichost = external
@@ -99,17 +97,50 @@ def do_setup_2():
 host			= %r
 statichost		= %r
 debug			= %r
-exceptionpath	= %r
-timezone		= %r""" % (host, statichost, debug, exceptionpath, timezone)
+timezone		= %r""" % (host, statichost, debug, timezone)
 	redirect('3')
 
 @app.get('/3')
 @view('setup_3')
 def view_setup_3():
-	return dict(has_mysql=("MySQLdb" not in get_unavailable_mods()))
+	return dict()
 
 @app.post('/3')
 def do_setup_3():
+	mode = request.params.get('exceptions', 'file')
+	global config
+	# if exceptionpath is null, errormiddleware won't log to path
+	# if to address is null, errormiddleware won't log to email
+	if mode == 'file' or mode == 'both':
+		path = request.params.get('file',None)
+	else:
+		path = None
+	if mode == 'email' or mode == 'both':
+		p = request.params
+		t = p['to']
+		f = p['from']
+		s = p['server']
+		u = p['username']
+		pa = p['password']
+	else:
+		t = f = s = u = pa = None
+	config += """
+exceptionpath = %r
+smtp_to			= %r
+smtp_from			= %r
+smtp_server			= %r
+smtp_user			= %r
+smtp_pass			= %r""" % (path, t, f, s, u, pa)
+	redirect('/4')
+
+
+@app.get('/4')
+@view('setup_4')
+def view_setup_4():
+	return dict(has_mysql=("MySQLdb" not in get_unavailable_mods()))
+
+@app.post('/4')
+def do_setup_4():
 	global config
 	proto = request.params.get('dbproto', 'mysql')
 	host = request.params.get('dbhost', 'localhost')
@@ -122,15 +153,15 @@ dbhost			= %r
 dbuser			= %r
 dbpass			= %r
 dbdb			= %r""" % (proto, host, user, passw, db)
-	redirect('3.5')
+	redirect('4.5')
 
-@app.get('/3.5')
+@app.get('/4.5')
 @view('setup_confirm_basic')
-def view_setup_35():
+def view_setup_45():
 	return dict(config=config)
 
-@app.post('/3.5')
-def do_setup_35():
+@app.post('/4.5')
+def do_setup_45():
 	f = open(os.path.join(os.getcwd(), 'instanceconfig.py'), 'w')
 	config = """import os, sys, simplejson
 libdir = os.path.join(os.getcwd(), 'lib')
@@ -148,23 +179,23 @@ if 'VCAP_SERVICES' in os.environ:
 """
 	f.write(config)
 	f.close()
-	redirect('4')
+	redirect('5')
 
 
-@app.get('/4')
-@view('setup_4')
-def view_setup_4():
+@app.get('/5')
+@view('setup_5')
+def view_setup_5():
 	global langs
 	return dict(langs=langs)
 
-@app.post('/4.u')
-def update_setup_4():
+@app.post('/5.u')
+def update_setup_5():
 	global langs
 	langs.append(request.params['lang_short'])
-	redirect('4')
+	redirect('5')
 
-@app.post('/4')
-def do_setup_4():
+@app.post('/5')
+def do_setup_5():
 	global langs
 	import shutil
 	for lang in [x for x in langs if x != 'en-US']:

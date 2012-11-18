@@ -8,16 +8,16 @@
 		<ol>
 			<li>Module Dependency Check</li>
 			<li>
-				Basic information:
+				Basic Information:
 				<ul>
 					<li>Hostname site is hosted on</li>
 					<li>Host that hosts static content such as CSS</li>
 					<li>Debug mode</li>
-					<li>Exception log directory</li>
 					<li>Timezone</li>
 				</ul>
 			</li>
-			<li>Database connection parameters</li>
+			<li>Exception Logging Configuration</li>
+			<li>Database Connection Parameters</li>
 			<li>Languages</li>
 		</ol>
 		<p>Click <a href="1">Next</a> to check for missing dependencies.</p>
