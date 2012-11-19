@@ -2769,7 +2769,7 @@ class BaseTemplate(object):
     settings = {} #used in prepare()
     defaults = {} #used in render()
 
-    def __init__(self, source=None, name=None, lookup=[], encoding='utf8', parent=None, **settings):
+    def __init__(self, source=None, name=None, lookup=[], encoding='utf8', parent=None, from_pkg=None, **settings):
         """ Create a new template.
         If the source parameter (str or buffer) is missing, the name argument
         is used to guess a template filename. Subclasses can assume that
@@ -2782,6 +2782,9 @@ class BaseTemplate(object):
         """
         self.name = name
         self.source = source.read() if hasattr(source, 'read') else source
+        if from_pkg:
+            import pkg_resources
+            self.source = pkg_resources.resource_string(from_pkg, 'views/%s.tpl' % name)
         self.filename = source.filename if hasattr(source, 'filename') else None
         self.lookup = [os.path.abspath(x) for x in lookup]
         self.encoding = encoding
