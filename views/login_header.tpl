@@ -1,3 +1,4 @@
+%from hvsi.imports import *
 %		if not request.logged_in:
 %		  if 'login' not in request.path:
 			<div class="fr" style="float: right;">

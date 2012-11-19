@@ -1,4 +1,4 @@
-%from imports import *
+%from hvsi.imports import *
 %cinclude parts part=1
 <head>
 %	cinclude head

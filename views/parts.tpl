@@ -1,4 +1,4 @@
-%from imports import *
+%from hvsi.imports import *
 %admin = bottle.request.admin or bottle.request.station
 %path = re.match(r'/log[inout]*(.*)', bottle.request.path)
 %count = db.Game.is_countdown

@@ -1,7 +1,5 @@
-%if 'i18n' not in globals():
-	%from i18n import i18n
-%end
-%import calendar, random, string
+%from hvsi.imports import *
+%import random, string
 %cinclude parts part=1
 <head>
 %	cinclude head

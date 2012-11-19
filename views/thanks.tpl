@@ -1,7 +1,4 @@
-%if 'i18n' not in globals():
-	%from i18n import i18n
-%end
-%import calendar
+%from hvsi.imports import *
 %cinclude parts part=1
 <head>
 <meta http-equiv="refresh" content="5;url=/index" >

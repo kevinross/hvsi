@@ -1,5 +1,5 @@
+%from hvsi.imports import *
 			<ul id="navigation">
-%import database as db
 %rego = db.Game.is_reg
 %starto = db.Game.is_started
 %logged_in = (hasattr(request, 'logged_in') and request.logged_in)

@@ -1,7 +1,5 @@
-%if 'i18n' not in globals():
-	%from i18n import i18n
-%end
-%import calendar, markdown, database as db
+%from hvsi.imports import *
+%import markdown
 %cinclude parts part=1
 <head>
 %	cinclude head

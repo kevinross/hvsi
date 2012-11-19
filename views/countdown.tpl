@@ -1,4 +1,4 @@
-%from imports import *
+%from hvsi.imports import *
 %past = datetime.datetime.now() > db.Game.countdown_time
 %if past:
 %	bottle.redirect('/index', 302)
