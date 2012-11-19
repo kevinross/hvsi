@@ -1,6 +1,6 @@
 import bottle, os, sys, datetime, urlimport, time
 static_root = os.getcwd()
-#sys.path.append('..')
+__all__ = ['application']
 try:
 	from settings import instanceconfig
 	os.environ['TZ'] = instanceconfig.timezone
