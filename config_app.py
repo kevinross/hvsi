@@ -1,5 +1,17 @@
-from bottle import Bottle, view, request, redirect
-import os, sys
+from bottle import Bottle, template, request, redirect
+import os, sys, bottle
+import pkg_resources
+# all the pages
+def view(view_name):
+	def tview(func):
+		def view_func(*args, **kwargs):
+			val = func(*args, **kwargs)
+			if val is not None and isinstance(val, dict) and 'page' not in val:
+				val['page'] = view_name
+			val['template_settings'] = dict(from_pkg='hvsi')
+			return template(view_name, **val)
+		return view_func
+	return tview
 libdir = os.path.join(os.getcwd(), 'lib')
 sys.path.append(libdir)
 sys.path.extend([os.path.join(os.getcwd(), 'lib', x) for x in os.listdir(libdir)])
@@ -23,7 +35,10 @@ def view_index():
 	return dict()
 
 def get_unavailable_mods():
-	f = open('requirements.txt')
+	try:
+		f = pkg_resources.resource_stream('hvsi','requirements.txt')
+	except:
+		f = open('requirements.txt')
 	modules = f.readlines()
 	f.close()
 	failed = []

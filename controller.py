@@ -1,6 +1,7 @@
 from bottle import view, route, request, response, static_file as send_file, redirect
 import bottle, os, sys, datetime, error_page, urlimport
 from settings import instanceconfig
+import pkg_resources
 # all the pages
 static_root = os.getcwd()
 from database import *

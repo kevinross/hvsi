@@ -1,12 +1,12 @@
 import os
-from controller import static_root
+import pkg_resources
 from bottle import route, static_file as send_file
-css_root 		= os.path.join(static_root, 'css')
-css_image_root 	= os.path.join(static_root, 'images')
-img_root 		= os.path.join(static_root, 'img')
-js_root  		= os.path.join(static_root, 'js')
-pdf_root 		= os.path.join(static_root, 'pdf')
-wmd_root 		= os.path.join(static_root, 'wmd')
+css_root 		= pkg_resources.resource_filename('hvsi', 'css')
+css_image_root 	= pkg_resources.resource_filename('hvsi', 'images')
+img_root 		= pkg_resources.resource_filename('hvsi', 'img')
+js_root  		= pkg_resources.resource_filename('hvsi', 'js')
+pdf_root 		= pkg_resources.resource_filename('hvsi', 'pdf')
+wmd_root 		= pkg_resources.resource_filename('hvsi', 'wmd')
 @route('/css/:file#.*#')
 def static_css(file):
 	return send_file(file, root=css_root)

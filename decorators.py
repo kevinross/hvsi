@@ -6,12 +6,12 @@ __all__ = ['mview','lang','allow_auth','require_auth','require_cond','require_ro
 # decorator that automatically gives the "page" variable to templates
 def mview(view_name):
 	def tview(func):
-		@view(view_name)
 		def view_func(*args, **kwargs):
 			val = func(*args, **kwargs)
 			if val is not None and isinstance(val, dict) and 'page' not in val:
 				val['page'] = view_name
-			return val
+			val['template_settings'] = dict(from_pkg='hvsi')
+			return template(view_name, **val)
 		return view_func
 	return tview
 # decorator that denies access to anon
