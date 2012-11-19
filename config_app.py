@@ -14,7 +14,8 @@ def view(view_name):
 	return tview
 libdir = os.path.join(os.getcwd(), 'lib')
 sys.path.append(libdir)
-sys.path.extend([os.path.join(os.getcwd(), 'lib', x) for x in os.listdir(libdir)])
+if os.path.exists(libdir):
+	sys.path.extend([os.path.join(os.getcwd(), 'lib', x) for x in os.listdir(libdir)])
 
 app = Bottle()
 # config goes in instanceconfig.py
