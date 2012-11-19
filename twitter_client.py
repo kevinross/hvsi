@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import time, pyDaemon
+import time
 from getpass import getpass
 from textwrap import TextWrapper
 
