@@ -2786,7 +2786,7 @@ class BaseTemplate(object):
             try:
                 import pkg_resources
                 self.source = pkg_resources.resource_string(from_pkg, 'views/%s.tpl' % name)
-			except:
+            except:
                 pass
         self.filename = source.filename if hasattr(source, 'filename') else None
         self.lookup = [os.path.abspath(x) for x in lookup]
