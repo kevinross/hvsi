@@ -225,5 +225,5 @@ def do_setup_5():
 def view_setup_done():
 	return dict()
 
-from bottle import run
-run(app, port=9055)
+#from bottle import run
+#run(app, port=9055)
