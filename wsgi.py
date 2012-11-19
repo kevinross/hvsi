@@ -1,5 +1,6 @@
 import bottle, os, sys, datetime, urlimport, time
 static_root = os.getcwd()
+#sys.path.append('..')
 try:
 	from settings import instanceconfig
 	os.environ['TZ'] = instanceconfig.timezone
@@ -27,11 +28,12 @@ try:
 									  smtp_password=instanceconfig.smtp_pass,
 									  error_subject_prefix=instanceconfig.host + ' error:')
 except:
+	print 'config_app'
 	import config_app
-	application = bottle.default_app()
+	application = config_app.app
 
 if __name__ == '__main__':
-	if len(sys.argv) > 1:
+	if len(sys.argv) > 1 and sys.argv[1] == 'debug':
 		from bottle import run
 		run(application, port=9055)
 	else:
