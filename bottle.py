@@ -2783,8 +2783,11 @@ class BaseTemplate(object):
         self.name = name
         self.source = source.read() if hasattr(source, 'read') else source
         if from_pkg:
-            import pkg_resources
-            self.source = pkg_resources.resource_string(from_pkg, 'views/%s.tpl' % name)
+            try:
+                import pkg_resources
+                self.source = pkg_resources.resource_string(from_pkg, 'views/%s.tpl' % name)
+			except:
+                pass
         self.filename = source.filename if hasattr(source, 'filename') else None
         self.lookup = [os.path.abspath(x) for x in lookup]
         self.encoding = encoding
