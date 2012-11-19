@@ -1,4 +1,4 @@
-from bottle import view, request, redirect
+from bottle import template, request, redirect
 from controller import error, get_session, set_cookie
 from database import *
 import i18n
