@@ -1,4 +1,3 @@
-%from hvsi.imports import *
 %import markdown
 %cinclude parts part=1
 <head>

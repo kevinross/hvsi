@@ -1,4 +1,3 @@
-%from hvsi.imports import *
 %cinclude parts part=1
 <head>
 <meta http-equiv="refresh" content="5;url=/index" >

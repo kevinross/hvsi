@@ -1,4 +1,3 @@
-%import random, string, hvsi.database as db
 				<ul id="sidebar">
 					<li class="widget">
 %			s=i18n[lang]['sidebar']['status']

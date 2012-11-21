@@ -1,4 +1,3 @@
-%from hvsi.imports import *
 			<ul id="navigation">
 %rego = db.Game.is_reg
 %starto = db.Game.is_started

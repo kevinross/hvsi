@@ -1,4 +1,3 @@
-%from hvsi.imports import *
 %today = datetime.datetime.now()
 %eight30 = datetime.datetime(today.year, today.month, today.day, 8, 00, 0, 0)
 %four30 = datetime.datetime(today.year, today.month, today.day, 18, 00, 0, 0)

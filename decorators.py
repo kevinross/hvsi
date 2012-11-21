@@ -1,7 +1,8 @@
 from bottle import template, request, redirect
 from controller import error, get_session, set_cookie
 from database import *
-import i18n
+import database
+import i18n, imports
 __all__ = ['mview','lang','allow_auth','require_auth','require_cond','require_role','require_user']
 # decorator that automatically gives the "page" variable to templates
 def mview(view_name):
@@ -10,7 +11,8 @@ def mview(view_name):
 			val = func(*args, **kwargs)
 			if val is not None and isinstance(val, dict) and 'page' not in val:
 				val['page'] = view_name
-			val['template_settings'] = dict(from_pkg='hvsi')
+				val['db'] = database
+				val.update(imports.__dict__)
 			return template(view_name, **val)
 		return view_func
 	return tview

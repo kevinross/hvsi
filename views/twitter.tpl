@@ -1,4 +1,3 @@
-%from hvsi.imports import *
 						<h2><a href="http://twitter.com/uoHvsI">Twitter</a></h2>
 						<div id="tweet" />
 						<script type="text/javascript">
