@@ -669,7 +669,7 @@ def create_default_data():
 		a = Admin(name='Admin',username='admin',hashed_pass='admin',email='admin@hvsi.ca')
 	if not Account.get_user('military.militaire'):
 		p = Player(name='Military / Militaire',username='military.militaire',hashed_pass='asiod8ofa9s8df',
-			   student_num=1,email='military@hvsi.ca')
+			   student_num=1,email='military@hvsi.ca',state='zombie')
 	for i in range(1, Game.max_id):
 		try:
 			GameClass(id=i)
