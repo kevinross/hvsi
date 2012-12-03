@@ -7,13 +7,14 @@ NAMESPACE = 'hvsi'
 from settings import instanceconfig
 proto = instanceconfig.dbprot
 host = instanceconfig.dbhost
+port = instanceconfig.dbport
 db = instanceconfig.dbdb
 user = instanceconfig.dbuser
 passw = instanceconfig.dbpass
 if proto == 'sqlite':
 	sqlhub.processConnection = connectionForURI('sqlite:%s/%s' % (host, db))
 else:
-	sqlhub.processConnection = connectionForURI('%s://%s:%s@%s/%s' % (proto, user, passw, host, db))
+	sqlhub.processConnection = connectionForURI('%s://%s:%s@%s:%i/%s' % (proto, user, passw, host, port, db))
 def norm_cell(val):
 	# strip everything out leaving just the numbers.
 	# prefix with a 1 if not already done

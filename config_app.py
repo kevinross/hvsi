@@ -186,17 +186,21 @@ def do_setup_4():
 	infra = request.params.get('infra', 'custom')
 	proto = request.params.get('dbproto', 'mysql')
 	host = request.params.get('dbhost', 'localhost')
+	try:
+		port = int(request.params.get('dbport', 3306))
+	except:
+		port = 3306 if proto == 'mysql' else 5432
 	user = request.params.get('dbuser', 'hvsi')
 	passw =request.params.get('dbpass', 'hvsi')
 	db   = request.params.get('dbdb', 'hvsi')
-	config += """
-dbprot			= %r
-dbhost			= %r
-dbuser			= %r
-dbpass			= %r
-dbdb			= %r""" % (proto, host, user, passw, db)
 	if infra == 'custom':
 		config += """
+dbprot		= %r
+dbhost		= %r
+dbport		= %r
+dbuser		= %r
+dbpass		= %r
+dbdb		= %r""" % (proto, host, port, user, passw, db)
 	elif infra == 'aws':
 		config += aws_sql
 	elif infra == 'af':

@@ -16,10 +16,11 @@
 						<option value="postgres">Postgres</option>
 						<option value="sqlite">SQLite</option>
 					  </select><br/><br/>
-			Hostname (filepath for SQLite): <input type="text" name="dbhost" /><br/><br/>
-			Username: <input type="text" name="dbuser" /><br/><br/>
-			Password: <input type="text" name="dbpass" /><br/><br/>
-			Database (filename for SQLite): <input type="text" name="dbdb" /><br/><br/>
+			Hostname (filepath for SQLite): <input class="c" type="text" name="dbhost" /><br/><br/>
+			Port (empty for protocol default): <input class="c" type="text" name="dbport" /><br/><br/>
+			Username: <input class="c" type="text" name="dbuser" /><br/><br/>
+			Password: <input class="c" type="text" name="dbpass" /><br/><br/>
+			Database (filename for SQLite): <input class="c" type="text" name="dbdb" /><br/><br/>
 			<input type="submit" value="Next" />
 		</form>
 		<script type="text/javascript">
