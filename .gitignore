@@ -4,3 +4,5 @@
 .idea/*
 lib
 instanceconfig.py
+dist
+hvsi.egg-info/SOURCES.txt
