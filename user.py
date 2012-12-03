@@ -44,7 +44,7 @@ def do_user_edit(name):
 		error(code=401)
 	p = request.params
 	user = Account.get_user(name)
-	# whitelist the paras a player may pass in
+	# whitelist the params a player may pass in
 	perm_user = ['verify_password','password','confirm_password','language','cell','twitter','email']
 	if request.player:
 		# filter the params down to the permitted ones
