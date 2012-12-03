@@ -48,10 +48,6 @@ def do_create_post():
 	if not p['content_e'] or not p['content_f'] or not p['title_e'] or not p['title_f']:
 		bottle.request.session.data = simplejson.dumps(p)
 		seterr('/post/create','missinginfo')
-	if p['content_e_hidden']:
-		p['content_e'] = p['content_e_hidden']
-	if p['content_f_hidden']:
-		p['content_f'] = p['content_f_hidden']
 	if 'allow_comments' in p:
 		p['allow_comments'] = True
 	else:
@@ -92,10 +88,6 @@ def do_edit_post(pid):
 		error(code=404)
 	except:
 		seterr(request.path, 'unknown')
-	if p['content_e_hidden']:
-		p['content_e'] = p['content_e_hidden']
-	if p['content_f_hidden']:
-		p['content_f'] = p['content_f_hidden']
 	if 'allow_comments' in p:
 		p['allow_comments'] = True
 	else:

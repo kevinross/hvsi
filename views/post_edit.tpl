@@ -26,12 +26,12 @@
 								</label>
 							</div>
 							<div>
-								<textarea rows=10 cols=70 id="content_{{i}}" name="content_{{i}}">{{data.get('content_' + i, '') if mode=='create' else getattr(post,'content_' + i)}}</textarea>
-								<input type="hidden" id="content_{{i}}_hidden" name="content_{{i}}_hidden" value="{{data.get('content_' + i + '_hidden', '')}}" />
+								<div id="wmd-button-bar-{{i}}"></div>
+								<textarea rows="10" cols="70" id="wmd-input-{{i}}" name="content_{{i}}">{{data.get('content_' + i, '') if mode=='create' else getattr(post,'content_' + i)}}</textarea>
 							</div>
 							<br/>
 							<br/>
-							<div style="border:1px solid black; padding: 10px;" class="wmd-preview" id="preview_{{i}}">&nbsp;</div>
+							<div style="border:1px solid black; padding: 10px;" id="wmd-preview-{{i}}">&nbsp;</div>
 							<br/>
 							<br/>
 						</div>
