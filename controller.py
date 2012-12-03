@@ -48,7 +48,7 @@ def error(code):
 def logged_in():
 	return hasattr(request, 'logged_in') and request.logged_in
 
-import basics, blog, gameops, user, admin
+import basics, blog, gameops, user, admin, api
 if not instanceconfig.statichost:
 	import static
 # catch all perm-redirect to make slashless
