@@ -143,6 +143,10 @@ class Session(InheritableSQLObject):
 class Account(InheritableSQLObject):
 	class sqlmeta:
 		registry = NAMESPACE
+		createSQL = {'mysql': [
+			'ALTER TABLE account MODIFY username VARCHAR(25) COLLATE latin1_general_cs',
+			'ALTER TABLE account MODIFY name VARCHAR(25) COLLATE latin1_general_cs'
+		]}
 	name		 = StringCol(length=50,varchar=True,notNone=True)
 	username	 = StringCol(length=25,varchar=True,unique=True,notNone=True)
 	hashed_pass	 = StringCol(notNone=True)
@@ -192,20 +196,26 @@ states = ['human','zombie','inactive','banned']
 class Player(Account):
 	class sqlmeta:
 		registry = NAMESPACE
-	student_num	 = IntCol(unique=True,notNone=True)
-	twitter		 = StringCol(length=50,varchar=True,unique=True,default=None)
-	cell		 = StringCol(length=11,varchar=True,unique=True,default=None)
+		createSQL = {'mysql': [
+			'ALTER TABLE player ALTER signedin SET DEFAULT 0',
+			'ALTER TABLE player ALTER liability SET DEFAULT 0',
+			'ALTER TABLE player ALTER safety SET DEFAULT 0',
+			'ALTER TABLE player ALTER zero SET DEFAULT 0'
+		]}
+	student_num	 	 = IntCol(unique=True,notNone=True)
+	twitter		 	 = StringCol(length=50,varchar=True,unique=True,default=None)
+	cell		 	 = StringCol(length=11,varchar=True,unique=True,default=None)
 	state			 = EnumCol(enumValues=states,default='human',notNone=True)
 	game_id			 = StringCol(length=10,varchar=True,unique=True,default=None)
 	kills			 = SQLMultipleJoin('Tag',joinColumn='tagger_id')
 	deaths			 = SQLMultipleJoin('Tag',joinColumn='taggee_id')
 	checkins		 = SQLMultipleJoin('Checkin',joinColumn='player_id',orderBy='time')
 	cures			 = SQLMultipleJoin('Cure',joinColumn='player_id',orderBy='time')
-	signedin		 = BoolCol(default=False,notNone=True)
+	signedin		 = BoolCol(default=False, notNone=True)
 	signedin_time	 = DateTimeCol(default=None)
-	liability		 = BoolCol(default=False,notNone=True)
-	safety			 = BoolCol(default=False,notNone=True)
-	zero			 = BoolCol(default=False,notNone=True)
+	liability		 = BoolCol(default=False, notNone=True)
+	safety			 = BoolCol(default=False, notNone=True)
+	zero			 = BoolCol(default=False, notNone=True)
 	def to_dict(self):
 		d = super(Player, self).to_dict()
 		d.update(dict(
