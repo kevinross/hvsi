@@ -131,11 +131,15 @@ def do_setup_2():
 	else:
 		debug = False
 	config += """
-host			= %r
-statichost		= %r
-debug			= %r
-timezone		= %r""" % (host, statichost, debug, timezone)
-	redirect('3')
+host		= %r
+statichost	= %r
+debug		= %r
+timezone	= %r""" % (host, statichost, debug, timezone)
+	# production uses error reporting, so redirect to that if in production mode
+	# else, skip it as a different system is used
+	if not debug:
+		redirect('3')
+	redirect('4')
 
 @app.get('/3')
 @view('setup_3')
@@ -162,12 +166,12 @@ def do_setup_3():
 	else:
 		t = f = s = u = pa = None
 	config += """
-exceptionpath = %r
-smtp_to			= %r
-smtp_from			= %r
-smtp_server			= %r
-smtp_user			= %r
-smtp_pass			= %r""" % (path, t, f, s, u, pa)
+exceptionpath 	= %r
+smtp_to		= %r
+smtp_from	= %r
+smtp_server	= %r
+smtp_user	= %r
+smtp_pass	= %r""" % (path, t, f, s, u, pa)
 	redirect('/4')
 
 

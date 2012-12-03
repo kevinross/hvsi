@@ -11,8 +11,7 @@
 								 <input type="radio" class="host" id="external" name="statichost" value="external">External:</input>
 								 <input type="text" id="externalhost" name="externalhost" disabled="true"/><br/><br/>
 			Debug Mode: <input type="radio" name="debug" value="yes">On</input>
-						<input type="radio" name="debug" value="no" checked>Off</input><br/><br/>
-			Exception Logs Directory: <input type="text" name="exceptionlogs" /><br/><br/>
+						<input type="radio" name="debug" value="no" checked="true">Off</input><br/><br/>
 			Timezone: <select name="timezone">
 						%try:
 						% import pytz
