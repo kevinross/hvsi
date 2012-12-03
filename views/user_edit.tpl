@@ -5,7 +5,7 @@
 %cinclude parts part=2
 				<h2>{{vuser.username}}</h2>
 				<form action="/user/{{vuser.username}}/edit" method="post">
-%				  if request.admin:
+%			if request.admin:
 					<h3>{{i18n[lang]['pages'][page]['userinfo']}}</h3>
 					<div>
 						<label for="username">
@@ -23,6 +23,7 @@
 					<div>
 						<input type="textbox" name="name" value="{{vuser.name}}" />
 					</div>
+%				if isinstance(vuser, db.Player):
 					<div>
 						<label for="student_num">
 							{{i18n[lang]['pages']['register']['student_num']}}:
@@ -45,7 +46,8 @@
 						</select>
 					</div>
 %				   end
-%				  end
+%				end
+%			end
 					<div>
 						<label for="email">
 							{{i18n[lang]['pages']['register']['email']}}:
@@ -54,6 +56,7 @@
 					<div>
 						<input type="textbox" name="email" value="{{vuser.email}}" />
 					</div>
+%				if isinstance(vuser, db.Player):
 					<div>
 						<label for="cell">
 							{{i18n[lang]['pages']['register']['cell']}}:
@@ -70,6 +73,7 @@
 					<div>
 						<input type="textbox" name="twitter" value="{{vuser.twitter if vuser.twitter else ''}}" />
 					</div>
+%				end
 					<br/>
 					<h3>{{i18n[lang]['pages']['register']['language']}}</h3>
 					<div>

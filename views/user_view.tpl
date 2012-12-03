@@ -16,7 +16,11 @@
 				<div style="width: 50%;">
 					<h2>{{vuser.username}}<span style="font-size: 0.5em; float: right;"><a href="/user/{{vuser.username}}/edit">[{{i18n[lang]['pages'][page]['edit']}}]</a></span></h2>
 				  %i=i18n[lang]['pages']['register']
-%				  for j in ['username','name','email','student_num','twitter','cell']:
+%				  keys = ['username','name','email']
+%				  if isinstance(vuser, db.Player):
+%					keys.extend(['student_num','twitter','cell'])
+%				  end
+%				  for j in keys:
 %					v = getattr(vuser, j)
 %					if v == 0:
 %						v = '0'
