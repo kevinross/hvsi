@@ -54,20 +54,22 @@ def do_login():
 	user = Account.from_username(usern)
 	if not user:
 		seterr('/login','nouser')
-	if user.verify_pass(passw):
-		sess = get_session()
-		# protect against session fixation
-		sess.destroySelf()
-		sess = get_session()
-		sess.user = user
-		if isinstance(user, Station):
-			sess.ttl = +(5*24*60*60)
-			sess.update_expires()
-		set_cookie(sess)
-		response.set_header('Location', request.environ.get('HTTP_REFERER', '/index'))
-		response.status = 303
-	else:
-		seterr('/login', 'nouser')
+	if not user.verify_pass(passw):
+		seterr('/login','nouser')
+	sess = get_session()
+	# protect against session fixation
+	sess.destroySelf()
+	sess = get_session()
+	sess.user = user
+	if isinstance(user, Station):
+		sess.ttl = +(5*24*60*60)
+		sess.update_expires()
+	set_cookie(sess)
+	loc = request.environ.get('HTTP_REFERER', '/index')
+	if loc == '/':
+		loc = '/index'
+	response.set_header('Location', loc)
+	response.status = 303
 	return None
 
 @route('/logout')
