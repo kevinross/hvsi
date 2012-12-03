@@ -1,8 +1,9 @@
 from sqlobject import *
 from sqlobject.mysql import builder
 from sqlobject.inheritance import *
+from sqlobject_todict import to_dict
 import bcrypt, datetime, time, markdown, os, urllib, uuid, hashlib, simplejson
-__all__ = ['Game','Account','Player','Bounty','Station','Admin','Tag','Checkin','Cure','Post','Comment','Snapshot','Score','Session']
+__all__ = ['Game','Account','Player','Bounty','Station','Admin','Tag','Checkin','Cure','Post','Comment','String','Snapshot','Score','Session']
 NAMESPACE = 'hvsi'
 from settings import instanceconfig
 proto = instanceconfig.dbprot
@@ -31,7 +32,12 @@ def norm_cell(val):
 	if final[0] != '1':
 		final = '1' + final
 	return final
-class Game(SQLObject):
+class Dictable():
+	@property
+	def dict(self):
+		return to_dict(self)
+
+class Game(SQLObject,Dictable):
 	class sqlmeta:
 		registry = NAMESPACE
 	max_id		= 12+1
@@ -102,7 +108,7 @@ except:
 	pass
 
 DEFAULT_LIFETIME = 300
-class Session(InheritableSQLObject):
+class Session(InheritableSQLObject,Dictable):
 	class sqlmeta:
 		registry = NAMESPACE
 	skey		 = StringCol(length=32,varchar=True,unique=True,notNone=True,default=lambda:uuid.uuid4().get_hex())
@@ -140,7 +146,7 @@ class Session(InheritableSQLObject):
 			s = Session.grab(u, 'user')
 		return s
 
-class Account(InheritableSQLObject):
+class Account(InheritableSQLObject,Dictable):
 	class sqlmeta:
 		registry = NAMESPACE
 		createSQL = {'mysql': [
@@ -216,18 +222,6 @@ class Player(Account):
 	liability		 = BoolCol(default=False, notNone=True)
 	safety			 = BoolCol(default=False, notNone=True)
 	zero			 = BoolCol(default=False, notNone=True)
-	def to_dict(self):
-		d = super(Player, self).to_dict()
-		d.update(dict(
-					state=self.state,
-					game_id=self.game_id,
-					kills=[x.to_dict() for x in self.kills],
-					deaths=[x.to_dict() for x in self.deaths],
-					checkins=[x.to_dict() for x in self.checkins],
-					cures=[x.to_dict() for x in self.cures],
-					signedin=self.signedin,
-					signedin_time=self.signedin_time.isoformat()))
-		return d
 	def _set_zero(self, zero):
 		# subtle bug here.  If creating the first Player in the db, the class won't have an ID column yet
 		# so if there aren't any players yet, just set zero and return
@@ -377,20 +371,12 @@ class Station(Account):
 	class sqlmeta:
 		registry = NAMESPACE
 	location		 = EnumCol(enumValues=locations,default='unset',notNone=True)
-	def to_dict(self):
-		d = super(Station, self).to_dict()
-		d['location'] = self.location
-		return d
 class Admin(Account):
 	class sqlmeta:
 		registry = NAMESPACE
 	def _get_location(self):
 		return Station.location_admin
-	def to_dict(self):
-		d = super(Admin, self).to_dict()
-		d['location'] = Station.location_admin
-		return d
-class Tag(SQLObject):
+class Tag(SQLObject,Dictable):
 	class sqlmeta:
 		registry = NAMESPACE
 	time	= DateTimeCol(default=datetime.datetime.now,notNone=True)
@@ -398,8 +384,6 @@ class Tag(SQLObject):
 	taggee  = ForeignKey('Player',notNone=True)
 	# prevents spoofing of tags
 	uid		= StringCol(length=100,varchar=True,unique=True,notNone=True)
-	def to_dict(self):
-		return dict(time=self.time.isoformat(), tagger=self.tagger.username, taggee=self.taggee.username, uid=self.uid)
 	def _get_method(self):
 		try:
 			i = int(self.uid)
@@ -417,15 +401,13 @@ class Tag(SQLObject):
 	@staticmethod
 	def has_uid(uid):
 		return Tag.select(Tag.q.uid == uid).count() > 0
-class Checkin(SQLObject):
+class Checkin(SQLObject,Dictable):
 	class sqlmeta:
 		registry = NAMESPACE
 	time	= DateTimeCol(default=datetime.datetime.now,notNone=True)
 	location= EnumCol(enumValues=locations,notNone=True)
 	player	= ForeignKey('Player',notNone=True)
-	def to_dict(self):
-		return dict(time=self.time.isoformat(), location=self.location, player=self.player.username)
-class Cure(SQLObject):
+class Cure(SQLObject,Dictable):
 	class sqlmeta:
 		registry = NAMESPACE
 	time		= DateTimeCol(default=datetime.datetime.now,notNone=True)
@@ -439,8 +421,6 @@ class Cure(SQLObject):
 		if not self._SO_get_card_id():
 			self._SO_set_card_id(hashlib.sha512(''.join([self.time.isoformat(),str(self.used),str(self.disqualified),str(time.clock())])).hexdigest()[15:25])
 		return self._SO_get_card_id()
-	def to_dict(self):
-		return dict(time=self.time.isoformat(), expiry=self.expiry.isoformat(), card_id=self.card_id, used=self.used, disqualified=self.disqualified, player=self.player.username)
 	@staticmethod
 	def from_cure_id(v):
 		try:
@@ -484,7 +464,7 @@ class string_dict():
 		return getattr(self.inst, '_SO_get_' + self.attr)().filter(String.q.field == self.attr).filter(String.q.lang == item)[0].content
 	def __setitem__(self, item, val):
 		getattr(self.inst, '_SO_get_' + self.attr)().filter(String.q.field == self.attr).filter(String.q.lang == item)[0].content = val
-class Post(SQLObject):
+class Post(SQLObject,Dictable):
 	class sqlmeta:
 		registry = NAMESPACE
 	time			= DateTimeCol(default=datetime.datetime.now,notNone=True)
@@ -563,7 +543,7 @@ class Post(SQLObject):
 		for i in self.content:
 			i.destroySelf()
 		self.destroySelf()
-class Comment(SQLObject):
+class Comment(SQLObject,Dictable):
 	class sqlmeta:
 		registry = NAMESPACE
 	time		= DateTimeCol(default=datetime.datetime.now,notNone=True)
@@ -572,12 +552,6 @@ class Comment(SQLObject):
 	post		= ForeignKey('Post',notNone=True)
 	def _get_html(self):
 		return markdown.markdown(self.content, safe_mode="remove")
-	def to_dict(self):
-		return dict(
-				time = self.time.isoformat(),
-				content = self.content,
-				user = dict(username = self.user.username, name = self.user.name),
-			)
 class Snapshot(SQLObject):
 	class sqlmeta:
 		registry = NAMESPACE
@@ -621,7 +595,7 @@ class Snapshot(SQLObject):
 # used to more efficiently store the scores for each person
 # if this didn't exist, we'd have to run a SELECT on Tag and count() for each player,
 # that could get slow really quickly
-class Score(SQLObject):
+class Score(SQLObject,Dictable):
 	class sqlmeta:
 		registry = NAMESPACE
 	player = ForeignKey('Player')
