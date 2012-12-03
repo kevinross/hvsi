@@ -28,5 +28,15 @@
 %			  if hasattr(request, 'admin') and request.admin:
 				<li class="page_item {{"current_page_item" if 'game' in request.path else ""}}"><a href="/game" title="{{i18n[lang]['navd']['game']}}">{{i18n[lang]['navd']['game']}}</a></li>
 %			  end
+%			  if lang_count == 2:
 				<li class="page_item" style="float:right;"><a href="?lang={{i18n[lang]['altlang']['key']}}">{{i18n[lang]['altlang']['name']}}</a></li>
+%			  else:
+				<form class="page_item" style="float:right;">
+					<select name="lang">
+%					  for k in i18n.keys():
+						<option value="{{k}}">{{i18n[k]['lang']}}</option>
+%					  end
+					</select>
+				</form>
+%			  end
 			</ul>
