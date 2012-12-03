@@ -1,12 +1,11 @@
 from bottle import view, route, request, response, static_file as send_file, redirect
-import bottle, os, sys, datetime, error_page, urlimport
+import bottle, os, sys, datetime, urlimport
 from settings import instanceconfig
 import pkg_resources
 # all the pages
 static_root = os.getcwd()
 from database import *
 bottle.debug(instanceconfig.debug)
-bottle.ERROR_PAGE_TEMPLATE = error_page.ERROR_PAGE_TEMPLATE
 def valid_creds(user, passw):
 	u = Account.from_username(user)
 	if not u:
