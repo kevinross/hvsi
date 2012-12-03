@@ -27,8 +27,10 @@ try:
 									  smtp_username=instanceconfig.smtp_user,
 									  smtp_password=instanceconfig.smtp_pass,
 									  error_subject_prefix=instanceconfig.host + ' error:')
-except:
-	print 'config_app'
+except Exception, e:
+	print "Couldn't load main app, traceback follows.  Starting config app instead."
+	import traceback
+	traceback.print_exc()
 	import config_app
 	application = config_app.app
 
