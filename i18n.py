@@ -1,13 +1,20 @@
 # coding=utf-8
-import copy, fnmatch
+import copy, fnmatch, os
 import pkg_resources
 i18n_global = {}
-for file in fnmatch.filter(pkg_resources.resource_listdir('hvsi',''), "i18n_*.py"):
+try:
+	files = pkg_resources.resource_listdir(__name__,'')
+except:
+	files = os.listdir('.')
+for file in fnmatch.filter(files, "i18n_*.py"):
 	if 'diff' in file:
 		continue
 	code = file.replace('i18n_','').replace('.py','').replace('_','-')
 	mod = file.replace('.py','')
-	i18n_global[code] = __import__('hvsi.' + mod, fromlist=[mod]).i18n
+	try:
+		i18n_global[code] = __import__('hvsi.' + mod, fromlist=[mod]).i18n
+	except:
+		i18n_global[code] = __import__(mod, fromlist=[mod]).i18n
 def update_dict(orig, new):
 	for k in new:
 		if isinstance(new[k], dict):
