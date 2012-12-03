@@ -1,19 +1,28 @@
-from bottle import template, request, redirect
+from bottle import template, request, redirect, SimpleTemplate
 from controller import error, get_session, set_cookie
 from database import *
-import database
+import database, bottle
 import i18n, imports
 __all__ = ['mview','lang','allow_auth','require_auth','require_cond','require_role','require_user']
+SimpleTemplate.global_config('from_pkg', 'hvsi')
+SimpleTemplate.defaults = imports.__dict__
+SimpleTemplate.defaults['bottle'] = bottle
+SimpleTemplate.defaults['db'] = database
+SimpleTemplate.defaults['lang_count'] = len(i18n.i18n.keys())
 # decorator that automatically gives the "page" variable to templates
 def mview(view_name):
 	def tview(func):
 		def view_func(*args, **kwargs):
 			val = func(*args, **kwargs)
+			i18n_val = i18n.i18n
 			if val is not None and isinstance(val, dict) and 'page' not in val:
 				val['page'] = view_name
-				val['db'] = database
-				val.update(imports.__dict__)
-			return template(view_name, **val)
+				i18n_val = val.get('i18n', i18n.i18n)
+				try:
+					del val['i18n']
+				except:
+					pass
+			return template(view_name, i18n=i18n_val, template_settings=dict(from_pkg='hvsi'), **val)
 		return view_func
 	return tview
 # decorator that denies access to anon
@@ -80,7 +89,6 @@ def lang(func):
 			if request.method == 'GET':
 				func_dict['request'] = request
 				func_dict['started'] = Game.is_started
-			request.environ['i18n'] = func_dict.get('i18n',i18n.i18n)
 		return func_dict
 	return lang
 # decorator that whitelists access based on roles

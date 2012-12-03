@@ -1,15 +1,16 @@
-from bottle import Bottle, template, request, redirect
+from bottle import Bottle, template, request, redirect, SimpleTemplate
 import os, sys, bottle
 import pkg_resources
 # all the pages
+SimpleTemplate.global_config('from_pkg', 'hvsi')
+SimpleTemplate.defaults['bottle'] = bottle
 def view(view_name):
 	def tview(func):
 		def view_func(*args, **kwargs):
 			val = func(*args, **kwargs)
 			if val is not None and isinstance(val, dict) and 'page' not in val:
 				val['page'] = view_name
-			val['template_settings'] = dict(from_pkg='hvsi')
-			return template(view_name, **val)
+			return template(view_name, template_settings=dict(from_pkg='hvsi'), **val)
 		return view_func
 	return tview
 libdir = os.path.join(os.getcwd(), 'lib')
@@ -37,17 +38,17 @@ def view_index():
 
 def get_unavailable_mods():
 	try:
-		f = pkg_resources.resource_stream('hvsi','requirements.txt')
+		modules = [x.key for x in pkg_resources.working_set.by_key['hvsi'].requires()]
 	except:
-		f = open('requirements.txt')
-	modules = f.readlines()
-	f.close()
+		try:
+			modules = open('requirements.txt').readlines()
+		except:
+			modules = open('hvsi/requirements.txt').readlines()
 	failed = []
 	for module in modules:
 		mod = module.replace('\n','').lower()
 		if mod == 'mysql-python':
 			mod = 'MySQLdb'
-			os.environ['DYLD_LIBRARY_PATH'] = os.environ['LD_LIBRARY_PATH'] = '/usr/local/mysql/lib'
 		if mod == 'py-bcrypt':
 			mod = 'bcrypt'
 		try:
