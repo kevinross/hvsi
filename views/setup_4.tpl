@@ -5,7 +5,11 @@
 	<body>
 		<h3>Database Connection</h3>
 		<form action="4" method="post">
-			Protocol: <select name="dbproto">
+			Infrastructure: <input type="radio" name="infra" value="aws">Amazon Web Services</input>
+							<input type="radio" name="infra" value="af">AppFog</input>
+							<input type="radio" name="infra" value="custom" checked="true">Custom</input>
+			<br/><br/>
+			Protocol: <select class="c" name="dbproto">
 					  %if has_mysql:
 						<option value="mysql">MySQL</option>
 					  %end
@@ -18,5 +22,14 @@
 			Database (filename for SQLite): <input type="text" name="dbdb" /><br/><br/>
 			<input type="submit" value="Next" />
 		</form>
+		<script type="text/javascript">
+			$('input:radio').change(function(evt) {
+				if (this.value == "custom") {
+					$('input.c').prop('disabled', false);
+				} else {
+					$('input.c').prop('disabled', true);
+				}
+			});
+		</script>
 	</body>
 </html>

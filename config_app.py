@@ -23,6 +23,26 @@ app = Bottle()
 config = """
 # this is a python module with configuration details for this instance of hvsi
 """
+aws_sql = """
+import os
+dbprot		= 'mysql'
+dbhost		= os.environ['RDS_HOSTNAME']
+dbport		= 3306
+dbdb		= os.environ['RDS_DB_NAME']
+dbuser		= os.environ['RDS_USERNAME']
+dbpass		= os.environ['RDS_PASSWORD']
+
+"""
+af_sql = """
+import os, simplejson
+data		= simplejson.loads(os.environ['VCAP_SERVICES'])['mysql-5.1'][0]['credentials']
+dbprot		= 'mysql'
+dbhost		= data['hostname']
+dbport		= 3306
+dbdb		= data['name']
+dbuser		= data['username']
+dbpass		= data['password']
+"""
 # 1: module deps
 # 2: configure static file hostname, debug, timezone
 # 3: configure exception logging
@@ -159,6 +179,7 @@ def view_setup_4():
 @app.post('/4')
 def do_setup_4():
 	global config
+	infra = request.params.get('infra', 'custom')
 	proto = request.params.get('dbproto', 'mysql')
 	host = request.params.get('dbhost', 'localhost')
 	user = request.params.get('dbuser', 'hvsi')
@@ -170,6 +191,12 @@ dbhost			= %r
 dbuser			= %r
 dbpass			= %r
 dbdb			= %r""" % (proto, host, user, passw, db)
+	if infra == 'custom':
+		config += """
+	elif infra == 'aws':
+		config += aws_sql
+	elif infra == 'af':
+		config += af_sql
 	redirect('4.5')
 
 @app.get('/4.5')
@@ -180,20 +207,7 @@ def view_setup_45():
 @app.post('/4.5')
 def do_setup_45():
 	f = open(os.path.join(os.getcwd(), 'instanceconfig.py'), 'w')
-	config = """import os, sys, simplejson
-libdir = os.path.join(os.getcwd(), 'lib')
-sys.path.append(libdir)
-sys.path.extend([os.path.join(os.getcwd(), 'lib', x) for x in os.listdir(libdir)])
-
-""" + request.params['config'] + """
-if 'VCAP_SERVICES' in os.environ:
-	d = simplejson.loads(os.environ['VCAP_SERVICES'])['mysql-5.1'][0]['credentials']
-	dbprot = 'mysql'
-	dbhost = d['hostname']
-	dbdb = d['name']
-	dbuser = d['username']
-	dbpass = d['password']
-"""
+	config = request.params['config']
 	f.write(config)
 	f.close()
 	redirect('5')
