@@ -16,6 +16,9 @@ if proto == 'sqlite':
 	sqlhub.processConnection = connectionForURI('sqlite:%s/%s' % (host, db))
 else:
 	sqlhub.processConnection = connectionForURI('%s://%s:%s@%s:%i/%s' % (proto, user, passw, host, port, db))
+if instanceconfig.debug:
+	sqlhub.processConnection.debug = True
+	sqlhub.processConnection.debugOutput = True
 def norm_cell(val):
 	# strip everything out leaving just the numbers.
 	# prefix with a 1 if not already done
