@@ -321,6 +321,7 @@ class Player(Account):
 		self.state = self.state_zombie
 	def cure(self):
 		self.state = self.state_human
+	@staticmethod
 	def from_twitter(twit):
 		if not twit:
 			return None
