@@ -13,8 +13,7 @@
 %				    bottle.request.session.error = None
 %				end
 %				if bottle.request.session.data:
-%					data = simplejson.loads(bottle.request.session.data)
-%					bottle.request.session.data = None
+%					data = bottle.request.session.data_dict
 %				else:
 %					data = dict()
 %				end
@@ -30,7 +29,7 @@
 					  </label>
 					</div>
 					<div class="form_field">
-						<input type="{{i[1]}}" name="{{i[0]}}" value="{{data.get(i[0], '')}}"/>
+						<input type="{{i[1]}}" id="{{i[0]}}" name="{{i[0]}}" value="{{data.get(i[0], '')}}"/>
 						<span class="extra_info">({{i18n[lang]['pages'][page]['required']}})</span>
 					</div>
 %				end
@@ -40,7 +39,7 @@
 					  </label>
 					</div>
 					<div class="form_field">
-						<select name="language">
+						<select id="language" name="language">
 %						  for l in i18n.keys():
 							<option value="{{l}}" {{'selected' if data.get('language','') == l else ''}}>{{i18n[l]['lang']}}</option>
 %						  end
@@ -57,23 +56,33 @@
 					  </label>
 					</div>
 					<div class="form_field">
-						<input type="{{i[1]}}" name="{{i[0]}}" value="{{data.get(i[0], '')}}"/>
+						<input type="{{i[1]}}" id="{{i[0]}}" name="{{i[0]}}" value="{{data.get(i[0], '')}}"/>
 %					  if i[2]:
 						<span class="extra_info">({{i[2]}})</span>
 %					  end
 					</div>
 %				end
 					<br/>
+                    <h3>{{i18n[lang]['pages'][page]['human?']}}</h3>
+                    <div class="form_label">
+                        <label for="answer">
+                            {{SkillTestingQuestion(data['question']).question(lang)}}
+                        </label>
+                    </div>
+                    <div class="form_field">
+                        <input type="textbox" id="answer" name="answer" value=""/>
+                    </div>
+                    <br/>
 					<h3>{{i18n[lang]['pages'][page]['eula']}}</h3>
 					<div class="eula">
 						<span>
 							<input type="checkbox" name="liability" />
-							{{i18n[lang]['pages'][page]['liability']}} <a href="/eula/liability.pdf">{{i18n[lang]['pages'][page]['liabilitywaiver']}}</a>
+							{{i18n[lang]['pages'][page]['liability']}} <a href="/pdf/liability.pdf">{{i18n[lang]['pages'][page]['liabilitywaiver']}}</a>
 						</span>
 						<br/>
 						<span>
 							<input type="checkbox" name="safety" />
-							{{i18n[lang]['pages'][page]['safety']}} <a href="/eula/safety.pdf">{{i18n[lang]['pages'][page]['safetyrules']}}</a>
+							{{i18n[lang]['pages'][page]['safety']}} <a href="/pdf/safety.pdf">{{i18n[lang]['pages'][page]['safetyrules']}}</a>
 						</span>
 					</div>
 					<div class="form_field">

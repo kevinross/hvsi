@@ -1,5 +1,6 @@
 from decorators import *
 from database import *
+from skilltester import SkillTestingQuestion
 from controller import error, seterr, get_session, set_cookie
 import i18n, datetime, simplejson
 from bottle import route, request, response, redirect
@@ -115,7 +116,8 @@ def reg_cond():
 @lang
 @require_cond(reg_cond)
 def view_registration():
-	return dict()
+	request.session['question'] = SkillTestingQuestion().as_dict
+	return dict(SkillTestingQuestion=SkillTestingQuestion)
 @route('/register',method='POST')
 @allow_auth
 @require_cond(reg_cond)
@@ -123,8 +125,10 @@ def do_registration():
 	p = request.params
 	data = dict([(x, request.params[x]) for x in request.params.keys()])
 	del data['password_confirm']
+	# must rescue the question before it becomes obliterated by field-saving code
+	question = SkillTestingQuestion(request.session['question'])
 	request.session.data = simplejson.dumps(data)
-	for i in ['username', 'name', 'password', 'password_confirm', 'language', 'student_num', 'email']:
+	for i in ['username', 'name', 'password', 'password_confirm', 'language', 'student_num', 'email', 'answer']:
 		if not p[i]:
 			seterr('/register','missinginfo')
 	if '/' in p['username']:
@@ -142,8 +146,11 @@ def do_registration():
 	email = p['email']
 	twitter = None if not p['twitter'] else p['twitter'].replace('@','')
 	cell = p.get('cell', None)
-	user = (Account.from_username(username) or Account.from_student_num(studentn) or Account.from_email(email) or
-			Account.from_twitter(twitter) or Account.from_cell(cell))
+	answer = p['answer']
+	if not question.check(answer):
+		seterr('/register','badanswer')
+	user = (Account.from_username(username) or Player.from_student_num(studentn) or Account.from_email(email) or
+			Player.from_twitter(twitter) or Player.from_cell(cell))
 	if user:
 		seterr('/register','userexists')
 	u = None
@@ -156,6 +163,8 @@ def do_registration():
 		sess = get_session()
 		sess.user = u
 		set_cookie(sess)
+	# only obliterate the form data when player is successfully created
+	request.session.data = None
 	redirect('/thanks',303)
 
 # end of non-auth pages

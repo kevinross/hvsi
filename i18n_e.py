@@ -121,7 +121,14 @@ i18n = {
 			'liability_read': 'The liability waiver has not been read',
 			'safety_read': 'The safety rules have not been read',
 			'liability_err': 'You may not register unless you agree to the terms in the liability waiver',
-			'safety_err': 'You may not register unless you agree to the safety rules'
+			'safety_err': 'You may not register unless you agree to the safety rules',
+			'human?': 'Solve the question below',
+			'badanswer': 'Incorrect response to verification question',
+			'question': {
+				'arithmetic': 'What is the result of %i %s %i?',
+				'logic': 'Is %i %s %i?  Yes or No',
+				'wo': 'Type the answer as a word.'
+			}
 		},
 		'eula': {
 			'title': 'Safety and Liability',
