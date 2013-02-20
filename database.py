@@ -170,7 +170,7 @@ class Account(InheritableSQLObject,Dictable):
 			'ALTER TABLE account MODIFY username VARCHAR(25) COLLATE latin1_general_cs',
 			'ALTER TABLE account MODIFY name VARCHAR(25) COLLATE latin1_general_cs'
 		]}
-	name		 = StringCol(length=50,varchar=True,notNone=True)
+	name		 = StringCol(length=25,varchar=True,notNone=True)
 	username	 = StringCol(length=25,varchar=True,unique=True,notNone=True)
 	hashed_pass	 = StringCol(notNone=True)
 	language	 = StringCol(default='e')
