@@ -149,6 +149,20 @@ class Session(InheritableSQLObject,Dictable):
 			s = Session.grab(u, 'user')
 		return s
 
+	@property
+	def data_dict(self):
+		if not self.data:
+			self.data = '{}'
+		return simplejson.loads(self.data)
+
+	def __getitem__(self, item):
+		return simplejson.loads(self.data)[item]
+
+	def __setitem__(self, key, value):
+		d = self.data_dict
+		d[key] = value
+		self.data = simplejson.dumps(d)
+
 class Account(InheritableSQLObject,Dictable):
 	class sqlmeta:
 		registry = NAMESPACE
