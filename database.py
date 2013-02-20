@@ -243,6 +243,11 @@ class Player(Account):
 		# subtle bug here.  If creating the first Player in the db, the class won't have an ID column yet
 		# so if there aren't any players yet, just set zero and return
 		if sqlhub.processConnection.queryOne('SELECT COUNT(*) FROM player')[0] == 0:
+			self._SO_set_zero(False)
+			return
+		# if I don't exist yet...
+		if self.sqlmeta._creating:
+			self._SO_set_zero(False)
 			return
 		for i in Player.select(Player.q.id != self.id):
 			i._SO_set_state('human')
