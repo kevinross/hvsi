@@ -4,6 +4,8 @@ from sqlobject import *
 from controller import error, seterr, get_session, set_cookie
 import i18n, datetime, simplejson
 from bottle import route, get, post, request, response, redirect
+
+
 def is_allowed(klass, ids, user):
 	s = get_session()
 	if s.admin:
