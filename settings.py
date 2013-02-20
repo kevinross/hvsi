@@ -1,10 +1,11 @@
-import os
+import os, sys
 # SETTINGS could be a URL or the name of the module in the tree
 # if it's a url]
-base = os.path.dirname(os.environ['SETTINGS'])
-mod = os.path.basename(os.environ['SETTINGS'])
-sys.path.append(base)
+
 try:
+	base = os.path.dirname(os.environ['SETTINGS'])
+	mod = os.path.basename(os.environ['SETTINGS']).replace('.py','')
+	sys.path.append(base)
 	instanceconfig = __import__(mod)
 except:
 	# last resort: use environment variables to configure the app.  Does not use defaults so
