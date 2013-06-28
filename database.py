@@ -483,7 +483,7 @@ class Cure(SQLObject,Dictable):
 			return Cure.select(Cure.q.used == self.used)
 	used_cards = state_class(True)
 	unused_cards = state_class(False)
-class String(SQLObject):
+class String(SQLObject, Dictable):
 	class sqlmeta:
 		registry = NAMESPACE
 	lang			= StringCol()
@@ -508,47 +508,51 @@ class Post(SQLObject,Dictable):
 	allow_comments 	= BoolCol(default=True,notNone=True)
 	comments		= SQLMultipleJoin('Comment',joinColumn='post_id',orderBy='time')
 	def _get_content(self):
-		return string_dict(self, 'content')
+		return self._SO_get_content().filter(String.q.field == 'content')
 	def _get_title(self):
+		return self._SO_get_title().filter(String.q.field == 'title')
+	def _get_stitle(self):
 		return string_dict(self, 'title')
+	def _get_scontent(self):
+		return string_dict(self, 'content')
 	def _get_content_e(self):
 		try:
-			return self.content['e']
+			return self.scontent['e']
 		except:
 			return ''
 	def _get_title_e(self):
 		try:
-			return self.title['e']
+			return self.stitle['e']
 		except:
 			return ''
 	def _get_content_f(self):
 		try:
-			return self.content['f']
+			return self.scontent['f']
 		except:
 			return ''
 	def _get_title_f(self):
 		try:
-			return self.title['f']
+			return self.stitle['f']
 		except:
 			return ''
 	def _set_content_e(self, val):
 		try:
-			self.content['e'] = val
+			self.scontent['e'] = val
 		except:
 			c = String(lang='e',content=val,field='content',post=self)
 	def _set_title_e(self, val):
 		try:
-			self.title['e'] = val
+			self.stitle['e'] = val
 		except:
 			c = String(lang='e',content=val,field='title',post=self)
 	def _set_content_f(self, val):
 		try:
-			self.content['f'] = val
+			self.scontent['f'] = val
 		except:
 			c = String(lang='f',content=val,field='content',post=self)
 	def _set_title_f(self, val):
 		try:
-			self.title['f'] = val
+			self.stitle['f'] = val
 		except:
 			c = String(lang='f',content=val,field='title',post=self)
 	def _get_html_e(self):
