@@ -1,11 +1,19 @@
-import random, operator, i18n, text2num
+import random, operator, i18n, text2num, num2text
 class SkillTestingQuestion():
 	arith = (operator.add,operator.sub,operator.mul,
 			 operator.add,operator.sub,operator.mul)
 	logic = (operator.gt,operator.ge,
 			 operator.lt,operator.le,
 			 operator.eq,operator.ne)
-	signs = {'add': '+', 'sub': '-', 'mul': '*', 'gt': '>', 'ge': '>=', 'lt': '<', 'le': '<=', 'eq': '=', 'ne': '!='}
+	signs = {'add': ['+','plus'],
+			 'sub': ['-', 'minus'],
+			 'mul': ['*', 'times','multiplied by'],
+			 'gt': ['>', 'greater than'],
+			 'ge': ['>=', 'greater than or equal to'],
+			 'lt': ['<', 'less than'],
+			 'le': ['<=', 'less than or equal to'],
+			 'eq': ['=', 'equal to'],
+			 'ne': ['!=', 'not equal to']}
 	def __init__(self, d=None):
 		if d:
 			self.x = d['x']
@@ -33,11 +41,13 @@ class SkillTestingQuestion():
 	def question(self, lang):
 		if self.op in SkillTestingQuestion.arith:
 			# what is the result of x op y?
-			fmt = i18n.i18n[lang]['pages']['register']['question']['arithmetic']
+			fmt = random.choice(i18n.i18n[lang]['pages']['register']['question']['arithmetic'])
 		elif self.op in SkillTestingQuestion.logic:
 			# is x op y?
-			fmt = i18n.i18n[lang]['pages']['register']['question']['logic']
-		s = fmt % (self.x, SkillTestingQuestion.signs[self.op.__name__], self.y)
+			fmt = random.choice(i18n.i18n[lang]['pages']['register']['question']['logic'])
+		left = num2text.num2text(self.x).strip() if random.choice([True,False]) else self.x
+		right = num2text.num2text(self.y).strip() if random.choice([True,False]) else self.y
+		s = fmt % dict(left=left, op=random.choice(SkillTestingQuestion.signs[self.op.__name__]), right=right)
 		if self.wo:
 			s += ' %s' % i18n.i18n[lang]['pages']['register']['question']['wo']
 		return s
@@ -64,3 +74,6 @@ class SkillTestingQuestion():
 				except:
 					return False
 		return ans == self.ans
+
+if __name__ == '__main__':
+	print SkillTestingQuestion().question('e')
