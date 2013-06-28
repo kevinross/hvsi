@@ -2784,14 +2784,10 @@ class BaseTemplate(object):
 		self.settings.update(settings) # Apply
 		self.name = name
 		self.source = source.read() if hasattr(source, 'read') else source
-		if from_pkg or self.settings.get('from_pkg', False):
+		if not self.source and (from_pkg or self.settings.get('from_pkg', False)):
 			pkg = self.settings.get('from_pkg', False) or from_pkg
-			try:
-				import pkg_resources
-				self.source = pkg_resources.resource_string(pkg, 'views/%s.tpl' % name)
-			except Exception, e:
-				import traceback
-				traceback.print_exc()
+			import pkg_resources
+			self.source = pkg_resources.resource_string(pkg, 'views/%s.tpl' % name)
 		self.filename = source.filename if hasattr(source, 'filename') else None
 		self.lookup = [os.path.abspath(x) for x in lookup]
 		self.encoding = encoding
