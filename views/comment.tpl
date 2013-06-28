@@ -5,7 +5,7 @@
 								</div>
 
 								<div class="comment-meta commentmetadata">
-									<a href="{{request.path}}#comment-{{comment.id}}">
+									<a href="/post/{{comment.post.id}}#comment-{{comment.id}}">
 									{{calendar.month_name[comment.time.month]}} {{comment.time.day}}, {{comment.time.year}} @ {{comment.time.strftime('%H:%M')}}</a>&nbsp;&nbsp;
 								</div>
 
