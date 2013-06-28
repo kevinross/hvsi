@@ -33,7 +33,7 @@
               %end
 %			  if bottle.request.session.error:
 				<div style="color: red;">
-%if 'suberror' in globals() and suberror:
+%if get('suberror', None):
 					{{i18n[lang]['pages'][page][bottle.request.session.error] % i18n[lang]['pages'][page][suberror]}}
 %else:
 					{{i18n[lang]['pages'][page][bottle.request.session.error]}}
