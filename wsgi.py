@@ -8,10 +8,10 @@ try:
 	import controller
 	application = bottle.default_app()
 	application.catchall = False
-	if instanceconfig.debug:
+	if instanceconfig.debug == True:
 		from werkzeug.debug import DebuggedApplication
 		application = DebuggedApplication(application, evalex=True)
-	else:
+	elif not instanceconfig.debug:
 		import paste.exceptions.errormiddleware
 		# monkey-patch in logging to datestamped files or gmail
 		# the latter is needed when access to datestamped files is impossible
