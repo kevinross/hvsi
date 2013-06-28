@@ -3,7 +3,7 @@
 %	cinclude head
 </head>
 %cinclude parts part=2
-				<h1>{{i18n[lang]['pages'][page]['title']}}</h1>
+				<h1>{(i18n[lang]['pages'][page]['title']}}</h1>
 				<form action="/login" method="post">
 					<div class="form_label">
 					  <label for="username">

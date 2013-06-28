@@ -2983,10 +2983,18 @@ class SimpleTemplate(BaseTemplate):
 		template = self.source or open(self.filename, 'rb').read()
 
 		def yield_tokens(line):
-			for i, part in enumerate(re.split(r'\{\{(.*?)\}\}', line)):
-				if i % 2:
+			brace = None
+			for i, part in enumerate(re.split(r'\{([{\(])(.*?)\}\}', line)):
+				if part in ('(','{', '}', ')'):
+					brace = part
+					continue
+				if brace == '{':
+					brace = None
 					if part.startswith('!'): yield 'RAW', part[1:]
 					else: yield 'CMD', part
+				elif brace == '(':
+					brace = None
+					yield 'I18', part
 				else: yield 'TXT', part
 
 		def flush(): # Flush the ptrbuffer
@@ -2997,6 +3005,7 @@ class SimpleTemplate(BaseTemplate):
 					if token == 'TXT': cline += repr(value)
 					elif token == 'RAW': cline += '_str(%s)' % value
 					elif token == 'CMD': cline += '_escape(%s)' % value
+					elif token == 'I18': cline += '"<span class=\\"i18n\\" path=\\"%s\\">", _str(%s), "</span>"' % (value, value)
 					cline +=  ', '
 				cline = cline[:-2] + '\\\n'
 			cline = cline[:-2]
@@ -3070,18 +3079,22 @@ class SimpleTemplate(BaseTemplate):
 			self.cache[_name+'##cinclude'] = self.__class__(name=_name, lookup=self.lookup, parent=self)
 		return self.cache[_name+'##cinclude'].execute(_stdout, kwargs)
 
-
 	def execute(self, _stdout, *args, **kwargs):
 		for dictarg in args: kwargs.update(dictarg)
 		env = self.defaults.copy()
 		if self.parent:
 			if self.parent.child_env:
 				env.update(self.parent.child_env)
+		env.update(kwargs)
+		def i18n(code):
+			try:
+				return code
+			except:
+				return 'TRANSLATION NEEDED: %s' % str(code)
 		env.update({'_stdout': _stdout, '_printlist': _stdout.extend,
-			   '_include': self.subtemplate, '_cinclude': self.cinclude, '_str': self._str,
+			   '_include': self.subtemplate, '_cinclude': self.cinclude, '_str': i18n,
 			   '_escape': self._escape, 'get': env.get,
 			   'setdefault': env.setdefault, 'defined': env.__contains__})
-		env.update(kwargs)
 		self.child_env = env
 		eval(self.co, env)
 		if '_rebase' in env:

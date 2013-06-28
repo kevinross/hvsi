@@ -1,7 +1,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="google-site-verification" content="GQMnsDEtrtfSC3X6Ael_dPtmbXAhskKKxqDQMpOg6ss" />
 %	if not defined('notitle'):
-	<title>HvsI &raquo; {{i18n[lang]['pages'][page]['title']}}</title>
+	<title>HvsI &raquo; {{get('title', i18n[lang]['pages'][page]['title'])}}</title>
 %	end
 	<script type="text/javascript" src="{{static('/js/jquery.min.js')}}"></script>
 	<script type="text/javascript" src="{{static('/js/jquery-ui.min.js')}}"></script>
