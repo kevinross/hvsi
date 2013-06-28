@@ -2,26 +2,31 @@ from bottle import template, request, redirect, SimpleTemplate
 from controller import error, get_session, set_cookie
 from database import *
 import database, bottle
-import i18n, imports
+import i18n as i18n_mod, imports
 __all__ = ['mview','lang','allow_auth','require_auth','require_cond','require_role','require_user']
 SimpleTemplate.global_config('from_pkg', 'hvsi')
 SimpleTemplate.defaults = imports.__dict__
 SimpleTemplate.defaults['bottle'] = bottle
 SimpleTemplate.defaults['db'] = database
-SimpleTemplate.defaults['lang_count'] = len(i18n.i18n.keys())
+SimpleTemplate.defaults['lang_count'] = len(i18n_mod.i18n.keys())
+
 # decorator that automatically gives the "page" variable to templates
 def mview(view_name):
 	def tview(func):
 		def view_func(*args, **kwargs):
-			val = func(*args, **kwargs)
-			i18n_val = i18n.i18n
+			val = lang(allow_auth(func))(*args, **kwargs)
+			i18n_val = i18n_mod.i18n
 			if val is not None and isinstance(val, dict) and 'page' not in val:
 				val['page'] = view_name
-				i18n_val = val.get('i18n', i18n.i18n)
+				i18n_val = val.get('i18n', i18n_mod.i18n)
 				try:
 					del val['i18n']
 				except:
 					pass
+			if isinstance(val, dict):
+				val['request'] = bottle.request
+			if not isinstance(val, dict):
+				return val
 			return template(view_name, i18n=i18n_val, template_settings=dict(from_pkg='hvsi'), **val)
 		return view_func
 	return tview

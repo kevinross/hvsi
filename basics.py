@@ -2,7 +2,8 @@ from decorators import *
 from database import *
 from skilltester import SkillTestingQuestion
 from controller import error, seterr, get_session, set_cookie
-import i18n, datetime, simplejson
+import i18n, datetime, simplejson, smtplib
+from email.mime.text import MIMEText
 from bottle import route, request, response, redirect
 from sqlobject import dberrors
 @route('/index')
@@ -175,30 +176,66 @@ def do_registration():
 @require_auth
 def view_thanks():
 	return dict()
+
+@route('/forgot_password',method='GET')
+@mview('forgotpass')
+@allow_auth
+@lang
+def view_forgot_password():
+	return dict()
+
+@route('/forgot_password',method='POST')
+@allow_auth
+def do_forgot_password():
+	email = request.params.get('email',None)
+	if not email:
+		seterr('/forgot_password', 'noemail')
+	u = Account.from_email(email)
+	if not u:
+		seterr('/forgot_password', 'nouser')
+	p = PasswordReset()
+	p.ttl = 24*60*60	# 24 hours
+	p.update_expires()
+	p.user = u
+	msg = MIMEText(i18n.i18n[get_session().language]['passemail']['body'] % p.skey)
+	msg['Subject'] = i18n.i18n[get_session().language]['passemail']['subject']
+	msg['From'] = 'passwordreset@hvsi.ca'
+	s = smtplib.SMTP_SSL(Game.email_host, 465)
+	s.login(Game.email_user,Game.email_pass)
+	s.sendmail(msg['From'], [u.email], msg.as_string())
+	redirect('/forgot_password?result=success')
 @route('/password_reset',method='GET')
 @mview('pass_reset')
 @allow_auth
 @lang
 def view_pass_reset():
+	if request.params.get('success', None):
+		return dict()
+	phash = request.params.get('key', None)
+	if not phash:
+		seterr('/password_reset', 'missinginfo')
+	pwr = PasswordReset.grab(phash)
+	if pwr.expired:
+		seterr('/password_reset', 'expired')
+	# this little bit here grabs field names from the registration page
 	i18n_reg_e = i18n.i18n_over({'nonsensical':'bullshit'})['e']['pages']['register']
 	del i18n_reg_e['title']
 	i18n_reg_f = i18n.i18n_over({'nonsensical':'bullshit'})['f']['pages']['register']
 	del i18n_reg_f['title']
-	if 'success' in request.params:
-		redirect('/', 303)
 	return dict(i18n=i18n.i18n_over({'e':{'pages':{'pass_reset':i18n_reg_e}},
 									 'f':{'pages':{'pass_reset':i18n_reg_f}}}))
 @route('/password_reset',method='POST')
 def do_pass_reset():
-	for i in ('email', 'student_num'):
+	for i in ('key', 'password', 'confirm'):
 		if i not in request.params:
 			seterr('/password_reset', 'missinginfo')
-	user = Account.get_user(request.params['email'])
+	pwr = PasswordReset.grab(request.params['key'])
+	user = pwr.user
 	if not user:
 		seterr('/password_reset', 'wronginfo')
-	if user.student_num != int(request.params['student_num']):
-		seterr('/password_reset', 'wronginfo')
-	user.hashed_pass = str(user.student_num)
+	if request.params['password'] != request.params['confirm']:
+		seterr('/password_reset', 'mismatch')
+	user.hashed_pass = request.params['password']
 	redirect('/password_reset?success=true', 303)
 @route('/stats')
 @mview('graph')

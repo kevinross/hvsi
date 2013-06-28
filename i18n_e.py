@@ -122,11 +122,11 @@ i18n = {
 			'safety_read': 'The safety rules have not been read',
 			'liability_err': 'You may not register unless you agree to the terms in the liability waiver',
 			'safety_err': 'You may not register unless you agree to the safety rules',
-			'human?': 'Solve the question below',
+			'human?': 'Are you human? (Zombies not allowed!)',
 			'badanswer': 'Incorrect response to verification question',
 			'question': {
-				'arithmetic': 'What is the result of %i %s %i?',
-				'logic': 'Is %i %s %i?  Yes or No',
+				'arithmetic': ['What is the result of %{left}i %{op}s %{right}i?'],
+				'logic': ['Is %{left}i %{op}s %{right}i?  Yes or No'],
 				'wo': 'Type the answer as a word.'
 			}
 		},
@@ -370,6 +370,10 @@ i18n = {
 	'email': {
 		'subject': 'HvsI: Auto-tag',
 		'message': 'You have been auto-tagged because you did not check-in twice today.\nPlease stop by a station and exchange your bandanna.'
+	},
+	'passemail': {
+		'subject': 'HvsI: Password Reset Request',
+		'message': 'You have requested a password reset, open http://hvsi.ca/?key=%s to continue.'
 	},
 	'logout': 'Logout',
 }

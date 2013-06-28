@@ -3,7 +3,7 @@ from sqlobject.mysql import builder
 from sqlobject.inheritance import *
 from sqlobject_todict import to_dict
 import bcrypt, datetime, time, markdown, os, urllib, uuid, hashlib, simplejson
-__all__ = ['Game','Account','Player','Bounty','Station','Admin','Tag','Checkin','Cure','Post','Comment','String','Snapshot','Score','Session']
+__all__ = ['Game','Account','Player','Bounty','Station','Admin','Tag','Checkin','Cure','Post','Comment','String','Snapshot','Score','Session','PasswordReset']
 NAMESPACE = 'hvsi'
 from settings import instanceconfig
 proto = instanceconfig.dbprot
@@ -122,16 +122,23 @@ class Session(InheritableSQLObject,Dictable):
 	error		 = StringCol(default=None)
 	data		 = StringCol(default=None)
 
-	@staticmethod
-	def grab(key, attr='skey'):
-		s = Session.select(getattr(Session.q, attr) == key)[0]
+	@classmethod
+	def grab(cls, key, attr='skey'):
+		s = cls.select(getattr(cls.q, attr) == key)[0]
+		if not isinstance(s, cls):	# guards against people using password reset hashes as sessions as
+			s.destroySelf()			# sqlobject automatically converts to subclasses so a select() on Session
+			s = cls()				# could return a password reset
 		u = s.user
-		if datetime.datetime.now() > s.expires:		# expired
+		if s.expired:		# expired
 			# destroy and expire it
 			s.destroySelf()
 			s = Session(user=u)
 		s.update_expires()
 		return s
+
+	@property
+	def expired(self):
+		return datetime.datetime.now() > self.expires
 
 	def update_expires(self):
 		self.expires = datetime.datetime.now() + datetime.timedelta(0, self.ttl)
@@ -162,6 +169,11 @@ class Session(InheritableSQLObject,Dictable):
 		d = self.data_dict
 		d[key] = value
 		self.data = simplejson.dumps(d)
+
+class PasswordReset(Session):
+	class sqlmeta:
+		registry = NAMESPACE
+
 
 class Account(InheritableSQLObject,Dictable):
 	class sqlmeta:
@@ -656,6 +668,7 @@ def createTables():
 	Score.createTable(ifNotExists=True)
 	Session.createTable(ifNotExists=True)
 	String.createTable(ifNotExists=True)
+	PasswordReset.createTable(ifNotExists=True)
 def create_default_data():
 	for i in range(1, 6):
 		try:
