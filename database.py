@@ -436,6 +436,9 @@ class Tag(SQLObject,Dictable):
 	@staticmethod
 	def has_uid(uid):
 		return Tag.select(Tag.q.uid == uid).count() > 0
+	@staticmethod
+	def for_user(u):
+		return Tag.select(OR(Tag.q.tagger == u, Tag.q.taggee == u))
 class Checkin(SQLObject,Dictable):
 	class sqlmeta:
 		registry = NAMESPACE
