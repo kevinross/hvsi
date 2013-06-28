@@ -11,7 +11,7 @@
 					</div>
 %				if post.allow_comments:
 					<div class="comment_count">
-						<a href="/post/view/{{post.id}}#respond" title="{{i18n[lang]['post']['comment']['on']}} {{getattr(post, 'title_' + lang)}}">{{post.comments.count()}}</a>
+						<a class="comment_count_int" href="/post/view/{{post.id}}#respond" title="{{i18n[lang]['post']['comment']['on']}} {{getattr(post, 'title_' + lang)}}">{{post.comments.count()}}</a>
 					</div>
 %				end
 					<h1><a href="/post/view/{{post.id}}" rel="bookmark" title="{{i18n[lang]['post']['permalink']}} {{getattr(post, 'title_' + lang)}}">{{getattr(post, 'title_' + lang)}}</a></h1>

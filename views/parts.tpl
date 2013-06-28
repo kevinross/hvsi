@@ -64,7 +64,7 @@
 						$('#mainBody').addClass('ie'+parseInt(jQuery.browser.version));
 				else if(jQuery.browser.opera)
 						$('#mainBody').addClass('opera');
-				
+				function fixup_corners() {
 				if(!jQuery.browser.msie && !jQuery.browser.opera)
 				{
 						$('.comment-body, #respond, .post .postinfo').each(function () {
@@ -78,7 +78,8 @@
 						$('.post .postinfo ul.tags li a').each(function () {
 								$(this).corner('2px');
 						});
-				}
+				}}
+                fixup_corners();
 	//]]>
 	</script>
 %  if not hasattr(request, 'logged_in') or (hasattr(request, 'logged_in') and (not request.logged_in or request.player)):

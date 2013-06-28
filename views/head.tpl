@@ -3,6 +3,8 @@
 %	if not defined('notitle'):
 	<title>HvsI &raquo; {{get('title', i18n[lang]['pages'][page]['title'])}}</title>
 %	end
+    <script src="{{static('/js/prototype.js')}}" type="text/javascript"></script>
+    <script src="{{static('/js/api.js')}}" type="text/javascript"></script>
 	<script type="text/javascript" src="{{static('/js/jquery.min.js')}}"></script>
 	<script type="text/javascript" src="{{static('/js/jquery-ui.min.js')}}"></script>
 	<script type="text/javascript" src="{{static('/js/jquery-ui-timepicker-addon.js')}}"></script>
@@ -32,5 +34,8 @@
 	/*]]>*/
 	</style>
 	<script>
-	$('html').addClass('js-on');
+        $('html').addClass('js-on');
+        var lang = "{{lang}}";
+        var page = "{{page}}";
 	</script>
+
