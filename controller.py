@@ -10,7 +10,9 @@ def valid_creds(user, passw):
 	u = Account.from_username(user)
 	if not u:
 		return False
-	return u.hashed_pass == passw or u.verify_pass(passw)
+	if not u.verify_pass(passw):
+		return False
+	return u
 def set_cookie(i, as_needed=False):
 	# if already set and more than 5 seconds away from expiring, don't reset it
 	if as_needed and i.skey in request.cookies and datetime.datetime.now() + datetime.timedelta(0, 5) < i.expires:
@@ -20,7 +22,7 @@ def get_session():
 	if 'session' in request.params or 'session' in request.cookies:
 		try:
 			info = Session.grab(request.params.get('session',None) or request.cookies.get('session',None))
-		except IndexError, e:
+		except Exception, e:
 			info = Session()
 			request.params['session'] = info.skey
 	else:
