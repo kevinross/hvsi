@@ -18,8 +18,10 @@ def to_dict(obj):
 	# an object dict is a dictionary with 2 keys.  name is the name of the class that the objects contained are instances of
 	# items is the list of IDs referenced.
 	def f(klass, objs):
-		return dict(name=klass,
-			    items=[x.id for x in objs])
+		return dict(sqlref=dict(name=klass,
+			    	items=[x.id for x in objs]))
+	# give myself some metadata
+	d['__meta__'] = dict(name=obj.__class__.__name__, id=obj.id)
 	
 	# convert all foreign keys to one-element object dicts
 	for key in foreigns:
