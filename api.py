@@ -152,5 +152,26 @@ class API(JSONRPC):
 		s = get_session()
 		return s.language if not s.user else s.user.language
 
+	def register(self, *vals):
+		tmap = ['email','hashed_pass','pass_confirm','username','name','student_num','twitter','cell','language']
+		params = {tmap[x]:vals[x] for x in range(0, len(tmap) - 1) if vals[x] != ''}
+		if params['hashed_pass'] != params['pass_confirm']:
+			return dict(result='false',message='pass')
+		del params['pass_confirm']
+		params['student_num'] = int(params['student_num'])
+		user = (Account.from_username(params['username']) or Player.from_student_num(params['student_num']) or Account.from_email(params['email']) or
+			Player.from_twitter(params['twitter']) or Player.from_cell(params['cell']))
+		if user:
+			return dict(result='false',message='dup')
+		try:
+			u = Player(**params)
+			get_session().user = u
+			return dict(result='true',message=str(u.id))
+		except dberrors.DuplicateEntryError, e:
+			return dict(result='false',message='dup')
+		except Exception, e:
+			return dict(result='false',message=str(e))
+
+
 
 build_routes(API(), lambda:get_session().skey)
