@@ -9,8 +9,10 @@ from functools import partial
 getters = dict()
 
 def str2class(s):
-	if s in ('Admin', 'Post', 'Comment', 'String', 'Bounty', 'Score', 'Game', 'Account', 'Player', 'Session', 'Tag'):
+	if s in ('Admin', 'Post', 'Comment', 'DbString', 'Bounty', 'Score', 'Game', 'Account', 'Player', 'Session', 'Tag'):
 		return eval(s)
+	if s is 'DbString':
+		return DbString
 
 def anongetter(klass, ids):
 	klass = str2class(klass)
@@ -31,7 +33,7 @@ def owngetter(klass, ids=[]):
 	if klass == Session:
 		return [get_session()]
 
-for k in ['Post', 'Comment', 'String', 'Bounty', 'Score']:
+for k in ['Post', 'Comment', 'DbString', 'Bounty', 'Score']:
 	getters[k] = partial(anongetter, k)
 for k in ['Admin','Game', 'Account', 'Player', 'Session', 'Tag']:
 	getters[k] = partial(owngetter, k)

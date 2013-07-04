@@ -3,7 +3,7 @@ from sqlobject.mysql import builder
 from sqlobject.inheritance import *
 from sqlobject_todict import to_dict
 import bcrypt, datetime, time, markdown, os, urllib, uuid, hashlib, simplejson
-__all__ = ['Game','Account','Player','Bounty','Station','Admin','Tag','Checkin','Cure','Post','Comment','String','Snapshot','Score','Session','PasswordReset']
+__all__ = ['Game','Account','Player','Bounty','Station','Admin','Tag','Checkin','Cure','Post','Comment', 'DbString','Snapshot','Score','Session','PasswordReset']
 NAMESPACE = 'hvsi'
 from settings import instanceconfig
 proto = instanceconfig.dbprot
@@ -486,7 +486,7 @@ class Cure(SQLObject,Dictable):
 			return Cure.select(Cure.q.used == self.used)
 	used_cards = state_class(True)
 	unused_cards = state_class(False)
-class String(SQLObject, Dictable):
+class DbString(SQLObject, Dictable):
 	class sqlmeta:
 		registry = NAMESPACE
 	lang			= StringCol()
@@ -499,21 +499,21 @@ class string_dict():
 		self.inst = inst
 		self.attr = attr
 	def __getitem__(self, item):
-		return getattr(self.inst, '_SO_get_' + self.attr)().filter(String.q.field == self.attr).filter(String.q.lang == item)[0].content
+		return getattr(self.inst, '_SO_get_' + self.attr)().filter(DbString.q.field == self.attr).filter(DbString.q.lang == item)[0].content
 	def __setitem__(self, item, val):
-		getattr(self.inst, '_SO_get_' + self.attr)().filter(String.q.field == self.attr).filter(String.q.lang == item)[0].content = val
+		getattr(self.inst, '_SO_get_' + self.attr)().filter(DbString.q.field == self.attr).filter(DbString.q.lang == item)[0].content = val
 class Post(SQLObject,Dictable):
 	class sqlmeta:
 		registry = NAMESPACE
 	time			= DateTimeCol(default=datetime.datetime.now,notNone=True)
-	title			= SQLMultipleJoin('String',joinColumn='post_id')
-	content			= SQLMultipleJoin('String',joinColumn='post_id')
+	title			= SQLMultipleJoin('DbString',joinColumn='post_id')
+	content			= SQLMultipleJoin('DbString',joinColumn='post_id')
 	allow_comments 	= BoolCol(default=True,notNone=True)
 	comments		= SQLMultipleJoin('Comment',joinColumn='post_id',orderBy='time')
 	def _get_content(self):
-		return self._SO_get_content().filter(String.q.field == 'content')
+		return self._SO_get_content().filter(DbString.q.field == 'content')
 	def _get_title(self):
-		return self._SO_get_title().filter(String.q.field == 'title')
+		return self._SO_get_title().filter(DbString.q.field == 'title')
 	def _get_stitle(self):
 		return string_dict(self, 'title')
 	def _get_scontent(self):
@@ -542,22 +542,22 @@ class Post(SQLObject,Dictable):
 		try:
 			self.scontent['e'] = val
 		except:
-			c = String(lang='e',content=val,field='content',post=self)
+			c = DbString(lang='e',content=val,field='content',post=self)
 	def _set_title_e(self, val):
 		try:
 			self.stitle['e'] = val
 		except:
-			c = String(lang='e',content=val,field='title',post=self)
+			c = DbString(lang='e',content=val,field='title',post=self)
 	def _set_content_f(self, val):
 		try:
 			self.scontent['f'] = val
 		except:
-			c = String(lang='f',content=val,field='content',post=self)
+			c = DbString(lang='f',content=val,field='content',post=self)
 	def _set_title_f(self, val):
 		try:
 			self.stitle['f'] = val
 		except:
-			c = String(lang='f',content=val,field='title',post=self)
+			c = DbString(lang='f',content=val,field='title',post=self)
 	def _get_html_e(self):
 		return markdown.markdown(self.content_e,output_format='html')
 	def _get_html_f(self):
@@ -674,7 +674,7 @@ def createTables():
 	Snapshot.createTable(ifNotExists=True)
 	Score.createTable(ifNotExists=True)
 	Session.createTable(ifNotExists=True)
-	String.createTable(ifNotExists=True)
+	DbString.createTable(ifNotExists=True)
 	PasswordReset.createTable(ifNotExists=True)
 def create_default_data():
 	for i in range(1, 6):
