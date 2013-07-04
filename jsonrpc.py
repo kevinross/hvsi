@@ -13,6 +13,8 @@ def json(obj):
 		return [json(x) for x in obj]
 	if isinstance(obj, dict):
 		return {x:json(obj[x]) for x in obj}
+	if isinstance(obj, datetime.datetime):
+		return obj.isoformat()
 	return obj
 
 def unjson(obj):
