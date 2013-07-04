@@ -81,6 +81,7 @@ class API(JSONRPC):
 			print getters[klass]
 			print getters[klass](ids)
 			return list(getters[klass](ids))
+	database = Database()
 	class Blog(JSONRPC):
 		def posts(self):
 			return list(Post.select())
@@ -100,10 +101,34 @@ class API(JSONRPC):
 				 'comment': c}
 			return dict(comment=c)#bottle.template('comment', **d)
 	blog = Blog()
-	def resolve_sqlobjs(self, klass, ids):
-		return list(getters[klass](ids))
-	database = Database()
-	@mview('login_header')
+	class Game(JSONRPC):
+		@property
+		def is_countdown(self):
+			return Game.is_countdown
+		@property
+		def countdown_time(self):
+			return Game.countdown_time
+		@property
+		def start_time(self):
+			return Game.game_start
+		@property
+		def end_time(self):
+			return Game.game_end
+		@property
+		def can_register(self):
+			return Game.is_reg
+		@property
+		def support_email(self):
+			return Game.it_email
+	game = Game()
+	def get_string(self, path):
+		s = get_session()
+		lang = s.language if not s.user else s.user.language
+		parts = path.split('/')
+		base = i18n.i18n[lang]
+		for part in parts:
+			base = base[part]
+		return base
 	def login(self, user, passw):
 		ac = valid_creds(user, passw)
 		if not ac:
