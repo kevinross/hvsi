@@ -135,15 +135,20 @@ class API(JSONRPC):
 			return False
 		get_session().user = ac
 		allow_auth(lambda: None)()
-		return dict()
+		return True
 	@property
 	def logged_in(self):
 		return get_session().user is not None
-	@mview('login_header')
 	def logout(self):
 		get_session().destroySelf()
 		allow_auth(lambda: None)()
-		return dict()
+		return True
+	def forgot_password(self, username):
+		try:
+			user = Account.from_username(username)
+			return True
+		except:
+			return False
 	@property
 	def self(self):
 		return get_session().user
