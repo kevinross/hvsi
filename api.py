@@ -23,7 +23,6 @@ def owngetter(klass, ids=[]):
 	klass = str2class(klass)
 	# for data that only the logged-in user or admin can access
 	# and *only* that data
-	print get_session().user
 	if isinstance(get_session().user, Admin) or klass == Game:
 		return list(klass.select(IN(klass.q.id, ids)))
 	if klass == Player:
