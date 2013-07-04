@@ -144,5 +144,13 @@ class API(JSONRPC):
 		get_session().destroySelf()
 		allow_auth(lambda: None)()
 		return dict()
+	@property
+	def self(self):
+		return get_session().user
+	@property
+	def language(self):
+		s = get_session()
+		return s.language if not s.user else s.user.language
+
 
 build_routes(API(), lambda:get_session().skey)
