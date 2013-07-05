@@ -89,6 +89,8 @@ class API(JSONRPC):
 			return Post.get(id_)
 		def comments(self, post_id):
 			return list(Post.get(post_id).comments)
+		def post_dict(self, id_):
+			return Post.get(id_).to_dict()
 		@allow_auth
 		@derefer
 		@mview('comment')
