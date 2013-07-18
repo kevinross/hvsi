@@ -125,8 +125,8 @@ i18n = {
 			'human?': 'Are you human? (Zombies not allowed!)',
 			'badanswer': 'Incorrect response to verification question',
 			'question': {
-				'arithmetic': ['What is the result of %{left}i %{op}s %{right}i?'],
-				'logic': ['Is %{left}i %{op}s %{right}i?  Yes or No'],
+				'arithmetic': ['What is the result of %(left)s %(op)s %(right)s?'],
+				'logic': ['Is %(left)s %(op)s %(right)s?  Yes or No'],
 				'wo': 'Type the answer as a word.'
 			}
 		},
