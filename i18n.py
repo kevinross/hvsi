@@ -1,20 +1,18 @@
 # coding=utf-8
-import copy, fnmatch, os
+import copy, fnmatch, os, configobj
 import pkg_resources
 i18n_global = {}
 try:
 	files = pkg_resources.resource_listdir(__name__,'')
 except:
-	files = os.listdir('.')
-for file in fnmatch.filter(files, "i18n_*.py"):
+	files = os.listdir('.') + os.listdir('./hvsi')
+for file in fnmatch.filter(files, "i18n_*.ini"):
 	if 'diff' in file:
 		continue
-	code = file.replace('i18n_','').replace('.py','').replace('_','-')
-	mod = file.replace('.py','')
-	try:
-		i18n_global[code] = __import__('hvsi.' + mod, fromlist=[mod]).i18n
-	except:
-		i18n_global[code] = __import__(mod, fromlist=[mod]).i18n
+	data = pkg_resources.resource_stream(__name__, file)
+	c = configobj.ConfigObj(data, indent_type='\t',encoding='utf-8',default_encoding='utf-8')
+	lang = file.replace('i18n_','').replace('.ini','')
+	i18n_global[lang] = c
 def update_dict(orig, new):
 	for k in new:
 		if isinstance(new[k], dict):
