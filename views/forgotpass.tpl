@@ -7,7 +7,7 @@
 %			  if 'success' in request.params:
 					<div><strong>{{i18n[lang]['pages'][page]['success']}}</strong></div>
 %			  else:
-				<form action="/password_reset" method="post">
+				<form action="/forgot_password" method="post">
 					<div>
 						<label for="email">
 							{{i18n[lang]['pages']['register']['email']}}
@@ -15,11 +15,6 @@
 					</div>
 					<div>
 						<input type="textbox" name="email" />
-					</div>
-					<div>
-						<label for="studentnum">
-							{{i18n[lang]['pages']['register']['student_num']}}
-						</label>
 					</div>
 					<div>
 						<input type="textbox" name="student_num" />
