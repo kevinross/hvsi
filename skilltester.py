@@ -47,7 +47,7 @@ class SkillTestingQuestion():
 			fmt = random.choice(i18n.i18n[lang]['pages']['register']['question']['logic'])
 		left = num2text.num2text(self.x).strip() if random.choice([True,False]) else self.x
 		right = num2text.num2text(self.y).strip() if random.choice([True,False]) else self.y
-		s = fmt % dict(left=left, op=random.choice(SkillTestingQuestion.signs[self.op.__name__]), right=right)
+		s = fmt % dict(left=str(left), op=random.choice(SkillTestingQuestion.signs[self.op.__name__]), right=str(right))
 		if self.wo:
 			s += ' %s' % i18n.i18n[lang]['pages']['register']['question']['wo']
 		return s
