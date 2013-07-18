@@ -2988,9 +2988,6 @@ class SimpleTemplate(BaseTemplate):
 					brace = None
 					if part.startswith('!'): yield 'RAW', part[1:]
 					else: yield 'CMD', part
-				elif brace == '(':
-					brace = None
-					yield 'I18', part
 				else: yield 'TXT', part
 
 		def flush(): # Flush the ptrbuffer
@@ -3001,7 +2998,6 @@ class SimpleTemplate(BaseTemplate):
 					if token == 'TXT': cline += repr(value)
 					elif token == 'RAW': cline += '_str(%s)' % value
 					elif token == 'CMD': cline += '_escape(%s)' % value
-					elif token == 'I18': cline += '"<span class=\\"i18n\\" path=\\"%s\\">", _str(%s), "</span>"' % (value, value)
 					cline +=  ', '
 				cline = cline[:-2] + '\\\n'
 			cline = cline[:-2]
@@ -3082,13 +3078,8 @@ class SimpleTemplate(BaseTemplate):
 			if self.parent.child_env:
 				env.update(self.parent.child_env)
 		env.update(kwargs)
-		def i18n(code):
-			try:
-				return code
-			except:
-				return 'TRANSLATION NEEDED: %s' % str(code)
 		env.update({'_stdout': _stdout, '_printlist': _stdout.extend,
-			   '_include': self.subtemplate, '_cinclude': self.cinclude, '_str': i18n,
+			   '_include': self.subtemplate, '_cinclude': self.cinclude, '_str': str,
 			   '_escape': self._escape, 'get': env.get,
 			   'setdefault': env.setdefault, 'defined': env.__contains__})
 		self.child_env = env

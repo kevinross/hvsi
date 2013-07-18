@@ -3,7 +3,6 @@
 %	cinclude head
 </head>
 %cinclude part_html_body
-				<h1>{(i18n[lang]['pages'][page]['title']}}</h1>
 				<form action="/login" method="post">
 					<div class="form_label">
 					  <label for="username">
