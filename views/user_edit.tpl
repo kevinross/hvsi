@@ -1,8 +1,8 @@
-%cinclude parts part=1
+%cinclude part_html_decl
 <head>
 %	cinclude head
 </head>
-%cinclude parts part=2
+%cinclude part_html_body
 				<h2>{{vuser.username}}</h2>
 				<form action="/user/{{vuser.username}}/edit" method="post">
 %			if request.admin:
@@ -128,6 +128,6 @@
 				<br/>
 			  %end
 			</div>
-%cinclude parts part=3
+%cinclude part_html_sidebars
 </body>
 </html>

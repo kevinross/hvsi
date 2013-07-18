@@ -1,8 +1,8 @@
-%cinclude parts part=1
+%cinclude part_html_decl
 <head>
 %	cinclude head
 </head>
-%cinclude parts part=2
+%cinclude part_html_body
 				<h2>
 					<a href="/user/{{tagger.username}}">{{tagger.username}}</a>
 %				  if 'taggee' in globals():
@@ -40,6 +40,6 @@
 					<br/>
 				</form>
 			</div>
-%cinclude parts part=3
+%cinclude part_html_sidebar
 </body>
 </html>

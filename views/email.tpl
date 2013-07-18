@@ -1,8 +1,8 @@
-%cinclude parts part=1
+%cinclude part_html_decl
 <head>
 %	cinclude head
 </head>
-%cinclude parts part=2
+%cinclude part_html_body
 %			if request.session.data:
 %				data = simplejson.loads(request.session.data)
 %				request.session.data = None
@@ -59,6 +59,6 @@
 				<br/>
 				<br/>
 			</div>
-%cinclude parts part=3
+%cinclude part_html_sidebar
 </body>
 </html>

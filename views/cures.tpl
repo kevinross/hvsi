@@ -1,8 +1,8 @@
-%cinclude parts part=1
+%cinclude part_html_decl
 <head>
 %	cinclude head
 </head>
-%cinclude parts part=2
+%cinclude part_html_body
 				<form action="/cures/add" method="post">
 					<input type="submit" value="{{i18n[lang]['pages'][page]['addcure']}}" style="float:left;"/>
 				</form>
@@ -38,6 +38,6 @@
 					<br/>
 					<br/>
 			</div>
-%cinclude parts part=3
+%cinclude part_html_sidebar
 </body>
 </html>

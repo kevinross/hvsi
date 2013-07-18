@@ -1,4 +1,4 @@
-%cinclude parts part=1
+%cinclude part_html_decl
 <head>
 %	cinclude head
 </head>
@@ -7,7 +7,7 @@
 %else:
 %	suberror = None
 %end
-%cinclude parts part=2, suberror=suberror
+%cinclude part_html_body, suberror=suberror
 				<h3>{{i18n[lang]['pages'][page]['search_heading']}}</h3>
 				
 				<form method="POST" action="/users">
@@ -49,6 +49,6 @@
 				<br/>
 				<br/>
 			</div>
-%cinclude parts part=3
+%cinclude part_html_sidebar
 </body>
 </html>

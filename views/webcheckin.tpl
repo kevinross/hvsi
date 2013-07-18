@@ -1,8 +1,8 @@
-%cinclude parts part=1
+%cinclude part_html_decl
 <head>
 %	cinclude head
 </head>
-%cinclude parts part=2
+%cinclude part_html_body
 				<h2>{{i18n[lang]['pages'][page]['title']}}</h2>
 %			  if request.user.did_webcheckin:
 				<h4>{{i18n[lang]['pages'][page]['already']}}</h4>
@@ -27,6 +27,6 @@
 				<br/>
 				<br/>
 			</div>
-%cinclude parts part=3
+%cinclude part_html_sidebar
 </body>
 </html>

@@ -1,4 +1,4 @@
-%cinclude parts part=1
+%cinclude part_html_decl
 <head>
 %	cinclude head
 	<style>
@@ -13,7 +13,7 @@
 		}
 	</style>
 </head>
-%cinclude parts part=2
+%cinclude part_html_body
 				<h2>{{i18n[lang]['pages'][page]['title']}}</h2>
 				<table>
 				<tr>
@@ -92,6 +92,6 @@
 				<a href="/email">Send Email</a>
 				<br/>
 			</div>
-%cinclude parts part=3
+%cinclude part_html_sidebar
 </body>
 </html>

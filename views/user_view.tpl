@@ -1,5 +1,5 @@
 %import markdown
-%cinclude parts part=1
+%cinclude part_html_decl
 <head>
 %	cinclude head
 	<style>
@@ -12,7 +12,7 @@
 		}
 	</style>
 </head>
-%cinclude parts part=2
+%cinclude part_html_body
 				<div style="width: 50%;">
 					<h2>{{vuser.username}}<span style="font-size: 0.5em; float: right;"><a href="/user/{{vuser.username}}/edit">[{{i18n[lang]['pages'][page]['edit']}}]</a></span></h2>
 				  %i=i18n[lang]['pages']['register']
@@ -81,6 +81,6 @@
 %			  end
 				<br/>
 			</div>
-%cinclude parts part=3
+%cinclude part_html_sidebar
 </body>
 </html>

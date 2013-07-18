@@ -1,8 +1,8 @@
-%cinclude parts part=1
+%cinclude part_html_decl
 <head>
 %	cinclude head
 </head>
-%cinclude parts part=2
+%cinclude part_html_body
 				<h2>Cure #{{cure.id}}</h2>
 				<form action="/cures/edit/{{cure.id}}" method="post">
 					<div>
@@ -64,6 +64,6 @@
 				</form>
 				<br/>
 			</div>
-%cinclude parts part=3
+%cinclude part_html_sidebar
 </body>
 </html>

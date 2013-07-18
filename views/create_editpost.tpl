@@ -1,4 +1,4 @@
-%cinclude parts part=1
+%cinclude part_html_decl
 <head>
 %	cinclude head notitle=1
 	<script type="text/javascript" src="{{static('/js/Markdown.Converter.js')}}"></script>
@@ -6,12 +6,12 @@
 	<link rel="stylesheet" href="{{static('/css/editor.css')}}"></link>
 	<title>{{i18n[lang]['pages']['post_' + mode]['title']}}</title>
 </head>
-%cinclude parts part=2
+%cinclude part_html_body
 				<h1>{{i18n[lang]['pages']['post_' + mode]['title']}}</h1>
 %				cinclude post_edit
 %				cinclude comments
 			</div>
-%cinclude parts part=3
+%cinclude part_html_sidebar
 	<script type="text/javascript">
 		(function () {
 			var converter = new Markdown.Converter();

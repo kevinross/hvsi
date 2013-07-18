@@ -1,4 +1,4 @@
-%cinclude parts part=1
+%cinclude part_html_decl
 <head>
 %	cinclude head
 	<script type="text/javascript" src="http://www.google.com/jsapi"></script>
@@ -89,11 +89,11 @@
   		google.setOnLoadCallback(drawVisualization);
 	</script>
 </head>
-%cinclude parts part=2
+%cinclude part_html_body
 				<div id="top_zombies"></div><br/>
 				<div id="day_visualization" style="width: 500px; height: 400px;"></div><br/>
 				<div id="week_visualization" style="width: 500px; height: 400px;"></div>
 			</div>
-%cinclude parts part=3
+%cinclude part_html_sidebar
 </body>
 </html>

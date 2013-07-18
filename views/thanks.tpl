@@ -1,11 +1,11 @@
-%cinclude parts part=1
+%cinclude part_html_decl
 <head>
 <meta http-equiv="refresh" content="5;url=/index" >
 %	cinclude head
 </head>
-%cinclude parts part=2
+%cinclude part_html_body
 				<h4>{{i18n[lang]['pages'][page]['thanks']}}</h4>
 			</div>
-%cinclude parts part=3
+%cinclude part_html_sidebar
 </body>
 </html>

@@ -1,8 +1,8 @@
-%cinclude parts part=1
+%cinclude part_html_decl
 <head>
 %	cinclude head
 </head>
-%cinclude parts part=2
+%cinclude part_html_body
 				<h1>{(i18n[lang]['pages'][page]['title']}}</h1>
 				<form action="/login" method="post">
 					<div class="form_label">
@@ -34,6 +34,6 @@
 				<br/>
 				<br/>
 			</div>
-%cinclude parts part=3
+%cinclude part_html_sidebar
 </body>
 </html>

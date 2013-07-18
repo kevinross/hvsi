@@ -1,11 +1,11 @@
 %today = datetime.datetime.now()
 %eight30 = datetime.datetime(today.year, today.month, today.day, 8, 00, 0, 0)
 %four30 = datetime.datetime(today.year, today.month, today.day, 18, 00, 0, 0)
-%cinclude parts part=1
+%cinclude part_html_decl
 <head>
 %	cinclude head
 </head>
-%cinclude parts part=2
+%cinclude part_html_body
 			%s=i18n[lang]['pages'][page]
 %		if not started and hasattr(request, 'station') and request.station:
 				<h3>{{i18n[lang]['pages'][page]['errors']['notstarted']}}</h3>
@@ -164,6 +164,6 @@
 %			cinclude post lang='e',template_settings=dict(noescape=True)
 			<br/>
 			</div>
-%cinclude parts part=3
+%cinclude part_html_sidebar
 </body>
 </html>
