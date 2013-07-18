@@ -376,4 +376,62 @@ i18n = {
 		'message': 'You have requested a password reset, open http://hvsi.ca/?key=%s to continue.'
 	},
 	'logout': 'Logout',
+	'app': {
+		'languages': ['English', 'Français'],
+		'name': 'HvsI',
+		'language': 'Language',
+		'pages': {
+			'register': {
+				'title': 'Register',
+				'inprogress': 'Registering&#8230;',
+				'complete': 'Registration Complete',
+				'complete_msg': 'Visit an HvsI station starting %1$s at %2$s to pick up your kit.',
+				'errors': {
+					'invalid_email': 'This email address is invalid',
+					'dup': 'A user already exists with some or all of this identifying information.',
+					'pass': 'Passwords do not match; check your spelling and try again.',
+					'other': 'An internal error occured, please try again.',
+					'bad': 'Registration Failed'
+				}
+			},
+			'login': {
+				'title': 'Login',
+				'inprogress': 'Logging in&#8230;',
+				'error_failed': 'Login failed'
+			},
+			'forgot_password': {
+				'title': 'Recover lost password',
+				'ok': 'An email was sent to the address associated with the specified username.  Follow the instructions within to reset your password.',
+				'fail': 'No account with the specified username.  Check spelling and try again.'
+			},
+			'post': {
+				'no_posts': 'No blog posts yet'
+			},
+			'tag': {
+				'human_go': 'Tag!',
+				'human_scan': 'Scan',
+				'human_hint': 'Human Code',
+				'zombie_hint': 'Zombie Username'
+			}
+		},
+		'fields': {
+			'name': 'Name',
+			'username': 'Username',
+			'email': 'Email address',
+			'password': 'Password',
+			'password_confirm': 'Password (confirm)',
+			'language': 'Language',
+			'student_number': 'Student Number',
+			'cell': 'Cell Number (optional)',
+			'twitter': 'Twitter Handle (optional)'
+		},
+		'tabs': [
+			'Info',
+			'Blog',
+			'Tag',
+			'Profile',
+			'Station',
+			'Admin'
+		]
+	}
 }
