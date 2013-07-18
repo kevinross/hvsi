@@ -87,10 +87,21 @@ class API(JSONRPC):
 			return list(Post.select())
 		def post(self, id_):
 			return Post.get(id_)
+		@property
+		def first_post_id(self):
+			return 6
+		@property
+		def last_post_id(self):
+			return Post.select().count()
 		def comments(self, post_id):
 			return list(Post.get(post_id).comments)
 		def post_dict(self, id_):
-			return Post.get(id_).to_dict()
+			p = Post.get(id_).to_dict()
+			s = get_session()
+			p['content'] = p[s.language if not s.user else s.user.language]
+			return p
+		def post_dicts(self, ids):
+			return [self.post_dict(x) for x in ids]
 		@allow_auth
 		@derefer
 		@mview('comment')

@@ -567,6 +567,10 @@ class Post(SQLObject,Dictable):
 		return Post.select(Post.q.id == pid)[0]
 	def to_dict(self):
 		return dict(
+			__meta__ = dict(
+				name = "PostDict",
+				id = self.id
+			),
 			time = self.time.isoformat(),
 			e = dict(
 				title = self.title_e,
