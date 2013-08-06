@@ -10,7 +10,7 @@ for file in fnmatch.filter(files, "i18n_*.ini"):
 	if 'diff' in file:
 		continue
 	data = pkg_resources.resource_stream(__name__, file)
-	c = configobj.ConfigObj(data, indent_type='\t',encoding='utf-8',default_encoding='utf-8')
+	c = configobj.ConfigObj(data, interpolation=False, indent_type='\t', encoding='utf-8', default_encoding='utf-8')
 	lang = file.replace('i18n_','').replace('.ini','')
 	i18n_global[lang] = c
 def update_dict(orig, new):
