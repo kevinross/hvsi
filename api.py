@@ -142,6 +142,12 @@ class API(JSONRPC):
 		for part in parts:
 			base = base[part]
 		return base
+	@property
+	def liability(self):
+		return 'Liability Waiver Text'
+	@property
+	def safety(self):
+		return 'Safety Responsibilities Text'
 	def login(self, user, passw):
 		ac = valid_creds(user, passw)
 		if not ac:
