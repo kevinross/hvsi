@@ -68,6 +68,7 @@ def do_user_edit(name):
 		user.hashed_pass = p['password']
 	redirect('/user/' + name, 303)
 @route('/user/:name/zero',method='POST')
+
 @allow_auth
 @require_auth
 @require_role(Admin)
@@ -76,6 +77,7 @@ def do_user_zero(name):
 	if not user:
 		error(code=404)
 	user.zero = True
+	user.state = 'zombie'
 	redirect(request.environ.get('HTTP_REFERER','/'), 303)
 @route('/user/:name/activate',method='POST')
 @allow_auth
