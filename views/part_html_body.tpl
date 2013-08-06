@@ -22,7 +22,7 @@
 %if not ('nocontent' in globals() and nocontent):
 		<div id="content">
 			<div id="left">
-              %if get('title', i18n[lang]['pages'][page]['title']):
+              %if get('title', i18n[lang]['pages'][page]['title']) and not get('notitle', False):
                 <h1>{{get('title', i18n[lang]['pages'][page]['title'])}}</h1>
               %end
 %			  if bottle.request.session.error:
