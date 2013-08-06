@@ -83,7 +83,7 @@ def do_webcheckin():
 def view_stationops():
 	if 'section' in request.params:
 		request.session.error = 'generic'
-		return dict(section=request.params['section'],err=request.params['err'],page='station',post=Post.from_pid(5))
+		return dict(section=request.params['section'],err=request.params['err'],error='err' in request.params, page='station',post=Post.from_pid(5))
 	return dict(post=Post.from_pid(5))
 @route('/station/checkin', method='POST')
 @allow_auth
