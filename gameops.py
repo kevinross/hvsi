@@ -115,12 +115,11 @@ def do_station_checkin():
 @require_role(Admin,Station)
 def do_station_activate():
 	if 'user_id' not in request.params:
-		redirect('/station?section=activate&err=nuid', 303)
+		redirect('/station?section=activate&err=nouid', 303)
 	try:
 		i = int(request.params['user_id'])
 	except:
-		redirect('/station?section=activate&err=nuid', 303)
-	user = Account.from_student_num(int(request.params['user_id']))
+		redirect('/station?section=activate&err=nouid', 303)
 	if not user:
 		redirect('/station?section=activate&err=noplayer', 303)
 	if user.signedin:
