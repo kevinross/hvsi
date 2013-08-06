@@ -2,7 +2,7 @@
 <head>
 %	cinclude head
 </head>
-%cinclude part_html_body, nologin=True, nocontent=True
+%cinclude part_html_body nologin=True, nocontent=True
 		<div id="content">
 			<div id="left">
 				<h1>{{i18n[lang]['pages'][page]['title']}}</h1>

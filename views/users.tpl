@@ -7,7 +7,7 @@
 %else:
 %	suberror = None
 %end
-%cinclude part_html_body, suberror=suberror
+%cinclude part_html_body suberror=suberror
 				<h3>{{i18n[lang]['pages'][page]['search_heading']}}</h3>
 				
 				<form method="POST" action="/users">

@@ -128,6 +128,6 @@
 				<br/>
 			  %end
 			</div>
-%cinclude part_html_sidebars
+%cinclude part_html_sidebar
 </body>
 </html>
