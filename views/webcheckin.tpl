@@ -3,7 +3,6 @@
 %	cinclude head
 </head>
 %cinclude part_html_body
-				<h2>{{i18n[lang]['pages'][page]['title']}}</h2>
 %			  if request.user.did_webcheckin:
 				<h4>{{i18n[lang]['pages'][page]['already']}}</h4>
 %			  else:

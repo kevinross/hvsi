@@ -3,7 +3,6 @@
 %	cinclude head
 </head>
 %cinclude part_html_body
-				<h2>{{i18n[lang]['pages'][page]['title']}}</h2>
 %			  if 'success' in request.params:
 					<div><strong>{{i18n[lang]['pages'][page]['success']}}</strong></div>
 %			  else:
