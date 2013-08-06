@@ -6,7 +6,7 @@
 	<link rel="stylesheet" href="{{static('/css/editor.css')}}"></link>
 	<title>{{i18n[lang]['pages']['post_' + mode]['title']}}</title>
 </head>
-%cinclude part_html_body
+%cinclude part_html_body notitle=True
 				<h1>{{i18n[lang]['pages']['post_' + mode]['title']}}</h1>
 %				cinclude post_edit
 %				cinclude comments

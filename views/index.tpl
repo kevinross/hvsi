@@ -2,7 +2,7 @@
 <head>
 %	cinclude head
 </head>
-%cinclude part_html_body
+%cinclude part_html_body notitle=True
 %				cinclude post template_settings=dict(noescape=True)
 %			  if request.path == '/':
 %			   for i in range(5):
