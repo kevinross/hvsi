@@ -4,8 +4,10 @@
 </head>
 %cinclude part_html_body
 				<h2>
+%                 if defined('tagger'):
 					<a href="/user/{{tagger.username}}">{{tagger.username}}</a>
-%				  if 'taggee' in globals():
+%                 end
+%				  if defined('taggee'):
 					&nbsp;{{i18n[lang]['pages'][page]['vs']}}&nbsp;
 					<a href="/user/{{taggee.username}}">{{taggee.username}}</a>
 %				  end
