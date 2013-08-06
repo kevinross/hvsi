@@ -107,8 +107,6 @@ def do_station_checkin():
 			redirect('/station?section=checkin&err=nohuman', 303)
 		else:
 			redirect('/station?section=checkin&err=unknown', 303)
-	except:
-		redirect('/station?section=checkin&err=unknown', 303)
 	redirect('/station', code=303)
 
 @route('/station/activate', method='POST')
