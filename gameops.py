@@ -120,6 +120,7 @@ def do_station_activate():
 		i = int(request.params['user_id'])
 	except:
 		redirect('/station?section=activate&err=nouid', 303)
+	user = Player.from_student_num(int(request.params['user_id']))
 	if not user:
 		redirect('/station?section=activate&err=noplayer', 303)
 	if user.signedin:
