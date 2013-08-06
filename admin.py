@@ -241,20 +241,29 @@ def do_edit_cure(cid):
 	# time, used, username, disqualified
 	time = request.params.get('time',None)
 	expiry = request.params.get('expiry',None)
+	if not expiry:
+		expiry = None
 	username = request.params.get('username',None)
-	time = None if not request.params['time'] else request.params['time']
-	username = None if not request.params['username'] else request.params['username']
-	used = 'used' in request.params
+	time = request.params.get('time', None)
+	if not time:
+		time = None
+	username = request.params.get('username', None)
+	if not username:
+		username = None
+	used = request.params.get('used', False)
 	disqualified = 'disqualified' in request.params
-	if time:
-		c.time = datetime.datetime.strptime(time,"%Y-%m-%dT%H:%M:%S")
-	if expiry:
-		c.expiry = datetime.datetime.strptime(expiry,"%Y-%m-%dT%H:%M:%S")
+	player = None
+	c.time = None if not time else datetime.datetime.strptime(time,"%Y-%m-%dT%H:%M:%S")
+	c.expiry = None if not expiry else datetime.datetime.strptime(expiry,"%Y-%m-%dT%H:%M:%S")
 	if username:
-		c.player = Account.get_user(username)
-	if c.player:
+		player = Account.get_user(username)
+	if player:
 		used = True
+		c.player = player
 		c.player.cure()
+	else:
+		used = False
+		c.player = None
 	c.used = used
 	c.disqualified = disqualified
 	redirect(request.path, 303)

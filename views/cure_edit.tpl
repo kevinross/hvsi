@@ -19,7 +19,7 @@
 						</label>
 					</div>
 					<div>
-						<input type="textbox" name="time" class="dt" value="{{cure.time.isoformat()}}" />
+						<input type="textbox" name="time" class="dt" value="{{'' if not cure.time else cure.time.isoformat()}}" />
 					</div>
 					<div>
 						<label for="card_id">
@@ -59,7 +59,7 @@
 						</label>
 					</div>
 					<div>
-						<input type="submit" name="submit" value="{{i18n[lang]['pages']['user']['edit']}}" />
+						<input type="submit" name="submit" value="{{i18n[lang]['pages']['user_view']['edit']}}" />
 					</div>
 				</form>
 				<br/>
