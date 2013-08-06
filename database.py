@@ -338,13 +338,13 @@ class Player(Account):
 		if not twit:
 			return None
 		try:
-			return Account.select(Account.q.twitter == twit)[0]
+			return Player.select(Player.q.twitter == twit)[0]
 		except:
 			return None
 	@staticmethod
 	def from_student_num(num):
 		try:
-			return Account.select(Account.q.student_num == num)[0]
+			return Player.select(Player.q.student_num == num)[0]
 		except:
 			return None
 	@staticmethod
@@ -355,7 +355,7 @@ class Player(Account):
 		if not cell:
 			return None
 		try:
-			return Account.select(Account.q.cell == cell)[0]
+			return Player.select(Player.q.cell == cell)[0]
 		except:
 			return None
 	@staticmethod
